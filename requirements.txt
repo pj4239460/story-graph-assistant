@@ -1,0 +1,14 @@
+# Story Graph Assistant - Requirements
+
+# Core
+pydantic>=2.0.0
+streamlit>=1.30.0
+
+# LLM
+litellm>=1.0.0
+python-dotenv>=1.0.0
+
+# Optional (for future features)
+# faiss-cpu>=1.7.4  # Vector store
+# chromadb>=0.4.0   # Alternative vector store
+# networkx>=3.0     # Graph algorithms
