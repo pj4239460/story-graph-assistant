@@ -1,50 +1,55 @@
 # Known Issues / 已知问题
 
-## ChromaDB Stability Issues on Windows
+## ~~ChromaDB Stability Issues on Windows~~ ✅ RESOLVED
 
 ### Problem
-ChromaDB 1.4.0 causes application crashes on Windows when attempting to index data into the vector database. The crash occurs at the native library level without Python exceptions.
+~~ChromaDB 1.4.0 causes application crashes on Windows when attempting to index data into the vector database. The crash occurs at the native library level without Python exceptions.~~
 
-### Symptoms
-- Application terminates immediately when loading a project
+### Resolution (December 2025)
+**MIGRATED TO FAISS** - The application now uses FAISS (Facebook AI Similarity Search) instead of ChromaDB:
+- ✅ **Stable on Windows** - No DLL errors or crashes
+- ✅ **CPU-only** - No PyTorch dependencies, lighter installation
+- ✅ **Simple architecture** - Direct file-based storage without client/server complexity
+- ✅ **Same API** - Seamless replacement with identical search capabilities
+
+### Technical Details
+- **Vector DB**: FAISS with IndexFlatL2 (exact L2 distance search)
+- **Embeddings**: sentence-transformers paraphrase-multilingual-MiniLM-L12-v2
+- **Storage**: `.vectordb/` directory with `.index` (FAISS binary) and `.meta.json` (metadata) files
+- **Dimensions**: 384-dimensional vectors
+
+### Previous Symptoms (ChromaDB 1.4.0)
+- Application terminated immediately when loading a project
 - Last log message: "Upserting to ChromaDB..."
 - No Python traceback or error message
 
-### Impact
-- ❌ Vector-based semantic search is disabled
-- ✅ Keyword-based search works as fallback
-- ✅ All other features function normally
-
-### Workaround
-Vector indexing has been temporarily disabled in:
-- `src/ui/sidebar.py` - Auto-indexing commented out
-
-The application automatically falls back to keyword-based search, which provides:
-- Name/alias matching
-- Tag-based filtering  
-- Trait and description matching
-- Intelligent relevance scoring
-
-### Possible Solutions
-1. **Wait for ChromaDB fix** - Monitor ChromaDB releases for Windows stability improvements
-2. **Switch to FAISS** - Implement FAISS as alternative vector database
-3. **Use ChromaDB 0.3.x** - Requires Visual C++ Build Tools installation
-4. **Linux/macOS** - ChromaDB works reliably on Unix-based systems
-
 ### Related Files
-- `src/infra/vector_db.py` - Vector database wrapper with graceful degradation
-- `src/services/search_service.py` - Automatic fallback to keyword search
-- `src/services/vector_index_service.py` - Indexing service (currently unused)
-- `requirements.txt` - ChromaDB marked as optional
+- `src/infra/vector_db.py` - Rewritten for FAISS (376 lines)
+- `src/services/search_service.py` - Automatic fallback to keyword search maintained
+- `src/services/vector_index_service.py` - Index management with detailed logging
+- `requirements.txt` - Updated: faiss-cpu, sentence-transformers (ChromaDB removed)
 
 ---
 
-## ChromaDB 在 Windows 上的稳定性问题
+## ~~ChromaDB 在 Windows 上的稳定性问题~~ ✅ 已解决
 
 ### 问题描述
-ChromaDB 1.4.0 在 Windows 上尝试向向量数据库索引数据时会导致应用崩溃。崩溃发生在原生库层面，没有 Python 异常。
+~~ChromaDB 1.4.0 在 Windows 上尝试向向量数据库索引数据时会导致应用崩溃。崩溃发生在原生库层面，没有 Python 异常。~~
 
-### 症状
+### 解决方案（2025年12月）
+**已迁移到 FAISS** - 应用现在使用 FAISS（Facebook AI 相似度搜索）替代 ChromaDB：
+- ✅ **Windows 稳定** - 无 DLL 错误或崩溃
+- ✅ **仅 CPU** - 无 PyTorch 依赖，安装更轻量
+- ✅ **架构简单** - 直接基于文件存储，无客户端/服务器复杂性
+- ✅ **相同 API** - 无缝替换，搜索能力相同
+
+### 技术细节
+- **向量数据库**: FAISS IndexFlatL2（精确 L2 距离搜索）
+- **嵌入模型**: sentence-transformers paraphrase-multilingual-MiniLM-L12-v2
+- **存储位置**: `.vectordb/` 目录，包含 `.index`（FAISS 二进制）和 `.meta.json`（元数据）文件
+- **向量维度**: 384 维
+
+### 之前的症状（ChromaDB 1.4.0）
 - 加载项目时应用立即终止
 - 最后的日志消息："Upserting to ChromaDB..."
 - 没有 Python traceback 或错误消息

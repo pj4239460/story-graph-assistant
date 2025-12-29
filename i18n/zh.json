@@ -27,7 +27,14 @@
     "load_failed": "加载失败：{error}",
     "save_failed": "保存失败：{error}",
     "my_story": "我的故事",
-    "ui_language": "UI 语言"
+    "ui_language": "UI 语言",
+    "api_settings": "API 设置",
+    "deepseek_api_key": "DeepSeek API Key",
+    "api_key_configured": "API Key 已配置",
+    "api_key_not_set": "未设置 API Key",
+    "api_key_help": "从 platform.deepseek.com 获取您的 API Key",
+    "clear_key": "清除",
+    "api_key_cleared": "API Key 已清除"
   },
   "tabs": {
     "routes": "故事路线",

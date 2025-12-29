@@ -40,7 +40,7 @@ def init_services():
         st.session_state.services_initialized = True
     
     # Always re-initialize stateless services to pick up code changes during dev
-    st.session_state.ai_service = AIService()
+    st.session_state.ai_service = AIService(st.session_state.app_db)
     # Inject vector_db into ai_service's search_service
     st.session_state.ai_service.search_service.set_vector_db(st.session_state.vector_db)
     

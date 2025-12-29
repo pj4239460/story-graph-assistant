@@ -14,8 +14,8 @@ from .search_service import SearchService
 class AIService:
     """AI functionality service"""
     
-    def __init__(self):
-        self.llm_client = LLMClient()
+    def __init__(self, app_db=None):
+        self.llm_client = LLMClient(app_db)
         self.search_service = SearchService()
     
     def summarize_scene(self, project: Project, scene: Scene) -> str:

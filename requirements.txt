@@ -9,15 +9,14 @@ streamlit-flow-component>=1.6.1
 litellm>=1.0.0
 python-dotenv>=1.0.0
 
-# Vector Database & Embeddings (Optional - see KNOWN_ISSUES.md)
-# ChromaDB 1.4.0 has stability issues on Windows, temporarily disabled
-# Application uses keyword-based search as fallback
-# To enable (unstable): pip install chromadb sentence-transformers torch --index-url https://download.pytorch.org/whl/cpu
-# chromadb>=0.4.0
-# sentence-transformers>=2.2.0
-# torch>=2.0.0
+# LangGraph for Agent orchestration
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain>=0.3.0
+
+# Vector Database & Embeddings
+faiss-cpu>=1.7.4  # Efficient vector similarity search
+sentence-transformers>=2.2.0  # Multilingual text embeddings
 
 # Optional (for future features)
-# faiss-cpu>=1.7.4  # Vector store
-# chromadb>=0.4.0   # Alternative vector store
 # networkx>=3.0     # Graph algorithms

@@ -64,9 +64,9 @@ def render_sidebar():
                             try:
                                 project = project_service.load_project(rp['path'])
                                 app_db.add_recent_project(rp['path'], project.name)
-                                # Index project in vector database (temporarily disabled due to ChromaDB crash)
-                                # if 'vector_db' in st.session_state:
-                                #     VectorIndexService.index_project(project, st.session_state.vector_db)
+                                # Index project in vector database
+                                if 'vector_db' in st.session_state:
+                                    VectorIndexService.index_project(project, st.session_state.vector_db)
                                 st.session_state.show_load_dialog = False
                                 st.success(f"✅ {i18n.t('sidebar.project_loaded', name=project.name)}")
                                 st.rerun()
@@ -85,9 +85,9 @@ def render_sidebar():
                     try:
                         project = project_service.load_project(path)
                         app_db.add_recent_project(path, project.name)
-                        # Index project in vector database (temporarily disabled due to ChromaDB crash)
-                        # if 'vector_db' in st.session_state:
-                        #     VectorIndexService.index_project(project, st.session_state.vector_db)
+                        # Index project in vector database
+                        if 'vector_db' in st.session_state:
+                            VectorIndexService.index_project(project, st.session_state.vector_db)
                         st.session_state.show_load_dialog = False
                         st.success(f"✅ {i18n.t('sidebar.project_loaded', name=project.name)}")
                         st.rerun()
@@ -128,6 +128,48 @@ def render_sidebar():
                             st.rerun()
                         except Exception as e:
                             st.error(f"❌ {i18n.t('sidebar.save_failed', error=str(e))}")
+        
+        # API Settings
+        st.divider()
+        with st.expander(f"⚙️ {i18n.t('sidebar.api_settings')}"):
+            # Get current API key from DB
+            current_api_key = app_db.get_setting("deepseek_api_key", "")
+            
+            # Show status
+            if current_api_key:
+                st.success(f"✅ {i18n.t('sidebar.api_key_configured')}")
+            else:
+                st.warning(f"⚠️ {i18n.t('sidebar.api_key_not_set')}")
+            
+            # Input form
+            with st.form("api_settings_form"):
+                api_key_input = st.text_input(
+                    i18n.t('sidebar.deepseek_api_key'),
+                    value=current_api_key if current_api_key else "",
+                    type="password",
+                    placeholder="sk-...",
+                    help=i18n.t('sidebar.api_key_help')
+                )
+                
+                col_save, col_clear = st.columns(2)
+                with col_save:
+                    save_btn = st.form_submit_button(i18n.t('common.save'), use_container_width=True)
+                with col_clear:
+                    clear_btn = st.form_submit_button(i18n.t('sidebar.clear_key'), use_container_width=True)
+                
+                if save_btn and api_key_input:
+                    app_db.set_setting("deepseek_api_key", api_key_input)
+                    # Update environment variable for current session
+                    os.environ["DEEPSEEK_API_KEY"] = api_key_input
+                    st.success(f"✅ {i18n.t('settings.save_success')}")
+                    st.rerun()
+                
+                if clear_btn:
+                    app_db.set_setting("deepseek_api_key", "")
+                    if "DEEPSEEK_API_KEY" in os.environ:
+                        del os.environ["DEEPSEEK_API_KEY"]
+                    st.success(f"✅ {i18n.t('sidebar.api_key_cleared')}")
+                    st.rerun()
         
         # Language switch
         st.divider()

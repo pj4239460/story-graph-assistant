@@ -18,10 +18,19 @@ from .token_stats import record_usage
 class LLMClient:
     """Unified LLM client"""
     
-    def __init__(self):
+    def __init__(self, app_db=None):
         # Check DeepSeek API Key
         if "DEEPSEEK_API_KEY" not in os.environ:
-            print("WARNING: DEEPSEEK_API_KEY not set in environment")
+            # Try to load from database
+            if app_db:
+                api_key = app_db.get_setting("deepseek_api_key", "")
+                if api_key:
+                    os.environ["DEEPSEEK_API_KEY"] = api_key
+                    print("INFO: Loaded DEEPSEEK_API_KEY from database")
+                else:
+                    print("WARNING: DEEPSEEK_API_KEY not set in environment or database")
+            else:
+                print("WARNING: DEEPSEEK_API_KEY not set in environment")
         
         if not LITELLM_AVAILABLE:
             print("WARNING: litellm not installed. AI features will be disabled.")

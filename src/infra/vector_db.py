@@ -1,77 +1,129 @@
 """
-Vector Database Infrastructure using ChromaDB
+Vector Database Infrastructure using FAISS
 """
 from __future__ import annotations
-from typing import List, Dict, Optional
+from typing import List, Dict
 from pathlib import Path
+import json
+import numpy as np
 
 
 class VectorDatabase:
-    """Vector database for semantic search using ChromaDB"""
+    """Vector database for semantic search using FAISS"""
     
-    def __init__(self, persist_directory: str = ".chromadb"):
-        """Initialize ChromaDB with persistence"""
-        self.persist_directory = persist_directory
-        Path(persist_directory).mkdir(parents=True, exist_ok=True)
+    def __init__(self, persist_directory: str = ".vectordb"):
+        """Initialize FAISS-based vector database with persistence"""
+        self.persist_directory = Path(persist_directory)
+        self.persist_directory.mkdir(parents=True, exist_ok=True)
         
         # Lazy import to avoid loading heavy dependencies at startup
         try:
-            import chromadb
+            import faiss
             from sentence_transformers import SentenceTransformer
             
-            self._chromadb = chromadb
+            self._faiss = faiss
             self._available = True
-            
-            # Initialize ChromaDB client with persistence (simplified for v1.4+)
-            self.client = chromadb.PersistentClient(path=persist_directory)
             
             # Initialize embedding model (using a multilingual model for Chinese support)
             print("Loading embedding model...")
             self.embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
             print("Embedding model loaded.")
-            print("✓ Vector database initialized successfully")
+            
+            # Store for project-specific indices and metadata
+            self.indices = {}  # project_id_type -> faiss.Index
+            self.metadata = {}  # project_id_type -> {id: {doc, metadata}}
+            
+            # Load existing indices
+            self._load_all_indices()
+            
+            print("✓ Vector database initialized successfully (FAISS)")
             
         except Exception as e:
             print(f"WARNING: Vector database not available: {e}")
-            print("Falling back to keyword search. To enable semantic search, install: pip install chromadb sentence-transformers torch")
+            print("Falling back to keyword search. To enable semantic search, install: pip install faiss-cpu sentence-transformers")
             self._available = False
-            self.client = None
             self.embedding_model = None
     
     def is_available(self) -> bool:
         """Check if vector database is available"""
         return self._available
-        
-    def get_or_create_collection(self, project_id: str, collection_type: str):
-        """Get or create a collection for a project
-        
-        Args:
-            project_id: Unique project identifier
-            collection_type: 'characters' or 'scenes'
-        """
-        if not self._available:
-            return None
-            
-        collection_name = f"{project_id}_{collection_type}"
-        # Sanitize collection name (ChromaDB requirements)
-        collection_name = collection_name.replace("-", "_").replace(".", "_")[:63]
-        
-        try:
-            collection = self.client.get_collection(name=collection_name)
-        except:
-            collection = self.client.create_collection(
-                name=collection_name,
-                metadata={"project_id": project_id, "type": collection_type}
-            )
-        
-        return collection
     
-    def embed_text(self, text: str) -> List[float]:
+    def _get_index_path(self, project_id: str, collection_type: str) -> Path:
+        """Get file path for index"""
+        safe_name = f"{project_id}_{collection_type}".replace("-", "_").replace(".", "_")[:63]
+        return self.persist_directory / f"{safe_name}.index"
+    
+    def _get_metadata_path(self, project_id: str, collection_type: str) -> Path:
+        """Get file path for metadata"""
+        safe_name = f"{project_id}_{collection_type}".replace("-", "_").replace(".", "_")[:63]
+        return self.persist_directory / f"{safe_name}.meta.json"
+    
+    def _load_all_indices(self):
+        """Load all existing indices from disk"""
+        for index_file in self.persist_directory.glob("*.index"):
+            try:
+                index = self._faiss.read_index(str(index_file))
+                key = index_file.stem  # filename without .index
+                self.indices[key] = index
+                
+                # Load corresponding metadata
+                meta_file = index_file.parent / f"{key}.meta.json"
+                if meta_file.exists():
+                    with open(meta_file, 'r', encoding='utf-8') as f:
+                        self.metadata[key] = json.load(f)
+                else:
+                    self.metadata[key] = {}
+                    
+                print(f"  Loaded index: {key} ({index.ntotal} vectors)")
+            except Exception as e:
+                print(f"  Warning: Failed to load index {index_file}: {e}")
+    
+    def _get_or_create_index(self, project_id: str, collection_type: str):
+        """Get or create a FAISS index for a project collection"""
+        key = f"{project_id}_{collection_type}".replace("-", "_").replace(".", "_")[:63]
+        
+        if key not in self.indices:
+            # Create new index (384 dimensions for paraphrase-multilingual-MiniLM-L12-v2)
+            dimension = 384
+            self.indices[key] = self._faiss.IndexFlatL2(dimension)
+            self.metadata[key] = {}
+            
+        return key
+    
+    def _save_index(self, key: str):
+        """Save index and metadata to disk"""
+        if key not in self.indices:
+            return
+            
+        try:
+            # Extract project_id and collection_type from key
+            parts = key.rsplit('_', 1)
+            if len(parts) == 2:
+                project_id = parts[0]
+                collection_type = parts[1]
+            else:
+                # Fallback: use key as is
+                project_id = key
+                collection_type = "default"
+            
+            # Save FAISS index
+            index_path = self._get_index_path(project_id, collection_type)
+            self._faiss.write_index(self.indices[key], str(index_path))
+            
+            # Save metadata
+            meta_path = self._get_metadata_path(project_id, collection_type)
+            with open(meta_path, 'w', encoding='utf-8') as f:
+                json.dump(self.metadata[key], f, ensure_ascii=False, indent=2)
+                
+        except Exception as e:
+            print(f"Warning: Failed to save index {key}: {e}")
+    
+    def embed_text(self, text: str) -> np.ndarray:
         """Generate embedding for text"""
         if not self._available:
-            return []
+            return np.array([])
         embedding = self.embedding_model.encode(text, convert_to_numpy=True)
-        return embedding.tolist()
+        return embedding
     
     def index_character(self, project_id: str, char_id: str, char_data: Dict):
         """Index a character for semantic search"""
@@ -79,10 +131,8 @@ class VectorDatabase:
             return
         
         try:
-            print(f"    Getting collection for project {project_id}...")
-            collection = self.get_or_create_collection(project_id, "characters")
+            key = self._get_or_create_index(project_id, "characters")
             
-            print(f"    Building searchable text...")
             # Build searchable text from character data
             text_parts = [
                 f"Name: {char_data['name']}",
@@ -102,25 +152,25 @@ class VectorDatabase:
                 text_parts.append(f"Fears: {', '.join(char_data['fears'])}")
             
             searchable_text = "\n".join(text_parts)
-            print(f"    Text length: {len(searchable_text)} chars")
             
             # Generate embedding
-            print(f"    Generating embedding...")
             embedding = self.embed_text(searchable_text)
-            print(f"    Embedding dimension: {len(embedding)}")
             
-            # Upsert to collection
-            print(f"    Upserting to ChromaDB...")
-            collection.upsert(
-                ids=[char_id],
-                embeddings=[embedding],
-                documents=[searchable_text],
-                metadatas=[{
-                    "name": char_data['name'],
-                    "type": "character"
-                }]
-            )
-            print(f"    Successfully indexed character")
+            # Add to FAISS index
+            self.indices[key].add(np.array([embedding], dtype=np.float32))
+            
+            # Store metadata
+            internal_id = self.indices[key].ntotal - 1  # Last added vector
+            self.metadata[key][str(internal_id)] = {
+                "id": char_id,
+                "document": searchable_text,
+                "name": char_data['name'],
+                "type": "character"
+            }
+            
+            # Save to disk
+            self._save_index(key)
+            
         except Exception as e:
             print(f"ERROR indexing character {char_id}: {type(e).__name__}: {e}")
             import traceback
@@ -133,7 +183,7 @@ class VectorDatabase:
             return
         
         try:
-            collection = self.get_or_create_collection(project_id, "scenes")
+            key = self._get_or_create_index(project_id, "scenes")
             
             # Build searchable text from scene data
             text_parts = [
@@ -158,18 +208,25 @@ class VectorDatabase:
             # Generate embedding
             embedding = self.embed_text(searchable_text)
             
-            # Upsert to collection
-            collection.upsert(
-                ids=[scene_id],
-                embeddings=[embedding],
-                documents=[searchable_text],
-                metadatas=[{
-                    "title": scene_data['title'],
-                    "type": "scene"
-                }]
-            )
+            # Add to FAISS index
+            self.indices[key].add(np.array([embedding], dtype=np.float32))
+            
+            # Store metadata
+            internal_id = self.indices[key].ntotal - 1
+            self.metadata[key][str(internal_id)] = {
+                "id": scene_id,
+                "document": searchable_text,
+                "title": scene_data['title'],
+                "type": "scene"
+            }
+            
+            # Save to disk
+            self._save_index(key)
+            
         except Exception as e:
-            print(f"Error indexing scene {scene_id}: {e}")
+            print(f"ERROR indexing scene {scene_id}: {type(e).__name__}: {e}")
+            import traceback
+            traceback.print_exc()
             raise
     
     def search_characters(self, project_id: str, query: str, top_k: int = 3) -> List[Dict]:
@@ -178,35 +235,35 @@ class VectorDatabase:
             return []
             
         try:
-            collection = self.get_or_create_collection(project_id, "characters")
+            key = f"{project_id}_characters".replace("-", "_").replace(".", "_")[:63]
             
-            # Check if collection is empty
-            if collection.count() == 0:
+            if key not in self.indices or self.indices[key].ntotal == 0:
                 return []
             
             # Generate query embedding
             query_embedding = self.embed_text(query)
             
-            # Search
-            results = collection.query(
-                query_embeddings=[query_embedding],
-                n_results=min(top_k, collection.count())
-            )
+            # Search in FAISS
+            k = min(top_k, self.indices[key].ntotal)
+            distances, indices = self.indices[key].search(np.array([query_embedding], dtype=np.float32), k)
             
             # Format results
             characters = []
-            if results['ids'] and len(results['ids'][0]) > 0:
-                for i, char_id in enumerate(results['ids'][0]):
+            for i, idx in enumerate(indices[0]):
+                if idx >= 0 and str(idx) in self.metadata[key]:
+                    meta = self.metadata[key][str(idx)]
                     characters.append({
-                        "id": char_id,
-                        "name": results['metadatas'][0][i]['name'],
-                        "distance": results['distances'][0][i] if 'distances' in results else 0,
-                        "document": results['documents'][0][i]
+                        "id": meta['id'],
+                        "name": meta['name'],
+                        "distance": float(distances[0][i]),
+                        "document": meta['document']
                     })
             
             return characters
         except Exception as e:
             print(f"Error searching characters: {e}")
+            import traceback
+            traceback.print_exc()
             return []
     
     def search_scenes(self, project_id: str, query: str, top_k: int = 3) -> List[Dict]:
@@ -215,68 +272,77 @@ class VectorDatabase:
             return []
             
         try:
-            collection = self.get_or_create_collection(project_id, "scenes")
+            key = f"{project_id}_scenes".replace("-", "_").replace(".", "_")[:63]
             
-            # Check if collection is empty
-            if collection.count() == 0:
+            if key not in self.indices or self.indices[key].ntotal == 0:
                 return []
             
             # Generate query embedding
             query_embedding = self.embed_text(query)
             
-            # Search
-            results = collection.query(
-                query_embeddings=[query_embedding],
-                n_results=min(top_k, collection.count())
-            )
+            # Search in FAISS
+            k = min(top_k, self.indices[key].ntotal)
+            distances, indices = self.indices[key].search(np.array([query_embedding], dtype=np.float32), k)
             
             # Format results
             scenes = []
-            if results['ids'] and len(results['ids'][0]) > 0:
-                for i, scene_id in enumerate(results['ids'][0]):
+            for i, idx in enumerate(indices[0]):
+                if idx >= 0 and str(idx) in self.metadata[key]:
+                    meta = self.metadata[key][str(idx)]
                     scenes.append({
-                        "id": scene_id,
-                        "title": results['metadatas'][0][i]['title'],
-                        "distance": results['distances'][0][i] if 'distances' in results else 0,
-                        "document": results['documents'][0][i]
+                        "id": meta['id'],
+                        "title": meta['title'],
+                        "distance": float(distances[0][i]),
+                        "document": meta['document']
                     })
             
             return scenes
         except Exception as e:
             print(f"Error searching scenes: {e}")
+            import traceback
+            traceback.print_exc()
             return []
     
     def delete_character(self, project_id: str, char_id: str):
-        """Remove a character from the index"""
-        try:
-            collection = self.get_or_create_collection(project_id, "characters")
-            collection.delete(ids=[char_id])
-        except Exception as e:
-            print(f"Error deleting character: {e}")
+        """Remove a character from the index
+        Note: FAISS doesn't support direct deletion, would need to rebuild index"""
+        print(f"Warning: FAISS doesn't support direct deletion. Character {char_id} remains in index.")
     
     def delete_scene(self, project_id: str, scene_id: str):
-        """Remove a scene from the index"""
-        try:
-            collection = self.get_or_create_collection(project_id, "scenes")
-            collection.delete(ids=[scene_id])
-        except Exception as e:
-            print(f"Error deleting scene: {e}")
+        """Remove a scene from the index
+        Note: FAISS doesn't support direct deletion, would need to rebuild index"""
+        print(f"Warning: FAISS doesn't support direct deletion. Scene {scene_id} remains in index.")
     
     def clear_project(self, project_id: str):
         """Clear all indexed data for a project"""
         try:
-            # Delete character collection
-            char_collection_name = f"{project_id}_characters".replace("-", "_").replace(".", "_")[:63]
-            try:
-                self.client.delete_collection(name=char_collection_name)
-            except:
-                pass
+            # Delete character index
+            char_key = f"{project_id}_characters".replace("-", "_").replace(".", "_")[:63]
+            if char_key in self.indices:
+                del self.indices[char_key]
+                del self.metadata[char_key]
+                
+                index_path = self._get_index_path(project_id, "characters")
+                meta_path = self._get_metadata_path(project_id, "characters")
+                
+                if index_path.exists():
+                    index_path.unlink()
+                if meta_path.exists():
+                    meta_path.unlink()
             
-            # Delete scene collection
-            scene_collection_name = f"{project_id}_scenes".replace("-", "_").replace(".", "_")[:63]
-            try:
-                self.client.delete_collection(name=scene_collection_name)
-            except:
-                pass
+            # Delete scene index
+            scene_key = f"{project_id}_scenes".replace("-", "_").replace(".", "_")[:63]
+            if scene_key in self.indices:
+                del self.indices[scene_key]
+                del self.metadata[scene_key]
+                
+                index_path = self._get_index_path(project_id, "scenes")
+                meta_path = self._get_metadata_path(project_id, "scenes")
+                
+                if index_path.exists():
+                    index_path.unlink()
+                if meta_path.exists():
+                    meta_path.unlink()
+                    
         except Exception as e:
             print(f"Error clearing project: {e}")

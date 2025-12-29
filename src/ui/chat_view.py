@@ -1,8 +1,26 @@
 """
-Chat with Story View
+Chat with Story View - Now with AI Agent
 """
 import streamlit as st
 from ..config import DEBUG_MODE
+
+
+def render_agent_steps(steps):
+    """Render agent thinking steps in an expander"""
+    with st.expander("🔍 View Agent Thinking Process", expanded=False):
+        for step in steps:
+            if step["type"] == "thinking":
+                st.caption(step["content"])
+            elif step["type"] == "tool_call":
+                st.code(f"🔧 Calling: {step['tool']}({step.get('args', {})})", language="python")
+            elif step["type"] == "tool_result":
+                with st.container():
+                    st.text(f"📊 Result from {step['tool']}:")
+                    st.text(step["content"])
+            elif step["type"] == "final_answer":
+                # Don't show final answer here, it's shown in the main chat
+                pass
+
 
 def render_chat_view():
     """Render chat view"""
@@ -21,7 +39,7 @@ def render_chat_view():
     if "chat_history" not in st.session_state:
         # Load from database
         db_history = app_db.get_chat_history(project_id)
-        st.session_state.chat_history = [{"role": msg["role"], "content": msg["content"]} for msg in db_history]
+        st.session_state.chat_history = [{"role": msg["role"], "content": msg["content"], "steps": []} for msg in db_history]
         
     # Initialize processing state
     if "chat_processing" not in st.session_state:
@@ -33,7 +51,7 @@ def render_chat_view():
     elif st.session_state.chat_current_project != project_id:
         # Project changed, reload history
         db_history = app_db.get_chat_history(project_id)
-        st.session_state.chat_history = [{"role": msg["role"], "content": msg["content"]} for msg in db_history]
+        st.session_state.chat_history = [{"role": msg["role"], "content": msg["content"], "steps": []} for msg in db_history]
         st.session_state.chat_current_project = project_id
         st.session_state.chat_processing = False
         
@@ -54,6 +72,9 @@ def render_chat_view():
     for message in st.session_state.chat_history:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
+            # Show agent steps if available
+            if message["role"] == "assistant" and message.get("steps"):
+                render_agent_steps(message["steps"])
             
     # Handle pending AI response (State Machine Approach)
     if st.session_state.chat_processing:
@@ -66,7 +87,13 @@ def render_chat_view():
                     prompt = last_user_msg["content"]
                     
                     # Prepare history (exclude the last user message which is the current prompt)
-                    history_context = st.session_state.chat_history[:-1]
+                    # Convert to OpenAI format
+                    history_messages = []
+                    for msg in st.session_state.chat_history[:-1]:
+                        history_messages.append({
+                            "role": msg["role"],
+                            "content": msg["content"]
+                        })
                     
                     if DEBUG_MODE:
                         # Use hardcoded response to save tokens during development
@@ -76,33 +103,44 @@ def render_chat_view():
 
 关于你的问题「{prompt}」：
 
-这是一个测试响应。在实际使用中，我会根据你的故事内容（角色、场景、设定）来回答问题。
+这是一个测试响应。在实际使用中，我会使用工具来精确回答。
 
 目前的故事项目包含：
 - **角色数量**: {len(project.characters)}
 - **场景数量**: {len(project.scenes)}
 
 你可以问我：
-- 角色之间的关系如何？
-- 某个场景的逻辑是否合理？
-- 剧情是否存在矛盾？
+- 现在整个故事中有几个角色？
+- 陈墨是谁？
+- 这个故事有几个结局？
 
-*（开发模式：硬编码响应，不消耗 Token）*"""
+*（开发模式：硬编码响应）*"""
+                        steps = []
                     else:
-                        # Production: Use real AI service
-                        response = ai_service.chat_with_story(
+                        # Production: Use LangGraph Agent service
+                        from ..services.langgraph_agent_service import LangGraphAgentService
+                        
+                        agent = LangGraphAgentService(
                             project=project,
-                            query=prompt,
-                            history=history_context
+                            model="deepseek/deepseek-chat"
                         )
+                        
+                        result = agent.chat(prompt, history=history_messages)
+                        response = result["response"]
+                        steps = result["steps"]
                     
                     print(f"DEBUG: AI Response generated (len={len(response) if response else 0})")
                     
                     if not response:
                         response = i18n.t('chat.error_no_response') if hasattr(i18n, 't') else "Error: No response from AI."
+                        steps = []
 
-                    # Add assistant response to history
-                    st.session_state.chat_history.append({"role": "assistant", "content": response})
+                    # Add assistant response to history with steps
+                    st.session_state.chat_history.append({
+                        "role": "assistant", 
+                        "content": response,
+                        "steps": steps
+                    })
                     
                     # Save to database
                     app_db.save_chat_message(project_id, "assistant", response)

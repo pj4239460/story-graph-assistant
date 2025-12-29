@@ -27,7 +27,14 @@
     "load_failed": "Load failed: {error}",
     "save_failed": "Save failed: {error}",
     "my_story": "My Story",
-    "ui_language": "UI Language"
+    "ui_language": "UI Language",
+    "api_settings": "API Settings",
+    "deepseek_api_key": "DeepSeek API Key",
+    "api_key_configured": "API Key configured",
+    "api_key_not_set": "API Key not set",
+    "api_key_help": "Get your API Key from platform.deepseek.com",
+    "clear_key": "Clear",
+    "api_key_cleared": "API Key cleared"
   },
   "tabs": {
     "routes": "Story Routes",

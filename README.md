@@ -11,7 +11,8 @@ A powerful tool for narrative game developers to manage complex branching storie
 
 **Documentation**: [English](#english) | [中文](#中文)  
 **Full Docs**: [English](GETTING_STARTED.en.md) | [中文](GETTING_STARTED.zh.md)  
-**Developer Guide**: [English](docs/developer_guide.en.md) | [中文](docs/developer_guide.zh.md)
+**Developer Guide**: [English](docs/developer_guide.en.md) | [中文](docs/developer_guide.zh.md)  
+**AI Agent Guide**: [English](docs/agent_guide.en.md) | [中文](docs/agent_guide.zh.md)
 
 ---
 
@@ -26,11 +27,13 @@ A powerful tool for narrative game developers to manage complex branching storie
   - Click nodes to view details
 - 📊 **Story Analytics Dashboard** - Real-time statistics for scenes, endings, and choices
 - 👥 **Character Management** - Centralized character profiles and relationships
-- 🤖 **AI-Powered Analysis**
-  - Scene summarization
-  - World-building fact extraction
+- 🤖 **AI Agent Assistant**
+  - LangGraph-powered conversational agent with tool calling
+  - Scene summarization and world-building fact extraction
   - Out-of-Character (OOC) detection
-  - Chat with your story (RAG with keyword-based retrieval)
+  - Semantic search with FAISS vector database (CPU-optimized)
+  - Natural language queries: "现在整个故事中有几个角色？", "陈墨是谁？"
+  - Extensible tool system - easily add new capabilities
 - 🌍 **Bilingual Interface** - Full Chinese/English support with dynamic language switching
 - 💬 **Chat History** - Persistent storage with SQLite
 - ⚙️ **Configurable Settings** - Customize AI token limits and model selection
@@ -95,10 +98,10 @@ Open your browser at `http://localhost:8501`
 - [ ] Timeline view
 - [ ] Multi-scene OOC checking
 
-**v1.0 - Vector Search** ⚠️ 
-- [ ] Vector-based retrieval (FAISS/alternative to ChromaDB)
-  - Note: ChromaDB 1.4.0 has stability issues on Windows
-- [ ] Semantic similarity search
+**v1.0 - Vector Search** ✅ 
+- [x] Vector-based retrieval (FAISS - migrated from ChromaDB)
+- [x] Semantic similarity search with 384-dim embeddings
+- [x] Auto-indexing on project load
 - [ ] Character arc analysis
 - [ ] Route analysis
 - [ ] Emotional pacing
@@ -165,6 +168,8 @@ Open your browser at `http://localhost:8501`
 - **Pydantic** - Data validation and serialization
 - **LiteLLM** - Unified LLM interface supporting DeepSeek and more
 - **SQLite** - Persistent chat history storage
+- **FAISS** - Vector similarity search for semantic retrieval
+- **Sentence Transformers** - Multilingual text embeddings
 - **JSON** - Lightweight local storage
 
 ### 📖 Documentation
@@ -192,10 +197,10 @@ Open your browser at `http://localhost:8501`
 - [ ] Timeline view
 - [ ] Multi-scene OOC checking
 
-**v1.0 - Vector Search** ⚠️ 
-- [ ] Vector-based retrieval (FAISS/alternative to ChromaDB)
-  - Note: ChromaDB 1.4.0 has stability issues on Windows
-- [ ] Semantic similarity search
+**v1.0 - Vector Search** ✅ 
+- [x] Vector-based retrieval (FAISS - migrated from ChromaDB)
+- [x] Semantic similarity search with 384-dim embeddings
+- [x] Auto-indexing on project load
 - [ ] Character arc analysis
 - [ ] Route analysis
 - [ ] Emotional pacing

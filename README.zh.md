@@ -10,7 +10,8 @@
 
 **文档**: [English](README.md) | [中文](#)  
 **完整文档**: [English](GETTING_STARTED.en.md) | [中文](GETTING_STARTED.zh.md)  
-**开发者指南**: [English](docs/developer_guide.en.md) | [中文](docs/developer_guide.zh.md)
+**开发者指南**: [English](docs/developer_guide.en.md) | [中文](docs/developer_guide.zh.md)  
+**AI Agent 指南**: [English](docs/agent_guide.en.md) | [中文](docs/agent_guide.zh.md)
 
 ---
 
@@ -30,10 +31,18 @@
 - 快速查找和编辑角色信息
 - 场景中角色参与度追踪
 
-### 3. **AI 智能分析**
+### 3. **AI 智能助手（Agent）**
+- **LangGraph 驱动的对话代理**：基于工具调用的智能问答系统
 - **场景摘要生成**：自动生成场景内容的简洁摘要
 - **设定提取**：从场景中提取世界观信息和关键剧情点
 - **OOC 检测**：检查角色行为是否符合人设
+- **FAISS 语义搜索**：CPU 优化的向量数据库，快速检索相关内容
+- **自然语言查询**：
+  - "现在整个故事中有几个角色？"
+  - "陈墨是谁？"
+  - "这个故事有几个结局？"
+  - "哪些场景提到了记忆？"
+- **可扩展工具系统**：轻松添加新功能，只需定义新的 @tool 函数
 - Token 使用量跟踪和限额管理
 
 ### 4. **双语界面与配置**
@@ -89,9 +98,14 @@ streamlit run src/app.py
 
 - **Streamlit**：快速搭建交互式 Web 应用
 - **Streamlit Flow**：基于 React Flow 的交互式流程图组件
+- **LangGraph**：AI Agent 状态机框架
+- **LangChain**：LLM 应用开发工具链
+- **ChatLiteLLM**：统一的多模型接口（支持 DeepSeek、OpenAI、Claude 等）
+- **FAISS**：Facebook AI 的向量相似度搜索库（CPU 优化）
+- **Sentence Transformers**：生成语义嵌入向量
 - **Pydantic**：数据验证和序列化
-- **LiteLLM**：统一的 LLM 接口，支持 DeepSeek 等多个模型
-- **JSON**：轻量级本地存储
+- **SQLite**：轻量级数据库（存储设置、聊天历史）
+- **JSON**：项目文件存储格式
 
 ---
 
