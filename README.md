@@ -19,13 +19,18 @@ A powerful tool for narrative game developers to manage complex branching storie
 
 ### ✨ Features
 
-- 📊 **Story Graph Visualization** - Manage scenes and branching paths
+- 🌳 **Interactive Story Graph** - Powered by Streamlit Flow
+  - Drag-and-drop node repositioning
+  - Multiple layouts (Tree, Layered, Force, Manual)
+  - Zoom, pan, and minimap navigation
+  - Click nodes to view details
+- 📊 **Story Analytics Dashboard** - Real-time statistics for scenes, endings, and choices
 - 👥 **Character Management** - Centralized character profiles and relationships
 - 🤖 **AI-Powered Analysis**
   - Scene summarization
   - World-building fact extraction
   - Out-of-Character (OOC) detection
-- 🎲 **What-If Simulations** - Explore alternative story paths (coming soon)
+- 🌍 **Bilingual Interface** - Full Chinese/English support with dynamic language switching
 - 💾 **JSON-based Storage** - Simple, portable project files
 
 ### 🚀 Quick Start
@@ -100,14 +105,15 @@ Open your browser at `http://localhost:8501`
 
 ### ✨ Features
 
-- 📊 **Story Scene Management** - Create, edit, and manage branching scenes
-- 👥 **Character Profiles** - Centralized character management with traits, goals, and relationships
-- 🤖 **AI-Powered Analysis**
-  - Scene summarization
-  - World-building fact extraction
-  - Out-of-Character (OOC) detection
-- 💾 **Local-First Storage** - Simple JSON-based project files
-- 📊 **Token Tracking** - Monitor AI usage with built-in token limits
+- 🌳 **交互式剧情图谱** - 基于 Streamlit Flow 的可视化流程图
+- 📊 **统计面板** - 实时场景、结局、选择统计
+- 👥 **角色档案** - 集中管理角色特征、目标和关系
+- 🤖 **AI 智能分析**
+  - 场景摘要生成
+  - 世界观设定提取
+  - OOC（人设崩坏）检测
+- 🌍 **双语界面** - 完整的中英文支持和动态切换
+- 💾 **本地优先存储** - 简单的 JSON 项目文件
 
 ### 🚀 Quick Start
 

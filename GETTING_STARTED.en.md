@@ -14,7 +14,10 @@ Based on the developer documentation, MVP version has been built with the follow
    - Create, edit, delete scenes
    - Scene content editing
    - Branch choice management
-   - Simple graph view
+   - **Interactive flow diagram** with Streamlit Flow
+   - Multiple layouts: Tree, Layered, Force, Manual
+   - Drag-and-drop repositioning
+   - Statistics dashboard
 
 3. **Character Management**
    - Create, edit, delete characters
