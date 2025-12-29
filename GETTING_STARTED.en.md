@@ -108,6 +108,12 @@ The application will automatically open in your browser at: `http://localhost:85
    - Select scene or character
    - Click "🚀 Generate/Detect"
 
+### 💡 Layout Tips
+
+- **Tree Layout**: Best for standard branching stories. It organizes scenes hierarchically from the start.
+- **Manual Layout**: Resets nodes to a grid. Use this if the graph gets messy or if you want to arrange everything yourself.
+- **Force Layout**: Good for seeing clusters and organic connections, but can be unstable with many nodes.
+
 ### Load Sample Project
 
 ```powershell

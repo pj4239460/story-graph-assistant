@@ -2,10 +2,120 @@
 Story routes view - Enhanced version with Streamlit Flow
 """
 import streamlit as st
+import math
 from streamlit_flow import streamlit_flow
 from streamlit_flow.elements import StreamlitFlowNode, StreamlitFlowEdge
 from streamlit_flow.state import StreamlitFlowState
-from streamlit_flow.layouts import TreeLayout
+from streamlit_flow.layouts import TreeLayout, ManualLayout
+
+
+def calculate_layout(nodes, edges, layout_type="Tree", direction="down"):
+    """
+    Calculate node positions manually in Python to ensure layout works.
+    This is a fallback/enhancement because frontend ELK layout can be unreliable.
+    """
+    if not nodes:
+        return nodes
+
+    # Configuration
+    node_width = 220
+    node_height = 100
+    spacing_x = 50
+    spacing_y = 80
+    
+    # Build graph structure
+    adj = {node.id: [] for node in nodes}
+    in_degree = {node.id: 0 for node in nodes}
+    node_map = {node.id: node for node in nodes}
+    
+    for edge in edges:
+        if edge.source in adj and edge.target in in_degree:
+            adj[edge.source].append(edge.target)
+            in_degree[edge.target] += 1
+            
+    # Find roots (nodes with in-degree 0)
+    roots = [nid for nid, deg in in_degree.items() if deg == 0]
+    if not roots and nodes:
+        roots = [nodes[0].id] # Fallback for cycles
+        
+    # --- Grid Layout (Only for Manual) ---
+    if layout_type == "Manual":
+        # Simple grid for manual start
+        cols = math.ceil(math.sqrt(len(nodes)))
+        for i, node in enumerate(nodes):
+            row = i // cols
+            col = i % cols
+            node.position = {
+                "x": col * (node_width + spacing_x),
+                "y": row * (node_height + spacing_y)
+            }
+    
+    # --- Tree / Layered Layout (BFS Levels) ---
+    # We also use this as a fallback for Force layout to give it a good initial state
+    else:
+        levels = {} # node_id -> level
+        queue = [(root, 0) for root in roots]
+        visited = set(roots)
+        
+        # Assign levels
+        while queue:
+            curr, level = queue.pop(0)
+            levels[curr] = level
+            
+            for neighbor in adj[curr]:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append((neighbor, level + 1))
+        
+        # Handle disconnected components or unvisited nodes
+        for node in nodes:
+            if node.id not in visited:
+                levels[node.id] = 0 # Put them at top/start
+        
+        # Group by level
+        level_nodes = {}
+        for nid, level in levels.items():
+            if level not in level_nodes:
+                level_nodes[level] = []
+            level_nodes[level].append(nid)
+            
+        # Assign positions
+        max_width = max(len(ns) for ns in level_nodes.values()) * (node_width + spacing_x)
+        
+        for level, nids in level_nodes.items():
+            row_width = len(nids) * (node_width + spacing_x) - spacing_x
+            start_x = (max_width - row_width) / 2
+            
+            for i, nid in enumerate(nids):
+                node = node_map[nid]
+                
+                if direction == "down":
+                    x = start_x + i * (node_width + spacing_x)
+                    y = level * (node_height + spacing_y)
+                    node.source_position = 'bottom'
+                    node.target_position = 'top'
+                elif direction == "up":
+                    x = start_x + i * (node_width + spacing_x)
+                    y = -level * (node_height + spacing_y)
+                    node.source_position = 'top'
+                    node.target_position = 'bottom'
+                elif direction == "right":
+                    x = level * (node_width + spacing_x)
+                    y = start_x + i * (node_height + spacing_y)
+                    node.source_position = 'right'
+                    node.target_position = 'left'
+                elif direction == "left":
+                    x = -level * (node_width + spacing_x)
+                    y = start_x + i * (node_height + spacing_y)
+                    node.source_position = 'left'
+                    node.target_position = 'right'
+                
+                # Update position directly
+                # Note: StreamlitFlowNode expects pos tuple in constructor, but we modify .position dict here
+                # because that's what asdict() uses
+                node.position = {"x": x, "y": y} 
+            
+    return nodes
 
 
 def create_flow_state_from_scenes(scenes):
@@ -44,22 +154,31 @@ def create_flow_state_from_scenes(scenes):
             'content': '\n\n'.join(label_parts)
         }
         
+        # Set all nodes to origin - let layout algorithm position them
+        # IMPORTANT: We must provide explicit width/height for ELK layout to work in frontend
         node = StreamlitFlowNode(
             id=scene.id,
-            pos=(0, i * 150),  # Initial vertical layout
+            pos=(0, 0),
             data=node_data,
             node_type='default',
             source_position='right',
             target_position='left',
             style=node_style,
-            draggable=True
+            draggable=True,
+            width=200,  # Explicit width for ELK
+            height=100  # Explicit height for ELK
         )
         nodes.append(node)
+    
+    # Create set of valid node IDs for validation
+    valid_node_ids = {node.id for node in nodes}
     
     # Create edges from choices
     for scene in scenes:
         for choice in scene.choices:
-            if choice.targetSceneId:
+            # Only create edge if target scene actually exists in our node list
+            # ELK layout engine will CRASH if an edge points to a non-existent node
+            if choice.targetSceneId and choice.targetSceneId in valid_node_ids:
                 edge = StreamlitFlowEdge(
                     id=f"{scene.id}-{choice.targetSceneId}",
                     source=scene.id,
@@ -265,64 +384,94 @@ def render_routes_view():
                 key="flow_layout"
             )
         with col2:
+            # Direction for layouts (disabled for Force and Manual)
+            layout_direction = st.selectbox(
+                "Direction" if st.session_state.locale == "en" else "方向",
+                ["Down", "Right", "Up", "Left"],
+                key="flow_direction",
+                disabled=(layout_type in ["Force", "Manual"])
+            )
+        with col3:
             show_text_view = st.checkbox(
                 "Text View" if st.session_state.locale == "en" else "文本视图",
                 value=False,
                 key="show_text_view"
             )
         
+        
         if not show_text_view:
-            # Initialize flow state in session
-            if 'flow_state' not in st.session_state or st.session_state.get('flow_needs_refresh', True):
-                st.session_state.flow_state = create_flow_state_from_scenes(scenes)
-                st.session_state.flow_needs_refresh = False
+            # Map direction string to lowercase for API
+            direction_map = {"Down": "down", "Right": "right", "Up": "up", "Left": "left"}
+            direction = direction_map.get(layout_direction, "down")
             
-            # Render interactive flow diagram
-            st.caption("💡 " + ("Drag nodes to rearrange, scroll to zoom, click for details" if st.session_state.locale == "en" else "拖动节点重排，滚轮缩放，点击查看详情"))
-            
-            # Get layout based on selection
+            # Get layout based on selection with parameters
             if layout_type == "Tree":
                 from streamlit_flow.layouts import TreeLayout
-                layout = TreeLayout(direction='down')
+                layout = TreeLayout(direction=direction, node_node_spacing=100)
             elif layout_type == "Layered":
                 from streamlit_flow.layouts import LayeredLayout
-                layout = LayeredLayout(direction='down')
+                layout = LayeredLayout(direction=direction, node_node_spacing=80, node_layer_spacing=120)
             elif layout_type == "Force":
                 from streamlit_flow.layouts import ForceLayout
-                layout = ForceLayout()
+                layout = ForceLayout(node_node_spacing=150)
             else:
                 from streamlit_flow.layouts import ManualLayout
                 layout = ManualLayout()
             
+            # Recreate state when layout changes to force ELK recalculation
+            layout_key = f"{layout_type}_{direction}"
+            if 'flow_state' not in st.session_state or st.session_state.get('last_layout_key') != layout_key:
+                # Create fresh state
+                new_state = create_flow_state_from_scenes(scenes)
+                
+                # If Manual layout, calculate positions in Python as a starting point
+                if layout_type == "Manual":
+                    new_state.nodes = calculate_layout(new_state.nodes, new_state.edges, "Manual", direction)
+                
+                st.session_state.flow_state = new_state
+                st.session_state.last_layout_key = layout_key
+            
+            # Instructions
+            if st.session_state.locale == "en":
+                st.caption("Drag nodes to rearrange, scroll to zoom, double-click to fit view")
+                st.caption("Right-click canvas to access 'Reset Layout' for recalculation")
+            else:
+                st.caption("拖动节点重排，滚轮缩放，双击适应视图")
+                st.caption("右键画布访问 'Reset Layout' 重新计算")
+            
             # Render the flow
-            selected_id = streamlit_flow(
-                'scene_flow',
+            # Use dynamic key to force component remount when layout changes
+            # This ensures ELK layout algorithm runs on fresh nodes
+            component_key = f"scene_flow_{layout_key}"
+            
+            # For Manual layout, we don't pass a layout object to let our calculated positions take effect
+            # For others, we pass the ELK layout object
+            flow_layout = ManualLayout() if layout_type == "Manual" else layout
+            
+            st.session_state.flow_state = streamlit_flow(
+                component_key,
                 st.session_state.flow_state,
-                layout=layout,
+                layout=flow_layout,
                 fit_view=True,
                 height=600,
                 enable_pane_menu=True,
                 enable_node_menu=True,
                 enable_edge_menu=True,
                 show_minimap=True,
-                hide_watermark=True
+                hide_watermark=True,
+                pan_on_drag=True,
+                allow_zoom=True,
+                min_zoom=0.1
             )
             
-            # Show selected node details
-            if selected_id:
-                st.info(f"Selected: {selected_id}")
-                selected_scene = scene_service.get_scene(project, selected_id)
-                if selected_scene:
-                    with st.expander(f"📖 {selected_scene.title}", expanded=True):
-                        if selected_scene.chapter:
-                            st.caption(f"📚 Chapter: {selected_scene.chapter}")
-                        if selected_scene.isEnding:
-                            st.warning("🏁 This is an ending scene")
-                        if selected_scene.summary:
-                            st.info(selected_scene.summary)
-                        if selected_scene.body:
-                            st.text_area("Content", selected_scene.body, height=150, disabled=True)
-        
+            # Check if any node was selected (clicked)
+            # Note: Streamlit Flow doesn't directly return selected ID
+            # Users can interact with nodes through context menus
+            if st.session_state.locale == "en":
+                st.caption("Right-click nodes for edit/delete options")
+            else:
+                st.caption("右键点击节点进行编辑/删除操作")
+
         else:
             # Text representation
             graph = scene_service.get_scene_graph(project)
