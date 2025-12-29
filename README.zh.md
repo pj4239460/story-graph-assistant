@@ -107,10 +107,14 @@ streamlit run src/app.py
 - [x] 项目管理（创建、加载、保存）
 - [x] 场景管理（增删改查）
 - [x] 角色管理（增删改查）
+- [x] 交互式流程图可视化（Streamlit Flow）
+- [x] 多种图布局算法
+- [x] 统计仪表板
 - [x] AI 场景摘要生成
 - [x] AI 设定提取
 - [x] AI OOC 检测
 - [x] Token 使用跟踪
+- [x] 完整双语支持（中英文）
 
 **v0.3 - RAG 基础**
 - [ ] 时间轴视图
@@ -140,23 +144,6 @@ MIT License
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
-- [ ] 角色/世界观管理系统
-- [ ] 基于 RAG 的 AI 集成
-- [ ] OOC 检测功能
-- [ ] What-if 推演引擎
-- [ ] 多语言支持
-
----
-
-## 📝 开源协议
-
-MIT License
-
----
-
-## 🤝 参与贡献
-
-欢迎贡献代码！详情请阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ---
 
