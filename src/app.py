@@ -17,6 +17,7 @@ from src.services.character_service import CharacterService
 from src.services.ai_service import AIService
 from src.infra.i18n import get_i18n
 from src.infra.app_db import AppDatabase
+from src.infra.vector_db import VectorDatabase
 from src.ui.layout import render_main_layout
 
 
@@ -26,11 +27,22 @@ def init_services():
         # Initialize DB
         st.session_state.app_db = AppDatabase()
         
+        # Initialize Vector DB (optional, will fallback to keyword search if unavailable)
+        print("Initializing Vector Database...")
+        st.session_state.vector_db = VectorDatabase()
+        if not st.session_state.vector_db.is_available():
+            print("Vector database not available. Using keyword search fallback.")
+        
         st.session_state.project_service = ProjectService(JsonProjectRepository())
         st.session_state.scene_service = SceneService()
         st.session_state.character_service = CharacterService()
-        st.session_state.ai_service = AIService()
+        # st.session_state.ai_service = AIService() # Moved out to ensure update
         st.session_state.services_initialized = True
+    
+    # Always re-initialize stateless services to pick up code changes during dev
+    st.session_state.ai_service = AIService()
+    # Inject vector_db into ai_service's search_service
+    st.session_state.ai_service.search_service.set_vector_db(st.session_state.vector_db)
     
     # Initialize i18n
     if "locale" not in st.session_state:

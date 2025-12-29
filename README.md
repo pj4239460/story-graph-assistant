@@ -30,7 +30,9 @@ A powerful tool for narrative game developers to manage complex branching storie
   - Scene summarization
   - World-building fact extraction
   - Out-of-Character (OOC) detection
+  - Chat with your story (RAG with keyword-based retrieval)
 - 🌍 **Bilingual Interface** - Full Chinese/English support with dynamic language switching
+- 💬 **Chat History** - Persistent storage with SQLite
 - ⚙️ **Configurable Settings** - Customize AI token limits and model selection
 - 🕒 **Recent Projects** - Quickly access your recently opened projects
 - 💾 **JSON-based Storage** - Simple, portable project files
@@ -83,15 +85,20 @@ Open your browser at `http://localhost:8501`
 - [x] AI fact extraction
 - [x] AI OOC detection
 - [x] Token usage tracking
+- [x] Chat interface with story context
+- [x] Persistent chat history (SQLite)
+- [x] RAG-based context retrieval (keyword search)
 
-**v0.3 - RAG Foundation**
+**v0.3 - Enhanced Search**
+- [x] Keyword-based retrieval (implemented)
+- [x] Intelligent content scoring
 - [ ] Timeline view
-- [ ] Keyword-based retrieval
-- [ ] World Q&A
 - [ ] Multi-scene OOC checking
 
-**v1.0 - Full RAG**
-- [ ] Vector-based retrieval (FAISS/Chroma)
+**v1.0 - Vector Search** ⚠️ 
+- [ ] Vector-based retrieval (FAISS/alternative to ChromaDB)
+  - Note: ChromaDB 1.4.0 has stability issues on Windows
+- [ ] Semantic similarity search
 - [ ] Character arc analysis
 - [ ] Route analysis
 - [ ] Emotional pacing
@@ -114,7 +121,9 @@ Open your browser at `http://localhost:8501`
   - 场景摘要生成
   - 世界观设定提取
   - OOC（人设崩坏）检测
+  - 与故事对话（基于关键词检索的 RAG）
 - 🌍 **双语界面** - 完整的中英文支持和动态切换
+- 💬 **聊天历史** - SQLite 持久化存储
 - 💾 **本地优先存储** - 简单的 JSON 项目文件
 
 ### 🚀 Quick Start
@@ -155,6 +164,7 @@ Open your browser at `http://localhost:8501`
 - **Streamlit** - Fast interactive web application framework
 - **Pydantic** - Data validation and serialization
 - **LiteLLM** - Unified LLM interface supporting DeepSeek and more
+- **SQLite** - Persistent chat history storage
 - **JSON** - Lightweight local storage
 
 ### 📖 Documentation
@@ -172,15 +182,20 @@ Open your browser at `http://localhost:8501`
 - [x] AI fact extraction
 - [x] AI OOC detection
 - [x] Token usage tracking
+- [x] Chat interface with story context
+- [x] Persistent chat history (SQLite)
+- [x] RAG-based context retrieval (keyword search)
 
-**v0.3 - RAG Foundation**
+**v0.3 - Enhanced Search**
+- [x] Keyword-based retrieval (implemented)
+- [x] Intelligent content scoring
 - [ ] Timeline view
-- [ ] Keyword-based retrieval
-- [ ] World Q&A
 - [ ] Multi-scene OOC checking
 
-**v1.0 - Full RAG**
-- [ ] Vector-based retrieval (FAISS/Chroma)
+**v1.0 - Vector Search** ⚠️ 
+- [ ] Vector-based retrieval (FAISS/alternative to ChromaDB)
+  - Note: ChromaDB 1.4.0 has stability issues on Windows
+- [ ] Semantic similarity search
 - [ ] Character arc analysis
 - [ ] Route analysis
 - [ ] Emotional pacing

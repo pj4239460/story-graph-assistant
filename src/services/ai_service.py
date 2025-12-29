@@ -8,6 +8,7 @@ from ..models.project import Project
 from ..models.scene import Scene
 from ..infra.llm_client import LLMClient
 from ..infra.token_stats import check_token_limit
+from .search_service import SearchService
 
 
 class AIService:
@@ -15,6 +16,7 @@ class AIService:
     
     def __init__(self):
         self.llm_client = LLMClient()
+        self.search_service = SearchService()
     
     def summarize_scene(self, project: Project, scene: Scene) -> str:
         """
@@ -211,5 +213,61 @@ REASONING: The character's cautious approach aligns with their "careful" trait. 
             "confidence": confidence,
             "explanation": explanation
         }
+
+    def chat_with_story(self, project: Project, query: str, history: List[Dict]) -> str:
+        """
+        Chat with the story context using RAG (Retrieval-Augmented Generation)
+        
+        Args:
+            project: Project object
+            query: User question
+            history: Chat history [{"role": "user", "content": "..."}, ...]
+            
+        Returns:
+            AI response
+        """
+        # Check token limit (reduced estimate since we use RAG)
+        can_proceed, message = check_token_limit(project, estimated_tokens=1000)
+        if not can_proceed:
+            return f"Error: {message}"
+            
+        # Use SearchService to retrieve only relevant content (RAG approach)
+        context = self.search_service.get_contextual_summary(project, query)
+        
+        # Build System Prompt with retrieved context
+        system_prompt = {
+            "role": "system",
+            "content": f"""You are an expert story consultant and co-author for the project "{project.name}".
+
+You have been provided with RELEVANT context based on the user's question. Answer based on this context.
+If the answer is not in the provided context, acknowledge what you don't know and suggest what additional information might help.
+
+=== RETRIEVED CONTEXT ===
+{context}
+
+=== INSTRUCTIONS ===
+- Answer the user's question using the context above
+- Be specific and reference the characters/scenes mentioned
+- If the context doesn't contain enough information, say so honestly
+- Suggest creative ideas that are consistent with the existing lore
+"""
+        }
+        
+        # Combine messages
+        messages = [system_prompt] + history + [{"role": "user", "content": query}]
+        
+        # Call LLM
+        try:
+            response, _ = self.llm_client.call(
+                project=project,
+                task_type="what_if", # Use reasoning model if available
+                messages=messages,
+                max_tokens=1000
+            )
+            return response
+        except Exception as e:
+            import traceback
+            print(f"LLM CALL ERROR: {str(e)}\n{traceback.format_exc()}")
+            raise e
 
 

@@ -33,7 +33,16 @@
     "routes": "故事路线",
     "characters": "角色管理",
     "ai_tools": "AI 工具",
+    "chat": "与故事对话",
     "settings": "设置"
+  },
+  "chat": {
+    "title": "与故事对话",
+    "welcome": "关于你的故事，问我任何问题！我已经阅读了所有的角色和场景。",
+    "placeholder": "例如：第三章的逻辑有漏洞吗？",
+    "thinking": "思考中...",
+    "clear_history": "清除历史",
+    "error_no_response": "错误：AI 服务未返回响应。"
   },
   "settings": {
     "ai_config": "AI 配置",

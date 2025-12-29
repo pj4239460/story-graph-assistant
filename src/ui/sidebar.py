@@ -3,6 +3,7 @@ Sidebar component
 """
 import streamlit as st
 import os
+from ..services.vector_index_service import VectorIndexService
 
 
 def render_sidebar():
@@ -63,6 +64,9 @@ def render_sidebar():
                             try:
                                 project = project_service.load_project(rp['path'])
                                 app_db.add_recent_project(rp['path'], project.name)
+                                # Index project in vector database (temporarily disabled due to ChromaDB crash)
+                                # if 'vector_db' in st.session_state:
+                                #     VectorIndexService.index_project(project, st.session_state.vector_db)
                                 st.session_state.show_load_dialog = False
                                 st.success(f"✅ {i18n.t('sidebar.project_loaded', name=project.name)}")
                                 st.rerun()
@@ -81,6 +85,9 @@ def render_sidebar():
                     try:
                         project = project_service.load_project(path)
                         app_db.add_recent_project(path, project.name)
+                        # Index project in vector database (temporarily disabled due to ChromaDB crash)
+                        # if 'vector_db' in st.session_state:
+                        #     VectorIndexService.index_project(project, st.session_state.vector_db)
                         st.session_state.show_load_dialog = False
                         st.success(f"✅ {i18n.t('sidebar.project_loaded', name=project.name)}")
                         st.rerun()

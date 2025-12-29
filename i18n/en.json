@@ -33,7 +33,16 @@
     "routes": "Story Routes",
     "characters": "Characters",
     "ai_tools": "AI Tools",
+    "chat": "Chat with Story",
     "settings": "Settings"
+  },
+  "chat": {
+    "title": "Chat with Story",
+    "welcome": "Ask me anything about your story! I have access to your characters and scenes.",
+    "placeholder": "e.g., Is there a plot hole in Chapter 3?",
+    "thinking": "Thinking...",
+    "clear_history": "Clear History",
+    "error_no_response": "Error: No response from AI service."
   },
   "settings": {
     "ai_config": "AI Configuration",

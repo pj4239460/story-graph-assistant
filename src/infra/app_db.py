@@ -39,6 +39,24 @@ class AppDatabase:
                 )
             """)
             
+            # Chat history table
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS chat_history (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    project_id TEXT NOT NULL,
+                    role TEXT NOT NULL,
+                    content TEXT NOT NULL,
+                    created_at TIMESTAMP NOT NULL,
+                    FOREIGN KEY (project_id) REFERENCES recent_projects(path)
+                )
+            """)
+            
+            # Create index for faster queries
+            cursor.execute("""
+                CREATE INDEX IF NOT EXISTS idx_chat_project 
+                ON chat_history(project_id, created_at)
+            """)
+            
             conn.commit()
 
     # --- Settings Operations ---
@@ -114,3 +132,68 @@ class AppDatabase:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM recent_projects WHERE path = ?", (path,))
             conn.commit()
+
+    # --- Chat History Operations ---
+
+    def save_chat_message(self, project_id: str, role: str, content: str):
+        """Save a single chat message"""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            now = datetime.now().isoformat()
+            
+            cursor.execute("""
+                INSERT INTO chat_history (project_id, role, content, created_at)
+                VALUES (?, ?, ?, ?)
+            """, (project_id, role, content, now))
+            conn.commit()
+
+    def get_chat_history(self, project_id: str, limit: Optional[int] = None) -> List[Dict[str, str]]:
+        """Get chat history for a project"""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            
+            if limit:
+                cursor.execute("""
+                    SELECT role, content, created_at 
+                    FROM chat_history 
+                    WHERE project_id = ? 
+                    ORDER BY created_at DESC 
+                    LIMIT ?
+                """, (project_id, limit))
+            else:
+                cursor.execute("""
+                    SELECT role, content, created_at 
+                    FROM chat_history 
+                    WHERE project_id = ? 
+                    ORDER BY created_at ASC
+                """, (project_id,))
+            
+            messages = []
+            for row in cursor.fetchall():
+                messages.append({
+                    "role": row[0],
+                    "content": row[1],
+                    "created_at": row[2]
+                })
+            
+            # Reverse if we used LIMIT (to get most recent first, then reverse to chronological)
+            if limit:
+                messages.reverse()
+            
+            return messages
+
+    def clear_chat_history(self, project_id: str):
+        """Clear all chat history for a project"""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM chat_history WHERE project_id = ?", (project_id,))
+            conn.commit()
+
+    def get_chat_count(self, project_id: str) -> int:
+        """Get total number of messages for a project"""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                SELECT COUNT(*) FROM chat_history WHERE project_id = ?
+            """, (project_id,))
+            return cursor.fetchone()[0]
