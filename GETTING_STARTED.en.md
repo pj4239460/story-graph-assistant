@@ -8,6 +8,7 @@ Based on the developer documentation, MVP version has been built with the follow
 
 1. **Project Management**
    - Create, load, save projects
+   - **Recent Projects** list for quick access
    - JSON format storage
 
 2. **Scene Management**
@@ -107,6 +108,12 @@ The application will automatically open in your browser at: `http://localhost:85
    - Select a tool (Scene Summary/Lore Extraction/OOC Detection)
    - Select scene or character
    - Click "🚀 Generate/Detect"
+
+5. **Configure Settings**
+   - Switch to "⚙️ Settings" tab
+   - Adjust **Project Token Limit** (Total budget)
+   - Adjust **Daily Soft Limit** (Warning threshold)
+   - View Model Configuration
 
 ### 💡 Layout Tips
 

@@ -31,6 +31,8 @@ A powerful tool for narrative game developers to manage complex branching storie
   - World-building fact extraction
   - Out-of-Character (OOC) detection
 - 🌍 **Bilingual Interface** - Full Chinese/English support with dynamic language switching
+- ⚙️ **Configurable Settings** - Customize AI token limits and model selection
+- 🕒 **Recent Projects** - Quickly access your recently opened projects
 - 💾 **JSON-based Storage** - Simple, portable project files
 
 ### 🚀 Quick Start

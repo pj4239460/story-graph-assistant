@@ -32,7 +32,17 @@
   "tabs": {
     "routes": "Story Routes",
     "characters": "Characters",
-    "ai_tools": "AI Tools"
+    "ai_tools": "AI Tools",
+    "settings": "Settings"
+  },
+  "settings": {
+    "ai_config": "AI Configuration",
+    "token_limits": "Token Limits",
+    "project_limit": "Project Total Limit",
+    "daily_limit": "Daily Soft Limit",
+    "model_config": "Model Selection",
+    "provider": "Provider",
+    "save_success": "Settings saved successfully"
   },
   "routes": {
     "title": "Story Route Graph",

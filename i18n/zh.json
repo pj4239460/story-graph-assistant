@@ -32,7 +32,17 @@
   "tabs": {
     "routes": "故事路线",
     "characters": "角色管理",
-    "ai_tools": "AI 工具"
+    "ai_tools": "AI 工具",
+    "settings": "设置"
+  },
+  "settings": {
+    "ai_config": "AI 配置",
+    "token_limits": "Token 限制",
+    "project_limit": "项目总限额",
+    "daily_limit": "每日软限额",
+    "model_config": "模型选择",
+    "provider": "提供商",
+    "save_success": "设置保存成功"
   },
   "routes": {
     "title": "故事路线图",

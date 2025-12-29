@@ -2,11 +2,13 @@
 Sidebar component
 """
 import streamlit as st
+import os
 
 
 def render_sidebar():
     """Render sidebar"""
     i18n = st.session_state.i18n
+    app_db = st.session_state.app_db
     
     with st.sidebar:
         st.header(f"📁 {i18n.t('sidebar.project_management')}")
@@ -38,20 +40,47 @@ def render_sidebar():
                 submitted = st.form_submit_button(i18n.t('common.create'))
                 if submitted and name:
                     project = project_service.create_project(name, locale)
+                    # Add to recent projects (assuming default path ./projects/name.json)
+                    default_path = os.path.abspath(f"./projects/{name}.json")
+                    app_db.add_recent_project(default_path, name)
+                    
                     st.session_state.show_create_dialog = False
                     st.success(f"✅ {i18n.t('sidebar.project_created', name=name)}")
                     st.rerun()
         
         # Load project dialog
         if st.session_state.get("show_load_dialog", False):
+            st.subheader(i18n.t('sidebar.load_project_title'))
+            
+            # Recent projects list
+            recent_projects = app_db.get_recent_projects()
+            if recent_projects:
+                st.caption("🕒 Recent Projects")
+                for rp in recent_projects:
+                    col_rp1, col_rp2 = st.columns([4, 1])
+                    with col_rp1:
+                        if st.button(f"📄 {rp['name']}", key=f"load_recent_{rp['path']}", help=rp['path'], use_container_width=True):
+                            try:
+                                project = project_service.load_project(rp['path'])
+                                app_db.add_recent_project(rp['path'], project.name)
+                                st.session_state.show_load_dialog = False
+                                st.success(f"✅ {i18n.t('sidebar.project_loaded', name=project.name)}")
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"❌ {i18n.t('sidebar.load_failed', error=str(e))}")
+                    with col_rp2:
+                        if st.button("❌", key=f"del_recent_{rp['path']}", help="Remove from history"):
+                            app_db.remove_recent_project(rp['path'])
+                            st.rerun()
+
             with st.form("load_project_form"):
-                st.subheader(i18n.t('sidebar.load_project_title'))
                 path = st.text_input(i18n.t('sidebar.project_path'), placeholder="path/to/project.json")
                 
                 submitted = st.form_submit_button(i18n.t('common.load'))
                 if submitted and path:
                     try:
                         project = project_service.load_project(path)
+                        app_db.add_recent_project(path, project.name)
                         st.session_state.show_load_dialog = False
                         st.success(f"✅ {i18n.t('sidebar.project_loaded', name=project.name)}")
                         st.rerun()
@@ -65,6 +94,8 @@ def render_sidebar():
             if st.button(f"💾 {i18n.t('sidebar.save_project')}", use_container_width=True):
                 if project_service.current_path:
                     project_service.save_project()
+                    # Update timestamp in recent projects
+                    app_db.add_recent_project(project_service.current_path, project_service.get_project().name)
                     st.success(f"✅ {i18n.t('sidebar.project_saved')}")
                 else:
                     st.session_state.show_save_as_dialog = True
@@ -82,6 +113,9 @@ def render_sidebar():
                     if submitted and save_path:
                         try:
                             project_service.save_project(save_path)
+                            # Add to recent projects
+                            app_db.add_recent_project(save_path, project_service.get_project().name)
+                            
                             st.session_state.show_save_as_dialog = False
                             st.success(f"✅ {i18n.t('sidebar.saved_to', path=save_path)}")
                             st.rerun()
@@ -103,6 +137,8 @@ def render_sidebar():
         if new_locale != st.session_state.locale:
             st.session_state.locale = new_locale
             st.session_state.i18n.set_locale(new_locale)
+            # Save to DB
+            app_db.set_setting("locale", new_locale)
             st.rerun()
         
         # Help information
