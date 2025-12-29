@@ -38,7 +38,7 @@ A powerful tool for narrative game developers to manage complex branching storie
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/story-graph-assistant.git
+git clone https://github.com/pj4239460/story-graph-assistant.git
 cd story-graph-assistant
 
 # Create virtual environment

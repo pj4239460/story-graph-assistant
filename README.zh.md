@@ -49,7 +49,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/story-graph-assistant.git
+git clone https://github.com/pj4239460/story-graph-assistant.git
 cd story-graph-assistant
 
 # 创建虚拟环境

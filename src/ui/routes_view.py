@@ -1,40 +1,79 @@
 """
-Story routes view - Enhanced version
+Story routes view - Enhanced version with Streamlit Flow
 """
 import streamlit as st
+from streamlit_flow import streamlit_flow
+from streamlit_flow.elements import StreamlitFlowNode, StreamlitFlowEdge
+from streamlit_flow.state import StreamlitFlowState
+from streamlit_flow.layouts import TreeLayout
 
 
-def generate_mermaid_graph(scenes, i18n):
-    """Generate Mermaid flowchart for scene graph"""
+def create_flow_state_from_scenes(scenes):
+    """Create Streamlit Flow state from scene list"""
     if not scenes:
-        return ""
+        return StreamlitFlowState([], [])
     
-    # Build Mermaid flowchart
-    mermaid_lines = ["graph TD"]
+    nodes = []
+    edges = []
     
-    for scene in scenes:
-        # Node style based on type
-        node_id = scene.id[:8]  # Shorten ID for readability
-        node_label = scene.title.replace('"', "'")
+    # Create nodes
+    for i, scene in enumerate(scenes):
+        # Node styling based on scene type
+        node_style = {
+            'background': '#ff6666' if scene.isEnding else '#4a90e2',
+            'color': 'white',
+            'border': '2px solid #333',
+            'borderRadius': '8px',
+            'padding': '10px',
+            'fontSize': '14px',
+            'fontWeight': 'bold',
+            'minWidth': '150px',
+            'minHeight': '60px'
+        }
         
+        # Node label with metadata
+        label_parts = [f"**{scene.title}**"]
+        if scene.chapter:
+            label_parts.append(f"📚 {scene.chapter}")
         if scene.isEnding:
-            # Ending scenes with special style
-            mermaid_lines.append(f'    {node_id}[["{node_label}"]]:::ending')
-        else:
-            mermaid_lines.append(f'    {node_id}["{node_label}"]')
+            label_parts.append("🏁 Ending")
+        if scene.choices:
+            label_parts.append(f"🔀 {len(scene.choices)} choices")
         
-        # Add edges for choices
-        for i, choice in enumerate(scene.choices):
+        node_data = {
+            'content': '\n\n'.join(label_parts)
+        }
+        
+        node = StreamlitFlowNode(
+            id=scene.id,
+            pos=(0, i * 150),  # Initial vertical layout
+            data=node_data,
+            node_type='default',
+            source_position='right',
+            target_position='left',
+            style=node_style,
+            draggable=True
+        )
+        nodes.append(node)
+    
+    # Create edges from choices
+    for scene in scenes:
+        for choice in scene.choices:
             if choice.targetSceneId:
-                target_id = choice.targetSceneId[:8]
-                choice_text = choice.text[:20] + "..." if len(choice.text) > 20 else choice.text
-                choice_text = choice_text.replace('"', "'")
-                mermaid_lines.append(f"    {node_id} -->|{choice_text}| {target_id}")
+                edge = StreamlitFlowEdge(
+                    id=f"{scene.id}-{choice.targetSceneId}",
+                    source=scene.id,
+                    target=choice.targetSceneId,
+                    label=choice.text[:30] + "..." if len(choice.text) > 30 else choice.text,
+                    edge_type='default',
+                    animated=False,
+                    style={'stroke': '#888', 'strokeWidth': 2},
+                    label_style={'fill': '#555', 'fontSize': 12},
+                    marker_end={'type': 'arrow', 'color': '#888'}
+                )
+                edges.append(edge)
     
-    # Add styles
-    mermaid_lines.append("    classDef ending fill:#f96,stroke:#333,stroke-width:3px")
-    
-    return "\n".join(mermaid_lines)
+    return StreamlitFlowState(nodes, edges)
 
 
 def render_routes_view():
@@ -212,28 +251,81 @@ def render_routes_view():
                         st.success(i18n.t('routes.scene_deleted', title=scene.title))
                         st.rerun()
     
-    # Graph visualization
+    # Interactive Flow Visualization
     if scenes:
         st.divider()
-        st.subheader(f"📈 {i18n.t('routes.simple_graph')}")
+        st.subheader(f"🌳 {i18n.t('routes.simple_graph')}")
         
-        # Tabs for different views
-        tab1, tab2 = st.tabs([
-            "🌳 " + ("Flow Chart" if st.session_state.locale == "en" else "流程图"),
-            "📋 " + ("Text View" if st.session_state.locale == "en" else "文本视图")
-        ])
+        # Layout options
+        col1, col2, col3 = st.columns([2, 2, 4])
+        with col1:
+            layout_type = st.selectbox(
+                "Layout" if st.session_state.locale == "en" else "布局",
+                ["Tree", "Layered", "Force", "Manual"],
+                key="flow_layout"
+            )
+        with col2:
+            show_text_view = st.checkbox(
+                "Text View" if st.session_state.locale == "en" else "文本视图",
+                value=False,
+                key="show_text_view"
+            )
         
-        with tab1:
-            # Mermaid visualization
-            mermaid_code = generate_mermaid_graph(scenes, i18n)
-            if mermaid_code:
-                st.code(mermaid_code, language="mermaid")
-                st.caption("💡 " + ("Copy the code above and paste into a Mermaid viewer" if st.session_state.locale == "en" else "复制上面的代码并粘贴到 Mermaid 查看器中"))
-                st.caption("🔗 Mermaid Live Editor: https://mermaid.live")
+        if not show_text_view:
+            # Initialize flow state in session
+            if 'flow_state' not in st.session_state or st.session_state.get('flow_needs_refresh', True):
+                st.session_state.flow_state = create_flow_state_from_scenes(scenes)
+                st.session_state.flow_needs_refresh = False
+            
+            # Render interactive flow diagram
+            st.caption("💡 " + ("Drag nodes to rearrange, scroll to zoom, click for details" if st.session_state.locale == "en" else "拖动节点重排，滚轮缩放，点击查看详情"))
+            
+            # Get layout based on selection
+            if layout_type == "Tree":
+                from streamlit_flow.layouts import TreeLayout
+                layout = TreeLayout(direction='down')
+            elif layout_type == "Layered":
+                from streamlit_flow.layouts import LayeredLayout
+                layout = LayeredLayout(direction='down')
+            elif layout_type == "Force":
+                from streamlit_flow.layouts import ForceLayout
+                layout = ForceLayout()
             else:
-                st.info(i18n.t('routes.no_scenes'))
+                from streamlit_flow.layouts import ManualLayout
+                layout = ManualLayout()
+            
+            # Render the flow
+            selected_id = streamlit_flow(
+                'scene_flow',
+                st.session_state.flow_state,
+                layout=layout,
+                fit_view=True,
+                height=600,
+                enable_pane_menu=True,
+                enable_node_menu=True,
+                enable_edge_menu=True,
+                show_minimap=True,
+                hide_watermark=True,
+                allow_zoom=True,
+                allow_pan=True
+            )
+            
+            # Show selected node details
+            if selected_id:
+                st.info(f"Selected: {selected_id}")
+                selected_scene = scene_service.get_scene(project, selected_id)
+                if selected_scene:
+                    with st.expander(f"📖 {selected_scene.title}", expanded=True):
+                        if selected_scene.chapter:
+                            st.caption(f"📚 Chapter: {selected_scene.chapter}")
+                        if selected_scene.isEnding:
+                            st.warning("🏁 This is an ending scene")
+                        if selected_scene.summary:
+                            st.info(selected_scene.summary)
+                        if selected_scene.body:
+                            st.text_area("Content", selected_scene.body, height=150, disabled=True)
         
-        with tab2:
+        else:
             # Text representation
             graph = scene_service.get_scene_graph(project)
             
