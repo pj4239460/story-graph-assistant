@@ -305,9 +305,7 @@ def render_routes_view():
                 enable_node_menu=True,
                 enable_edge_menu=True,
                 show_minimap=True,
-                hide_watermark=True,
-                allow_zoom=True,
-                allow_pan=True
+                hide_watermark=True
             )
             
             # Show selected node details
