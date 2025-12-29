@@ -43,6 +43,8 @@ def init_services():
     st.session_state.ai_service = AIService(st.session_state.app_db)
     # Inject vector_db into ai_service's search_service
     st.session_state.ai_service.search_service.set_vector_db(st.session_state.vector_db)
+    # Expose search_service for agent use
+    st.session_state.search_service = st.session_state.ai_service.search_service
     
     # Initialize i18n
     if "locale" not in st.session_state:

@@ -117,12 +117,18 @@ def render_chat_view():
 *（开发模式：硬编码响应）*"""
                         steps = []
                     else:
-                        # Production: Use LangGraph Agent service
+                        # Production: Use LangGraph Agent service with enhanced tools
                         from ..services.langgraph_agent_service import LangGraphAgentService
+                        from ..services.search_service import SearchService
+                        
+                        # Get search service from session state (initialized in app.py)
+                        search_service = st.session_state.get('search_service')
                         
                         agent = LangGraphAgentService(
                             project=project,
-                            model="deepseek/deepseek-chat"
+                            model="deepseek/deepseek-chat",
+                            search_service=search_service,
+                            ai_service=ai_service
                         )
                         
                         result = agent.chat(prompt, history=history_messages)

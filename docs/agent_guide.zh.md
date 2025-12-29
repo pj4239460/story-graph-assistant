@@ -2,28 +2,162 @@
 
 本指南介绍如何扩展故事图谱助手的 AI Agent 功能。
 
+## 🎯 最新更新
+
+### 已实现的增强功能
+
+✅ **RAG 工具** - `search_story_context(query)`: 语义搜索整个故事数据库  
+✅ **场景分析工具** - `analyze_scene(scene_id)`: 综合场景分析（摘要+设定提取）  
+✅ **意图分类** - 自动区分 QA 模式（事实查询）和 Chat 模式（讨论建议）
+
+### 架构升级
+
+```
+用户输入
+  ↓
+classify_intent (意图分类节点)
+  ├─ qa_agent (事实查询模式)
+  │   ├─ 优先使用 search_story_context
+  │   ├─ 可调用 analyze_scene
+  │   └─ 其他查询工具
+  └─ chat_agent (讨论模式)
+      └─ 创意讨论，按需使用工具
+```
+
 ## 架构概览
 
 ### 技术栈
-- **LangGraph**: AI Agent 状态机框架
+- **LangGraph**: AI Agent 状态机框架（支持多节点路由）
 - **ChatLiteLLM**: 统一的 LLM 接口（支持 DeepSeek、OpenAI、Claude 等）
 - **LangChain Tools**: 使用 `@tool` 装饰器定义工具函数
+- **FAISS**: 语义搜索向量数据库
+- **SearchService**: RAG 层，整合向量搜索和关键词搜索
 
 ### 核心组件
 
 ```
 langgraph_agent_service.py
 ├── LangGraphAgentService
-│   ├── __init__(): 初始化 LLM 和工具
-│   ├── _create_tools(): 定义所有工具函数
-│   ├── _build_graph(): 构建 StateGraph 工作流
+│   ├── __init__(): 初始化 LLM、工具和 services
+│   ├── _create_tools(): 定义所有工具函数（包括 RAG 工具）
+│   ├── _build_graph(): 构建 StateGraph 工作流（带意图分类）
+│   ├── _get_qa_system_prompt(): QA 模式的系统提示词
+│   ├── _get_chat_system_prompt(): Chat 模式的系统提示词
 │   └── chat(): 处理用户消息
 │
 └── StateGraph 工作流
-    ├── agent_node: LLM 推理节点
+    ├── classify_intent: 意图分类节点
+    ├── qa_agent_node: QA 代理节点（事实查询）
+    ├── chat_agent_node: Chat 代理节点（讨论建议）
     ├── tool_node: 工具执行节点
-    └── should_continue: 路由决策
+    └── route_by_intent: 路由决策
 ```
+
+## 核心工具说明
+
+### 1. 🔍 search_story_context (RAG 工具)
+
+**最重要的工具** - 使用语义搜索查询整个故事数据库。
+
+```python
+@tool
+def search_story_context(query: str) -> str:
+    """在整个故事数据中进行检索，返回与 query 最相关的角色、场景和设定摘要。
+    
+    适合回答:
+    - "在这个世界里帝国和教会的关系是怎样的？"
+    - "主角目前经历了什么？"
+    - "Which scenes involve memory manipulation?"
+    """
+```
+
+**工作原理:**
+1. 调用 `SearchService.get_contextual_summary(project, query)`
+2. 使用 FAISS 向量数据库进行语义搜索
+3. 返回格式化的上下文（相关角色 + 相关场景）
+
+**何时使用:** Agent 会优先使用此工具处理大部分问题，特别是关于世界观、背景和情节的查询。
+
+### 2. 📊 analyze_scene (场景分析工具)
+
+综合分析特定场景的所有内容。
+
+```python
+@tool
+def analyze_scene(scene_id: str) -> str:
+    """对指定场景进行全面分析:
+    - 生成 AI 摘要
+    - 提取世界观设定和剧情点
+    - 展示元数据（选项数、标签、参与角色）
+    """
+```
+
+**输出示例:**
+```markdown
+# Scene Analysis: 雨夜的委托
+
+**ID:** scene_01
+**Chapter:** 第一章
+
+---
+
+## 📝 Summary
+陈墨在雨夜收到神秘委托...
+*(AI Generated)*
+
+## 🌍 Extracted Facts & Plot Points
+- [角色] 陈墨是一名私家侦探
+- [设定] 新上海2077年，赛博朋克世界
+- [伏笔] 委托人提到"记忆碎片"
+
+---
+
+## 📊 Scene Metadata
+- **Choices:** 3 options
+- **Tags:** #悬疑, #开场
+- **Characters:** 陈墨, 神秘女人
+```
+
+### 3. 其他查询工具
+
+- `get_all_characters()` - 列出所有角色
+- `get_character_by_name(name)` - 查询特定角色详情
+- `get_all_scenes()` - 列出所有场景
+- `search_scenes(keyword)` - 关键词搜索场景
+- `count_endings()` - 统计结局数量
+- `get_world_facts()` - 获取已提取的世界观设定
+
+## 意图分类机制
+
+### QA 模式 (事实查询)
+
+**触发条件:** 用户问事实性问题
+
+示例问题:
+- "现在有几个角色？"
+- "陈墨是谁？"
+- "这个故事有几个结局？"
+- "分析一下 Scene 5"
+- "帝国和教会的关系是什么？"
+
+**行为特点:**
+- 系统提示词强调"使用工具获取准确信息"
+- 优先调用 `search_story_context`
+- 不编造信息，找不到就明确说明
+
+### Chat 模式 (讨论建议)
+
+**触发条件:** 用户想要讨论、头脑风暴或征求建议
+
+示例问题:
+- "我觉得这个角色设定怎么样？"
+- "有什么改进建议吗？"
+- "怎么让这段剧情更吸引人？"
+
+**行为特点:**
+- 系统提示词强调"创意讨论和建设性反馈"
+- 可以使用工具，但非必需
+- 鼓励提问和探讨
 
 ## 如何添加新工具
 
