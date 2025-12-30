@@ -1,103 +1,127 @@
-# Story Graph Assistant - 启动指南
+# 快速上手指南
 
-## 🎯 MVP v0.1 已完成！
+## 安装
 
-基于你提供的开发者文档，MVP 版本已经构建完成，包含以下功能：
+### 环境要求
+- Python 3.10+
+- DeepSeek API 密钥（[免费获取](https://platform.deepseek.com/)）
 
-### ✅ 已实现的功能
+### 安装步骤
 
-1. **项目管理**
-   - 创建、加载、保存项目
-   - **最近项目**列表，快速访问
-   - JSON 格式存储
+```bash
+# 1. 克隆仓库
+git clone https://github.com/pj4239460/story-graph-assistant.git
+cd story-graph-assistant
 
-2. **场景管理**
-   - 创建、编辑、删除场景
-   - 场景内容编辑
-   - 分支选项管理
-   - **交互式流程图** 基于 Streamlit Flow
-   - 多种布局：树形、分层、力导向、手动
-   - 拖拽节点自由排列
-   - 统计仪表板
-
-3. **角色管理**
-   - 创建、编辑、删除角色
-   - 角色档案（描述、性格、目标、恐惧）
-   - 角色关系管理
-
-4. **AI 智能工具**
-   - 场景摘要生成
-   - 世界观设定提取
-   - OOC（人设崩坏）检测
-
-5. **Token 统计**
-   - 项目总用量追踪
-   - 今日用量统计
-   - 按功能分类统计
-
-6. **国际化支持**
-   - 中英文界面（已完全集成）
-   - 动态语言切换
-   - 130+ 翻译键值
-
----
-
-## 🚀 快速启动
-
-### 1. 安装依赖
-
-```powershell
-# 确保在项目根目录
-cd d:\Workspace\game_projects\story_graph_assistant
-
-# 创建虚拟环境（推荐）
+# 2. 创建虚拟环境
 python -m venv venv
-.\venv\Scripts\activate
+venv\Scripts\activate  # Linux/Mac: source venv/bin/activate
 
-# 安装依赖
+# 3. 安装依赖
 pip install -r requirements.txt
-```
 
-### 2. 配置 API Key
-
-```powershell
-# 复制配置模板
+# 4. 配置 API 密钥
 copy .env.example .env
+# 编辑 .env 文件，设置: DEEPSEEK_API_KEY=你的密钥
 
-# 编辑 .env 文件，填入你的 DeepSeek API Key
-# DEEPSEEK_API_KEY=sk-你的key
-```
-
-如果你没有 DeepSeek API Key：
-- 访问 https://platform.deepseek.com/
-- 注册并获取 API Key
-- DeepSeek 提供非常优惠的价格（远低于 OpenAI）
-
-### 3. 运行应用
-
-```powershell
+# 5. 运行应用
 streamlit run src/app.py
 ```
 
-应用将自动在浏览器中打开：`http://localhost:8501`
+浏览器将自动打开 `http://localhost:8501`
+
+## 第一步
+
+### 1. 体验示例项目
+
+点击侧边栏的示例按钮：
+- 🇨🇳 **中文** - 中文时间旅行者故事
+- 🇺🇸 **EN** - 英文时间旅行者故事
+
+这将加载一个包含 3 个场景、2 个角色和分支选择的完整示例。
+
+### 2. 探索界面
+
+**标签页：**
+- **📍 路线图** - 交互式剧情图谱
+- **👤 角色** - 角色档案管理
+- **🔧 AI 工具** - 场景分析工具
+- **💬 对话** - 向 AI 提问
+- **⚙️ 设置** - 配置 AI 模型和限额
+
+### 3. 查看场景详情
+
+点击图谱中的任意节点查看：
+- **内容** - 场景文本和选项
+- **AI 体检** - 综合分析（情感、事实、质量洞察）
+- **元数据** - 技术细节
+
+### 4. 创建自己的项目
+
+1. 点击侧边栏的 **➕ 新建**
+2. 输入项目名称并选择语言
+3. 添加第一个场景
+4. 通过添加选项和连接场景来构建故事
+
+## 核心功能
+
+### 场景体检面板
+
+AI 驱动的分析包括：
+- **摘要** - 简洁的场景概述
+- **事实** - 提取的世界观信息
+- **情感** - 检测到的情感基调
+- **OOC 风险** - 角色一致性警告（即将推出）
+
+结果会被缓存以提高性能。点击 🔄 刷新可重新生成。
+
+### AI 对话助手
+
+自然语言查询：
+- "故事中有几个角色？"
+- "scene-001 中提到了谁？"
+- "故事有几个结局？"
+
+使用 FAISS 语义搜索实现准确检索。
+
+### 项目管理
+
+- **最近项目** - 快速访问最近的文件
+- **JSON 存储** - 简单、可移植、适合版本控制
+- **自动保存** - 更改自动保存
+
+## 使用技巧
+
+1. **使用标签** - 用 "战斗"、"恋爱"、"线索" 等标签组织场景
+2. **角色 ID** - 使用一致的 ID（char-001, char-002）便于跟踪
+3. **章节命名** - 将场景分组到章节中以便更好地组织
+4. **Token 限额** - 在设置标签页监控使用量以避免超限
+5. **导出分析** - 将场景体检报告下载为 JSON
+
+## 故障排除
+
+**API 密钥问题**
+- 确认项目根目录存在 `.env` 文件
+- 检查密钥格式：`DEEPSEEK_API_KEY=sk-...`
+- 编辑 `.env` 后重启应用
+
+**FAISS 不工作**
+- 应用可以在没有 FAISS 的情况下工作（回退到关键词搜索）
+- 安装：`pip install faiss-cpu`
+
+**性能慢**
+- 场景体检使用缓存 - 首次运行慢，后续查看即时显示
+- 点击 🔄 刷新按钮清除缓存
+
+## 下一步
+
+- 阅读[开发者指南](docs/developer_guide.zh.md)了解架构细节
+- 在 AI 工具标签页探索 AI 功能
+- 在 GitHub Issues 参与讨论
 
 ---
 
-## 📖 使用指南
-
-### 第一次使用
-
-1. **创建项目**
-   - 点击左侧菜单「➕ 新建」
-   - 输入项目名称（如"我的第一个故事"）
-   - 选择语言（中文/English）
-   - 点击「创建」
-
-2. **添加场景**
-   - 切换到「📊 故事路线」标签页
-   - 点击「➕ 新建场景」
-   - 输入场景标题和内容
-   - 保存
+**需要帮助？** 在 [github.com/pj4239460/story-graph-assistant](https://github.com/pj4239460/story-graph-assistant) 提交 issue
 
 3. **创建角色**
    - 切换到「👥 角色管理」标签页
@@ -128,7 +152,7 @@ streamlit run src/app.py
 ```powershell
 # 在应用中点击「📂 加载」
 # 输入路径：
-d:\Workspace\game_projects\story_graph_assistant\examples\sample_project\project.json
+./examples/sample_project/project.json
 ```
 
 示例项目包含：
@@ -184,85 +208,12 @@ story_graph_assistant/
 
 ---
 
-## 🎮 功能演示
+## 下一步
 
-### 场景摘要
-- 自动为长场景生成简洁摘要
-- 帮助快速了解场景内容
-- 保存到场景对象中
-
-### 设定提取
-- 从场景文本中提取关键信息
-- 自动分类：角色特征、世界观、剧情点
-- 用于构建知识库（v2 将支持 RAG 检索）
-
-### OOC 检测
-- 根据角色档案检查场景中的行为
-- AI 分析是否符合人设
-- 给出详细解释和建议
+- 阅读[开发者指南](docs/developer_guide.zh.md)了解架构细节
+- 在 AI 工具标签页探索 AI 功能
+- 在 GitHub Issues 参与讨论
 
 ---
 
-## 🔧 故障排除
-
-### 问题：无法安装 litellm
-
-```powershell
-pip install --upgrade pip
-pip install litellm
-```
-
-### 问题：Streamlit 启动失败
-
-```powershell
-# 检查 Python 版本
-python --version  # 应该 >= 3.10
-
-# 重新安装 streamlit
-pip install --upgrade streamlit
-```
-
-### 问题：AI 功能返回错误
-
-1. 检查 `.env` 文件中的 API Key 是否正确
-2. 确认 API Key 有足够的额度
-3. 检查网络连接
-
----
-
-## 📋 下一步开发计划
-
-### v0.2 - 增强功能
-- [ ] 场景编辑功能
-- [ ] 角色编辑功能
-- [ ] 场景间连接的可视化编辑
-- [ ] 导出功能（Markdown/HTML）
-
-### v0.3 - RAG 基础
-- [ ] 时间线视图
-- [ ] Keyword-based 检索
-- [ ] 世界观问答
-- [ ] 多场景 OOC 检查
-
----
-
-## 💡 使用建议
-
-1. **定期保存**：使用「💾 保存项目」避免数据丢失
-2. **从小开始**：先创建简单的故事结构，逐步完善
-3. **充分利用 AI**：为每个重要场景生成摘要和提取设定
-4. **Token 管理**：注意 Token 使用量，合理使用 AI 功能
-5. **备份项目**：JSON 文件可以直接复制备份
-
----
-
-## 🤝 反馈与贡献
-
-如有问题或建议，欢迎：
-- 提交 Issue
-- 发起 Pull Request
-- 联系开发者
-
----
-
-**祝你创作愉快！🎉**
+**需要帮助？** 在 [github.com/pj4239460/story-graph-assistant](https://github.com/pj4239460/story-graph-assistant) 提交 issue

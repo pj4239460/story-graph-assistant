@@ -1,5 +1,14 @@
 """
-Streamlit Application Entry Point
+Story Graph Assistant - Streamlit Application Entry Point
+
+A visual AI assistant for managing branching game stories with graph visualization
+and AI-powered narrative analysis.
+
+Author: Ji PEI <pj4239460@gmail.com>
+License: MIT
+Repository: https://github.com/pj4239460/story-graph-assistant
+
+Copyright (c) 2025 Ji PEI. All rights reserved.
 """
 import sys
 from pathlib import Path

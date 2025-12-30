@@ -95,4 +95,11 @@ def render_main_layout():
         
     with tab5:
         render_settings_view()
-
+    
+    # Footer with copyright
+    st.divider()
+    cols = st.columns([2, 1])
+    with cols[0]:
+        st.caption("© 2025 Ji PEI | Story Graph Assistant | Licensed under MIT")
+    with cols[1]:
+        st.caption("Powered by Streamlit & DeepSeek AI")

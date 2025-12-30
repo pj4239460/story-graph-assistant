@@ -461,16 +461,66 @@ def render_routes_view():
                 hide_watermark=True,
                 pan_on_drag=True,
                 allow_zoom=True,
-                min_zoom=0.1
+                min_zoom=0.1,
+                # Enable node selection
+                get_node_on_click=True,
             )
             
+            # Handle node click - check if state has selected nodes
+            if hasattr(st.session_state.flow_state, 'selected_id') and st.session_state.flow_state.selected_id:
+                st.session_state.selected_scene_id = st.session_state.flow_state.selected_id
+            
             # Check if any node was selected (clicked)
+            # Display scene details in expander when available
+            if 'selected_scene_id' in st.session_state and st.session_state.selected_scene_id:
+                scene_id = st.session_state.selected_scene_id
+                scene = project_service.get_project().scenes.get(scene_id)
+                
+                if scene:
+                    with st.expander(f"📄 Scene Details: {scene.title}", expanded=True):
+                        tabs = st.tabs(["📝 Content", "🔬 AI Checkup", "⚙️ Metadata"])
+                        
+                        with tabs[0]:
+                            # Content tab
+                            st.markdown(f"**Title:** {scene.title}")
+                            if scene.chapter:
+                                st.markdown(f"**Chapter:** {scene.chapter}")
+                            if scene.summary:
+                                st.markdown(f"**Summary:** {scene.summary}")
+                            st.markdown("**Body:**")
+                            st.text_area("", value=scene.body, height=200, disabled=True, key=f"body_{scene_id}")
+                            
+                            if scene.choices:
+                                st.markdown(f"**Choices ({len(scene.choices)}):**")
+                                for i, choice in enumerate(scene.choices, 1):
+                                    st.caption(f"{i}. {choice.text} → {choice.targetSceneId or 'END'}")
+                        
+                        with tabs[1]:
+                            # AI Checkup tab
+                            from .scene_checkup_panel import render_scene_checkup_tab
+                            ai_service = st.session_state.ai_service
+                            render_scene_checkup_tab(project_service.get_project(), scene, ai_service)
+                        
+                        with tabs[2]:
+                            # Metadata tab
+                            st.json({
+                                "ID": scene.id,
+                                "Chapter": scene.chapter or "N/A",
+                                "Tags": scene.tags,
+                                "Participants": [p.characterId for p in scene.participants],
+                                "Choices": len(scene.choices),
+                            })
+                        
+                        if st.button("✖ Close", key="close_scene_details"):
+                            st.session_state.selected_scene_id = None
+                            st.rerun()
+            
             # Note: Streamlit Flow doesn't directly return selected ID
             # Users can interact with nodes through context menus
             if st.session_state.locale == "en":
-                st.caption("Right-click nodes for edit/delete options")
+                st.caption("Right-click nodes for edit/delete options | Click nodes to view details")
             else:
-                st.caption("右键点击节点进行编辑/删除操作")
+                st.caption("右键点击节点进行编辑/删除操作 | 单击查看详情")
 
         else:
             # Text representation

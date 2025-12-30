@@ -1,83 +1,127 @@
-# Story Graph Assistant - Getting Started
+# Getting Started Guide
 
-## 🎯 MVP v0.1 Complete!
+## Installation
 
-Based on the developer documentation, MVP version has been built with the following features:
+### Prerequisites
+- Python 3.10+
+- DeepSeek API Key ([Get free key](https://platform.deepseek.com/))
 
-### ✅ Implemented Features
+### Setup
 
-1. **Project Management**
-   - Create, load, save projects
-   - **Recent Projects** list for quick access
-   - JSON format storage
+```bash
+# 1. Clone repository
+git clone https://github.com/pj4239460/story-graph-assistant.git
+cd story-graph-assistant
 
-2. **Scene Management**
-   - Create, edit, delete scenes
-   - Scene content editing
-   - Branch choice management
-   - **Interactive flow diagram** with Streamlit Flow
-   - Multiple layouts: Tree, Layered, Force, Manual
-   - Drag-and-drop repositioning
-   - Statistics dashboard
-
-3. **Character Management**
-   - Create, edit, delete characters
-   - Character profiles (description, personality, goals, fears)
-   - Relationship management
-
-4. **AI Tools**
-   - Scene summarization
-   - Worldbuilding lore extraction
-   - Out-of-Character (OOC) detection
-
-5. **Token Statistics**
-   - Project total usage tracking
-   - Daily usage statistics
-   - Usage by feature
-
-6. **Internationalization**
-   - Chinese/English UI (infrastructure ready)
-
----
-
-## 🚀 Quick Start
-
-### 1. Install Dependencies
-
-```powershell
-# Navigate to project root
-cd d:\Workspace\game_projects\story_graph_assistant
-
-# Create virtual environment (recommended)
+# 2. Create virtual environment
 python -m venv venv
-.\venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Install dependencies
+# 3. Install dependencies
 pip install -r requirements.txt
-```
 
-### 2. Configure API Key
+# 4. Configure API key
+cp .env.example .env
+# Edit .env and set: DEEPSEEK_API_KEY=your_key_here
 
-```powershell
-# Copy configuration template
-copy .env.example .env
-
-# Edit .env file and add your DeepSeek API Key
-# DEEPSEEK_API_KEY=sk-your_key_here
-```
-
-If you don't have a DeepSeek API Key:
-- Visit https://platform.deepseek.com/
-- Register and get an API Key
-- DeepSeek offers very competitive pricing (much lower than OpenAI)
-
-### 3. Run Application
-
-```powershell
+# 5. Run application
 streamlit run src/app.py
 ```
 
-The application will automatically open in your browser at: `http://localhost:8501`
+Browser will open at `http://localhost:8501`
+
+## First Steps
+
+### 1. Try Sample Projects
+
+Click the sample buttons in sidebar:
+- 🇨🇳 **中文** - Chinese time travel story
+- 🇺🇸 **EN** - English time travel story
+
+This loads a complete example with 3 scenes, 2 characters, and branching choices.
+
+### 2. Explore the Interface
+
+**Tabs:**
+- **📍 Routes** - Interactive story graph
+- **👤 Characters** - Character profiles
+- **🔧 AI Tools** - Scene analysis tools
+- **💬 Chat** - Ask AI about your story
+- **⚙️ Settings** - Configure AI models and limits
+
+### 3. View Scene Details
+
+Click any node in the graph to see:
+- **Content** - Scene text and choices
+- **AI Checkup** - Comprehensive analysis with emotions, facts, and quality insights
+- **Metadata** - Technical details
+
+### 4. Create Your Own Project
+
+1. Click **➕ New** in sidebar
+2. Enter project name and choose language
+3. Add your first scene
+4. Build story by adding choices and connecting scenes
+
+## Key Features
+
+### Scene Checkup Panel
+
+AI-powered analysis includes:
+- **Summary** - Concise scene overview
+- **Facts** - Extracted world-building information
+- **Emotions** - Detected emotional tones
+- **OOC Risk** - Character consistency warnings (coming soon)
+
+Results are cached for performance. Click 🔄 Refresh to regenerate.
+
+### AI Chat Assistant
+
+Natural language queries:
+- "How many characters are in the story?"
+- "Who is mentioned in scene-001?"
+- "How many endings does the story have?"
+
+Uses FAISS semantic search for accurate retrieval.
+
+### Project Management
+
+- **Recent Projects** - Quick access to recent files
+- **JSON Storage** - Simple, portable, version-control friendly
+- **Auto-save** - Changes saved automatically
+
+## Tips
+
+1. **Use Tags** - Organize scenes with tags like "combat", "romance", "clue"
+2. **Character IDs** - Use consistent IDs (char-001, char-002) for tracking
+3. **Chapter Names** - Group scenes into chapters for better organization
+4. **Token Limits** - Monitor usage in Settings tab to avoid overages
+5. **Export Analysis** - Download Scene Checkup reports as JSON
+
+## Troubleshooting
+
+**API Key Issues**
+- Verify `.env` file exists in project root
+- Check key format: `DEEPSEEK_API_KEY=sk-...`
+- Restart application after editing `.env`
+
+**FAISS Not Working**
+- Application works without FAISS (falls back to keyword search)
+- Install: `pip install faiss-cpu`
+
+**Slow Performance**
+- Scene Checkup uses caching - first run is slow, subsequent views are instant
+- Clear cache by clicking 🔄 Refresh button
+
+## Next Steps
+
+- Read [Developer Guide](docs/developer_guide.en.md) for architecture details
+- Explore AI tools in the AI Tools tab
+- Join discussions on GitHub Issues
+
+---
+
+**Need Help?** Open an issue at [github.com/pj4239460/story-graph-assistant](https://github.com/pj4239460/story-graph-assistant)
 
 ---
 
@@ -123,10 +167,10 @@ The application will automatically open in your browser at: `http://localhost:85
 
 ### Load Sample Project
 
-```powershell
+```bash
 # In the app, click "📂 Load"
 # Enter path:
-d:\Workspace\game_projects\story_graph_assistant\examples\sample_project\project.json
+./examples/sample_project/project.json
 ```
 
 Sample project includes:

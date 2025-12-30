@@ -14,6 +14,9 @@ def render_sidebar():
     with st.sidebar:
         st.header(f"📁 {i18n.t('sidebar.project_management')}")
         
+        # Author attribution
+        st.caption("Created by Ji PEI | Story Graph Assistant")
+        
         project_service = st.session_state.project_service
         
         # Project operations
@@ -26,6 +29,38 @@ def render_sidebar():
         with col2:
             if st.button(f"📂 {i18n.t('sidebar.load_project')}", use_container_width=True):
                 st.session_state.show_load_dialog = True
+        
+        # Sample project buttons
+        st.caption("📚 Sample Projects / 示例项目:")
+        col_s1, col_s2 = st.columns(2)
+        
+        with col_s1:
+            if st.button("🇨🇳 中文", use_container_width=True, help="时间旅行者 (中文版)"):
+                sample_path = os.path.abspath("./examples/sample_project/project.json")
+                if os.path.exists(sample_path):
+                    try:
+                        project_service.load_project(sample_path)
+                        app_db.add_recent_project(sample_path, "示例项目 - 时间旅行者")
+                        st.success("✅ 中文示例已加载！")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Failed to load sample: {str(e)}")
+                else:
+                    st.error(f"Sample not found: {sample_path}")
+        
+        with col_s2:
+            if st.button("🇺🇸 EN", use_container_width=True, help="Time Traveler (English)"):
+                sample_path = os.path.abspath("./examples/sample_project_en/project.json")
+                if os.path.exists(sample_path):
+                    try:
+                        project_service.load_project(sample_path)
+                        app_db.add_recent_project(sample_path, "Sample Project - Time Traveler")
+                        st.success("✅ English sample loaded!")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Failed to load sample: {str(e)}")
+                else:
+                    st.error(f"Sample not found: {sample_path}")
         
         # Create project dialog
         if st.session_state.get("show_create_dialog", False):
@@ -206,6 +241,12 @@ def render_sidebar():
             
             ### {i18n.t('help.docs_title')}
             - [{i18n.t('help.developer_guide')}](./docs/developer_guide.md)
-            - [{i18n.t('help.github')}](https://github.com/yourusername/story-graph-assistant)
+            - [{i18n.t('help.github')}](https://github.com/pj4239460/story-graph-assistant)
+            
+            ---
+            
+            **Story Graph Assistant**  
+            © 2025 Ji PEI. Licensed under MIT.  
+            Powered by Streamlit, LangGraph, and DeepSeek AI.
             """)
 

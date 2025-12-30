@@ -1,0 +1,140 @@
+{
+  "id": "demo-002",
+  "name": "Sample Project - Time Traveler",
+  "locale": "en",
+  "createdAt": "2025-01-01T00:00:00.000Z",
+  "updatedAt": "2025-01-01T00:00:00.000Z",
+  "aiSettings": {
+    "provider": "deepseek",
+    "modelExtraction": "deepseek/deepseek-chat",
+    "modelOOC": "deepseek/deepseek-chat",
+    "modelWhatIf": "deepseek/deepseek-reasoner",
+    "maxTokensPerCall": 2000,
+    "worldSimEnabled": false,
+    "worldSimMaxTokensPerRun": 3000,
+    "projectTokenLimit": 50000,
+    "dailyTokenSoftLimit": 8000
+  },
+  "tokenStats": {
+    "projectUsed": 0,
+    "todayUsed": 0,
+    "byFeature": {},
+    "todayDate": ""
+  },
+  "scenes": {
+    "scene-001": {
+      "id": "scene-001",
+      "title": "The Mysterious Laboratory",
+      "body": "You stand in an abandoned laboratory, surrounded by dust and cobwebs. A yellowed photograph hangs on the wall, showing an old man in a white lab coat, his eyes revealing madness and desire.\n\nIn the corner of the lab, there's an ancient-looking machine flickering with a faint green light. On the nearby desk lies a notebook with [Time Travel Journal] written on its cover.\n\nYou feel dizzy, as if time flows differently here than in the outside world...",
+      "summary": null,
+      "chapter": "Prologue",
+      "tags": ["opening", "laboratory"],
+      "participants": ["char-001"],
+      "choices": [
+        {
+          "id": "choice-001",
+          "text": "Examine the ancient machine",
+          "targetSceneId": "scene-002",
+          "conditions": []
+        },
+        {
+          "id": "choice-002",
+          "text": "Open the Time Travel Journal",
+          "targetSceneId": "scene-003",
+          "conditions": []
+        }
+      ],
+      "isEnding": false,
+      "endingType": null,
+      "timeIndex": 0,
+      "timeLabel": "January 1, 2025",
+      "worldEffects": []
+    },
+    "scene-002": {
+      "id": "scene-002",
+      "title": "Time Machine Activated",
+      "body": "You approach the machine, carefully observing its construction. It's a spherical device covered with complex circuits and tubes. In the center is a control panel with several buttons and a year input field.\n\nSuddenly, the machine emits a deep hum, and the green light becomes brighter. A line of text appears on the screen:\n\n[Welcome, Time Traveler. Please enter target year.]\n\nYou notice a warning label next to the year input: [Warning: Time paradoxes may cause reality collapse.]",
+      "summary": null,
+      "chapter": "Prologue",
+      "tags": ["time machine", "choice"],
+      "participants": ["char-001"],
+      "choices": [
+        {
+          "id": "choice-003",
+          "text": "Enter 1955 (the year mentioned in the journal)",
+          "targetSceneId": null,
+          "conditions": []
+        },
+        {
+          "id": "choice-004",
+          "text": "Give up and leave the laboratory",
+          "targetSceneId": null,
+          "conditions": []
+        }
+      ],
+      "isEnding": false,
+      "endingType": null,
+      "timeIndex": 1,
+      "timeLabel": null,
+      "worldEffects": []
+    },
+    "scene-003": {
+      "id": "scene-003",
+      "title": "Secrets in the Journal",
+      "body": "You carefully open the yellowed notebook. The first page reads:\n\n[First Experiment Log - March 15, 1985\n\nToday, I finally completed the time machine prototype. In theory, it can send a person to any point in time. But I must warn future users:\n\n1. Do not alter major historical events\n2. Do not meet yourself\n3. Do not stay for more than 24 hours\n\nViolate these rules at your own risk.\n\n—Professor John Smith]\n\nBelow are many experiment records. One page has been torn out, leaving only a few words:\n\n[...last time...1955...she's still alive...]",
+      "summary": null,
+      "chapter": "Prologue",
+      "tags": ["journal", "clue"],
+      "participants": ["char-001", "char-002"],
+      "choices": [
+        {
+          "id": "choice-005",
+          "text": "Go back to examine the time machine",
+          "targetSceneId": "scene-002",
+          "conditions": []
+        },
+        {
+          "id": "choice-006",
+          "text": "Continue reading the journal",
+          "targetSceneId": null,
+          "conditions": []
+        }
+      ],
+      "isEnding": false,
+      "endingType": null,
+      "timeIndex": 1,
+      "timeLabel": null,
+      "worldEffects": []
+    }
+  },
+  "characters": {
+    "char-001": {
+      "id": "char-001",
+      "name": "Alex Chen",
+      "alias": "Time Detective",
+      "description": "A young physicist with deep research into time travel theory. Cautious yet curious by nature.",
+      "traits": ["cautious", "curious", "rational", "brave"],
+      "goals": ["Uncover the secrets of time travel", "Find Professor Smith's whereabouts"],
+      "fears": ["time paradoxes", "losing self"],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-002": {
+      "id": "char-002",
+      "name": "John Smith",
+      "alias": "The Time Professor",
+      "description": "Mysterious inventor of the time machine, missing for many years. Left behind many unsolved mysteries.",
+      "traits": ["eccentric", "genius", "obsessive", "enigmatic"],
+      "goals": ["Complete the ultimate time experiment"],
+      "fears": ["experiment failure", "being forgotten"],
+      "relationships": [],
+      "timeline": []
+    }
+  },
+  "events": {},
+  "worldState": {
+    "facts": {},
+    "history": []
+  },
+  "threads": {}
+}

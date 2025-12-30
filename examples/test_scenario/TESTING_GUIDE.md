@@ -15,7 +15,7 @@
 ### 1. 启动应用
 
 ```bash
-cd D:\Workspace\game_projects\story_graph_assistant
+# 在项目根目录下
 streamlit run src/app.py
 ```
 
