@@ -18,6 +18,7 @@ A powerful tool for narrative game developers to manage complex branching storie
 ### ✨ Features
 
 - 🌳 **Interactive Story Graph** - Drag-and-drop visualization with multiple layouts
+- ✏️ **Full Editing Support** - Edit scenes, characters, and choices with inline forms
 - 📋 **Scene Checkup Panel** - AI-powered comprehensive scene analysis with caching
 - 👥 **Character Management** - Centralized profiles and relationships
 - 🤖 **AI Agent Assistant** - LangGraph-powered conversational queries with FAISS semantic search
@@ -73,6 +74,7 @@ Get your free DeepSeek API key at [platform.deepseek.com](https://platform.deeps
 ### ✨ Features
 
 - 🌳 **交互式剧情图谱** - 基于 Streamlit Flow 的可视化流程图
+- ✏️ **完整编辑功能** - 内联表单编辑场景、角色和分支选项
 - 📊 **统计面板** - 实时场景、结局、选择统计
 - 👥 **角色档案** - 集中管理角色特征、目标和关系
 - 🤖 **AI 智能分析**

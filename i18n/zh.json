@@ -82,7 +82,18 @@
     "no_connections": "还没有场景之间的连接",
     "placeholder_title": "例如：开场",
     "placeholder_content": "输入场景描述和对话...",
-    "placeholder_chapter": "第一章"
+    "placeholder_chapter": "第一章",
+    "time_label": "时间标签",
+    "is_ending": "是否结局",
+    "scene_updated": "场景「{title}」已更新",
+    "edit_choice": "编辑选项",
+    "add_choice": "添加选项",
+    "choice_text": "选项文本",
+    "target_scene": "目标场景",
+    "no_target": "无（结束）",
+    "choice_updated": "选项已更新",
+    "choice_deleted": "选项已删除",
+    "choice_added": "选项已添加"
   },
   "characters": {
     "title": "角色管理",
@@ -104,7 +115,11 @@
     "placeholder_name": "例如：张三",
     "placeholder_alias": "可选",
     "placeholder_description": "角色的外貌、背景等...",
-    "with": "与"
+    "with": "与",
+    "traits_help": "每行一个特征",
+    "goals_help": "每行一个目标",
+    "fears_help": "每行一个恐惧",
+    "character_updated": "角色「{name}」已更新"
   },
   "ai_tools": {
     "title": "AI 智能工具",

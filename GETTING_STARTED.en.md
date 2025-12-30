@@ -65,6 +65,24 @@ Click any node in the graph to see:
 
 ## Key Features
 
+### Full Editing Support ✅
+
+**Scene Editing:**
+- Click ✏️ button next to any scene to open edit form
+- Edit: title, content, chapter, summary, time label, ending status
+- Changes automatically update graph visualization
+
+**Character Editing:**
+- Click ✏️ button next to any character to open edit form
+- Edit: name, alias, description, traits, goals, fears
+- Traits/goals/fears support multi-line input (one per line)
+
+**Choice/Branch Editing:**
+- Each choice in scene details has an ✏️ button
+- Edit choice text and target scene
+- Add new choices or delete existing ones
+- Target scene supports dropdown selection or "None (Ending)"
+
 ### Scene Checkup Panel
 
 AI-powered analysis includes:
@@ -274,10 +292,10 @@ pip install --upgrade streamlit
 
 ## 📋 Next Development Steps
 
-### v0.2 - Enhanced Features
-- [ ] Scene editing functionality
-- [ ] Character editing functionality
-- [ ] Visual editing for scene connections
+### v0.2 - Enhanced Features ✅
+- [x] Scene editing functionality (title, content, chapter, summary, time label, ending status)
+- [x] Character editing functionality (name, alias, description, traits, goals, fears)
+- [x] Choice/connection editing (add, edit, delete scene branches)
 - [ ] Export features (Markdown/HTML)
 
 ### v0.3 - RAG Foundation

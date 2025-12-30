@@ -93,9 +93,74 @@ def render_characters_view():
                 
                 with col2:
                     if st.button(f"✏️ {i18n.t('common.edit')}", key=f"edit_char_{character.id}", use_container_width=True):
-                        st.info(i18n.t('routes.edit_coming_soon'))
+                        st.session_state[f"editing_char_{character.id}"] = True
+                        st.rerun()
                     
                     if st.button(f"🗑️ {i18n.t('common.delete')}", key=f"delete_char_{character.id}", use_container_width=True):
                         character_service.delete_character(project, character.id)
                         st.success(i18n.t('characters.character_deleted', name=character.name))
                         st.rerun()
+                
+                # Edit form
+                if st.session_state.get(f"editing_char_{character.id}", False):
+                    st.divider()
+                    with st.form(f"edit_character_form_{character.id}"):
+                        st.subheader(f"✏️ {i18n.t('common.edit')} - {character.name}")
+                        
+                        new_name = st.text_input(i18n.t('characters.character_name'), value=character.name)
+                        new_alias = st.text_input(i18n.t('characters.alias'), value=character.alias or "")
+                        new_description = st.text_area(i18n.t('characters.description'), value=character.description, height=150)
+                        
+                        # Traits
+                        traits_text = st.text_area(
+                            i18n.t('characters.traits'),
+                            value="\n".join(character.traits) if character.traits else "",
+                            height=100,
+                            help=i18n.t('characters.traits_help')
+                        )
+                        
+                        # Goals
+                        goals_text = st.text_area(
+                            i18n.t('characters.goals'),
+                            value="\n".join(character.goals) if character.goals else "",
+                            height=100,
+                            help=i18n.t('characters.goals_help')
+                        )
+                        
+                        # Fears
+                        fears_text = st.text_area(
+                            i18n.t('characters.fears'),
+                            value="\n".join(character.fears) if character.fears else "",
+                            height=100,
+                            help=i18n.t('characters.fears_help')
+                        )
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            submitted = st.form_submit_button(i18n.t('common.save'), use_container_width=True)
+                        with col2:
+                            cancelled = st.form_submit_button(i18n.t('common.cancel'), use_container_width=True)
+                        
+                        if submitted:
+                            # Parse multi-line text into lists
+                            new_traits = [t.strip() for t in traits_text.split('\n') if t.strip()]
+                            new_goals = [g.strip() for g in goals_text.split('\n') if g.strip()]
+                            new_fears = [f.strip() for f in fears_text.split('\n') if f.strip()]
+                            
+                            character_service.update_character(
+                                project,
+                                character.id,
+                                name=new_name,
+                                alias=new_alias if new_alias else None,
+                                description=new_description,
+                                traits=new_traits,
+                                goals=new_goals,
+                                fears=new_fears
+                            )
+                            st.session_state[f"editing_char_{character.id}"] = False
+                            st.success(f"✅ {i18n.t('characters.character_updated', name=new_name)}")
+                            st.rerun()
+                        
+                        if cancelled:
+                            st.session_state[f"editing_char_{character.id}"] = False
+                            st.rerun()

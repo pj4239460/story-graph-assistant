@@ -82,7 +82,18 @@
     "no_connections": "No connections between scenes yet",
     "placeholder_title": "e.g., Opening Scene",
     "placeholder_content": "Enter scene description and dialogue...",
-    "placeholder_chapter": "Chapter 1"
+    "placeholder_chapter": "Chapter 1",
+    "time_label": "Time Label",
+    "is_ending": "Is Ending",
+    "scene_updated": "Scene '{title}' updated",
+    "edit_choice": "Edit Choice",
+    "add_choice": "Add Choice",
+    "choice_text": "Choice Text",
+    "target_scene": "Target Scene",
+    "no_target": "None (Ending)",
+    "choice_updated": "Choice updated",
+    "choice_deleted": "Choice deleted",
+    "choice_added": "Choice added"
   },
   "characters": {
     "title": "Character Management",
@@ -104,7 +115,11 @@
     "placeholder_name": "e.g., John Doe",
     "placeholder_alias": "Optional",
     "placeholder_description": "Character's appearance, background, etc...",
-    "with": "with"
+    "with": "with",
+    "traits_help": "One trait per line",
+    "goals_help": "One goal per line",
+    "fears_help": "One fear per line",
+    "character_updated": "Character '{name}' updated"
   },
   "ai_tools": {
     "title": "AI Tools",

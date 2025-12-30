@@ -83,6 +83,43 @@ class SceneService:
         scene.choices.append(choice)
         return choice
     
+    def update_choice(
+        self,
+        project: Project,
+        scene_id: str,
+        choice_id: str,
+        text: Optional[str] = None,
+        target_scene_id: Optional[str] = None,
+    ) -> Choice:
+        """Update a choice in a scene"""
+        scene = project.scenes.get(scene_id)
+        if scene is None:
+            raise ValueError(f"Scene {scene_id} not found")
+        
+        choice = next((c for c in scene.choices if c.id == choice_id), None)
+        if choice is None:
+            raise ValueError(f"Choice {choice_id} not found in scene {scene_id}")
+        
+        if text is not None:
+            choice.text = text
+        if target_scene_id is not None:
+            choice.targetSceneId = target_scene_id
+        
+        return choice
+    
+    def delete_choice(
+        self,
+        project: Project,
+        scene_id: str,
+        choice_id: str,
+    ) -> None:
+        """Delete a choice from a scene"""
+        scene = project.scenes.get(scene_id)
+        if scene is None:
+            raise ValueError(f"Scene {scene_id} not found")
+        
+        scene.choices = [c for c in scene.choices if c.id != choice_id]
+    
     def get_all_scenes(self, project: Project) -> List[Scene]:
         """Get all scenes"""
         return list(project.scenes.values())

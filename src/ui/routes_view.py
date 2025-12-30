@@ -359,16 +359,160 @@ def render_routes_view():
                                 target_scene = scene_service.get_scene(project, choice.targetSceneId)
                                 if target_scene:
                                     target_title = target_scene.title
-                            st.markdown(f"{i+1}. {choice.text} → `{target_title}`")
+                            
+                            choice_col1, choice_col2 = st.columns([5, 1])
+                            with choice_col1:
+                                st.markdown(f"{i+1}. {choice.text} → `{target_title}`")
+                            with choice_col2:
+                                if st.button("✏️", key=f"edit_choice_{choice.id}", help=i18n.t('common.edit')):
+                                    st.session_state[f"editing_choice_{choice.id}"] = True
+                                    st.rerun()
+                            
+                            # Edit choice form
+                            if st.session_state.get(f"editing_choice_{choice.id}", False):
+                                with st.form(f"edit_choice_form_{choice.id}"):
+                                    st.caption(f"✏️ {i18n.t('routes.edit_choice')}")
+                                    
+                                    choice_text = st.text_input(
+                                        i18n.t('routes.choice_text'),
+                                        value=choice.text,
+                                        key=f"text_{choice.id}"
+                                    )
+                                    
+                                    # Target scene selection
+                                    scene_options = {s.id: s.title for s in scenes}
+                                    scene_options[""] = i18n.t('routes.no_target')
+                                    current_target = choice.targetSceneId or ""
+                                    
+                                    target_scene_id = st.selectbox(
+                                        i18n.t('routes.target_scene'),
+                                        options=list(scene_options.keys()),
+                                        format_func=lambda x: scene_options[x],
+                                        index=list(scene_options.keys()).index(current_target) if current_target in scene_options else 0,
+                                        key=f"target_{choice.id}"
+                                    )
+                                    
+                                    choice_col1, choice_col2, choice_col3 = st.columns(3)
+                                    with choice_col1:
+                                        save_choice = st.form_submit_button(i18n.t('common.save'), use_container_width=True)
+                                    with choice_col2:
+                                        delete_choice = st.form_submit_button(i18n.t('common.delete'), use_container_width=True)
+                                    with choice_col3:
+                                        cancel_choice = st.form_submit_button(i18n.t('common.cancel'), use_container_width=True)
+                                    
+                                    if save_choice:
+                                        scene_service.update_choice(
+                                            project,
+                                            scene.id,
+                                            choice.id,
+                                            text=choice_text,
+                                            target_scene_id=target_scene_id if target_scene_id else None
+                                        )
+                                        st.session_state[f"editing_choice_{choice.id}"] = False
+                                        st.success(f"✅ {i18n.t('routes.choice_updated')}")
+                                        st.rerun()
+                                    
+                                    if delete_choice:
+                                        scene_service.delete_choice(project, scene.id, choice.id)
+                                        st.session_state[f"editing_choice_{choice.id}"] = False
+                                        st.success(f"🗑️ {i18n.t('routes.choice_deleted')}")
+                                        st.rerun()
+                                    
+                                    if cancel_choice:
+                                        st.session_state[f"editing_choice_{choice.id}"] = False
+                                        st.rerun()
+                    
+                    # Add new choice button
+                    if st.button(f"➕ {i18n.t('routes.add_choice')}", key=f"add_choice_{scene.id}"):
+                        st.session_state[f"adding_choice_{scene.id}"] = True
+                        st.rerun()
+                    
+                    # Add choice form
+                    if st.session_state.get(f"adding_choice_{scene.id}", False):
+                        with st.form(f"add_choice_form_{scene.id}"):
+                            st.caption(f"➕ {i18n.t('routes.add_choice')}")
+                            
+                            new_choice_text = st.text_input(i18n.t('routes.choice_text'))
+                            
+                            scene_options = {s.id: s.title for s in scenes}
+                            scene_options[""] = i18n.t('routes.no_target')
+                            
+                            new_target_scene_id = st.selectbox(
+                                i18n.t('routes.target_scene'),
+                                options=list(scene_options.keys()),
+                                format_func=lambda x: scene_options[x],
+                                key=f"new_target_{scene.id}"
+                            )
+                            
+                            add_col1, add_col2 = st.columns(2)
+                            with add_col1:
+                                add_submitted = st.form_submit_button(i18n.t('common.add'), use_container_width=True)
+                            with add_col2:
+                                add_cancelled = st.form_submit_button(i18n.t('common.cancel'), use_container_width=True)
+                            
+                            if add_submitted and new_choice_text:
+                                scene_service.add_choice(
+                                    project,
+                                    scene.id,
+                                    text=new_choice_text,
+                                    target_scene_id=new_target_scene_id if new_target_scene_id else None
+                                )
+                                st.session_state[f"adding_choice_{scene.id}"] = False
+                                st.success(f"✅ {i18n.t('routes.choice_added')}")
+                                st.rerun()
+                            
+                            if add_cancelled:
+                                st.session_state[f"adding_choice_{scene.id}"] = False
+                                st.rerun()
+                
                 
                 with col2:
                     if st.button(f"✏️ {i18n.t('common.edit')}", key=f"edit_{scene.id}", use_container_width=True):
-                        st.info(i18n.t('routes.edit_coming_soon'))
+                        st.session_state[f"editing_scene_{scene.id}"] = True
+                        st.rerun()
                     
                     if st.button(f"🗑️ {i18n.t('common.delete')}", key=f"delete_{scene.id}", use_container_width=True):
                         scene_service.delete_scene(project, scene.id)
                         st.success(i18n.t('routes.scene_deleted', title=scene.title))
                         st.rerun()
+                
+                # Edit form
+                if st.session_state.get(f"editing_scene_{scene.id}", False):
+                    st.divider()
+                    with st.form(f"edit_scene_form_{scene.id}"):
+                        st.subheader(f"✏️ {i18n.t('common.edit')} - {scene.title}")
+                        
+                        new_title = st.text_input(i18n.t('routes.scene_title'), value=scene.title)
+                        new_body = st.text_area(i18n.t('routes.scene_content'), value=scene.body, height=200)
+                        new_chapter = st.text_input(i18n.t('routes.chapter'), value=scene.chapter or "")
+                        new_summary = st.text_area(i18n.t('routes.summary'), value=scene.summary or "", height=100)
+                        new_time_label = st.text_input(i18n.t('routes.time_label'), value=scene.timeLabel or "")
+                        new_is_ending = st.checkbox(i18n.t('routes.is_ending'), value=scene.isEnding)
+                        
+                        col1, col2 = st.columns(2)
+                        with col1:
+                            submitted = st.form_submit_button(i18n.t('common.save'), use_container_width=True)
+                        with col2:
+                            cancelled = st.form_submit_button(i18n.t('common.cancel'), use_container_width=True)
+                        
+                        if submitted:
+                            scene_service.update_scene(
+                                project, 
+                                scene.id,
+                                title=new_title,
+                                body=new_body,
+                                chapter=new_chapter if new_chapter else None,
+                                summary=new_summary if new_summary else None,
+                                timeLabel=new_time_label if new_time_label else None,
+                                isEnding=new_is_ending
+                            )
+                            st.session_state[f"editing_scene_{scene.id}"] = False
+                            st.success(f"✅ {i18n.t('routes.scene_updated', title=new_title)}")
+                            st.rerun()
+                        
+                        if cancelled:
+                            st.session_state[f"editing_scene_{scene.id}"] = False
+                            st.rerun()
     
     # Interactive Flow Visualization
     if scenes:
@@ -507,7 +651,7 @@ def render_routes_view():
                                 "ID": scene.id,
                                 "Chapter": scene.chapter or "N/A",
                                 "Tags": scene.tags,
-                                "Participants": [p.characterId for p in scene.participants],
+                                "Participants": scene.participants,
                                 "Choices": len(scene.choices),
                             })
                         
