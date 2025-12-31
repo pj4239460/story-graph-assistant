@@ -4,7 +4,12 @@
 
 ### Prerequisites
 - Python 3.10+
-- DeepSeek API Key ([Get free key](https://platform.deepseek.com/))
+- LLM API Key (supports multiple providers)
+  - DeepSeek: [Get free key](https://platform.deepseek.com/)
+  - OpenAI: [API Keys](https://platform.openai.com/api-keys)
+  - Anthropic Claude: [Console](https://console.anthropic.com/)
+  - Google Gemini: [AI Studio](https://aistudio.google.com/)
+  - Or use local models (Ollama, LM Studio, etc.)
 
 ### Setup
 
@@ -22,7 +27,12 @@ pip install -r requirements.txt
 
 # 4. Configure API key
 cp .env.example .env
-# Edit .env and set: DEEPSEEK_API_KEY=your_key_here
+# Edit .env and set:
+# DeepSeek: DEEPSEEK_API_KEY=sk-...
+# OpenAI: OPENAI_API_KEY=sk-...
+# Anthropic: ANTHROPIC_API_KEY=sk-ant-...
+# Google: GEMINI_API_KEY=...
+# Local models: No key needed, use ollama/model-name
 
 # 5. Run application
 streamlit run src/app.py
@@ -95,12 +105,58 @@ Results are cached for performance. Click 🔄 Refresh to regenerate.
 
 ### AI Chat Assistant
 
-Natural language queries:
+Powered by LiteLLM with multi-model support. Natural language queries:
 - "How many characters are in the story?"
 - "Who is mentioned in scene-001?"
 - "How many endings does the story have?"
 
 Uses FAISS semantic search for accurate retrieval.
+
+**Supported LLM Providers (as of 2025-12-31):**
+- 🚀 **DeepSeek** - Best value for money, recommended
+  - `deepseek-chat` (Chat)
+  - `deepseek-reasoner` (Reasoning)
+- 🧠 **OpenAI** - Latest GPT series
+  - GPT-5 series: `gpt-5.2`, `gpt-5.2-pro`, `gpt-5-mini`
+  - o reasoning: `o3`, `o3-pro`, `o4-mini`
+  - GPT-4.x: `gpt-4.1`, `gpt-4o`, `gpt-4o-mini`
+- 🤖 **Anthropic** - Claude 4.5 latest series
+  - Claude 4.5: `claude-sonnet-4-5`, `claude-opus-4-5`, `claude-haiku-4-5`
+  - Claude 3.x: `claude-3-7-sonnet-latest`, `claude-3-5-haiku-latest`
+- 🌎 **Google** - Gemini 2.5/3.0 series
+  - Gemini 3: `gemini-3-pro-preview`, `gemini-3-flash-preview`
+  - Gemini 2.5: `gemini-2.5-pro`, `gemini-2.5-flash`
+  - Gemini 2.0: `gemini-2.0-flash`
+- 💻 **Local Models** - Latest Ollama versions
+  - Llama: `ollama/llama3.3`, `ollama/llama3.2`
+  - Qwen: `ollama/qwen2.5`
+  - Others: `ollama/mistral`, `ollama/deepseek-coder-v2`, `ollama/gemma2`, `ollama/phi4`
+
+**Configuration Examples:**
+```bash
+# .env file
+# Use DeepSeek (recommended)
+DEEPSEEK_API_KEY=sk-...
+
+# Or use OpenAI GPT-5
+OPENAI_API_KEY=sk-...
+# Select model in settings: gpt-5.2 / gpt-5-mini / o3
+
+# Or use Claude 4.5
+ANTHROPIC_API_KEY=sk-ant-...
+# Select in settings: claude-sonnet-4-5 / claude-opus-4-5
+
+# Or use Gemini 2.5/3.0
+GEMINI_API_KEY=AIza...
+# Select in settings: gemini-2.5-pro / gemini-3-flash-preview
+
+# Or use local Ollama (no API key needed)
+# 1. Install Ollama: https://ollama.ai/
+# 2. Pull model: ollama pull llama3.3
+# 3. Select in settings: ollama/llama3.3
+```
+
+In the app's ⚙️ Settings tab, you can select different models. LiteLLM automatically recognizes the model format and routes to the appropriate provider.
 
 ### Project Management
 
@@ -120,8 +176,17 @@ Uses FAISS semantic search for accurate retrieval.
 
 **API Key Issues**
 - Verify `.env` file exists in project root
-- Check key format: `DEEPSEEK_API_KEY=sk-...`
+- Check key format:
+  - DeepSeek: `DEEPSEEK_API_KEY=sk-...`
+  - OpenAI: `OPENAI_API_KEY=sk-...`
+  - Anthropic: `ANTHROPIC_API_KEY=sk-ant-...`
+  - Google: `GEMINI_API_KEY=...`
 - Restart application after editing `.env`
+
+**Local Model Configuration**
+- Using Ollama: Install [Ollama](https://ollama.ai/) first, then run `ollama pull llama3`
+- Change model in settings to `ollama/llama3` or `ollama/qwen`
+- LM Studio/vLLM: Set up OpenAI-compatible mode, use `openai/model-name`
 
 **FAISS Not Working**
 - Application works without FAISS (falls back to keyword search)

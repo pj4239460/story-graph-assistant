@@ -19,18 +19,35 @@ class LLMClient:
     """Unified LLM client"""
     
     def __init__(self, app_db=None):
-        # Check DeepSeek API Key
-        if "DEEPSEEK_API_KEY" not in os.environ:
-            # Try to load from database
-            if app_db:
-                api_key = app_db.get_setting("deepseek_api_key", "")
-                if api_key:
-                    os.environ["DEEPSEEK_API_KEY"] = api_key
+        # Load all API keys from database if available
+        if app_db:
+            # DeepSeek
+            if "DEEPSEEK_API_KEY" not in os.environ:
+                deepseek_key = app_db.get_setting("deepseek_api_key", "")
+                if deepseek_key:
+                    os.environ["DEEPSEEK_API_KEY"] = deepseek_key
                     print("INFO: Loaded DEEPSEEK_API_KEY from database")
-                else:
-                    print("WARNING: DEEPSEEK_API_KEY not set in environment or database")
-            else:
-                print("WARNING: DEEPSEEK_API_KEY not set in environment")
+            
+            # OpenAI
+            if "OPENAI_API_KEY" not in os.environ:
+                openai_key = app_db.get_setting("openai_api_key", "")
+                if openai_key:
+                    os.environ["OPENAI_API_KEY"] = openai_key
+                    print("INFO: Loaded OPENAI_API_KEY from database")
+            
+            # Anthropic
+            if "ANTHROPIC_API_KEY" not in os.environ:
+                anthropic_key = app_db.get_setting("anthropic_api_key", "")
+                if anthropic_key:
+                    os.environ["ANTHROPIC_API_KEY"] = anthropic_key
+                    print("INFO: Loaded ANTHROPIC_API_KEY from database")
+            
+            # Google Gemini
+            if "GEMINI_API_KEY" not in os.environ:
+                gemini_key = app_db.get_setting("gemini_api_key", "")
+                if gemini_key:
+                    os.environ["GEMINI_API_KEY"] = gemini_key
+                    print("INFO: Loaded GEMINI_API_KEY from database")
         
         if not LITELLM_AVAILABLE:
             print("WARNING: litellm not installed. AI features will be disabled.")

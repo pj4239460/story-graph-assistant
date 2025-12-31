@@ -22,6 +22,7 @@ A powerful tool for narrative game developers to manage complex branching storie
 - 📋 **Scene Checkup Panel** - AI-powered comprehensive scene analysis with caching
 - 👥 **Character Management** - Centralized profiles and relationships
 - 🤖 **AI Agent Assistant** - LangGraph-powered conversational queries with FAISS semantic search
+- 🅱️ **Multi-LLM Support** - Works with DeepSeek, OpenAI, Anthropic, Google, local models via LiteLLM
 - 📚 **Sample Projects** - One-click Chinese/English example stories
 - 🌍 **Bilingual Interface** - Full Chinese/English UI with dynamic switching
 - 💾 **Simple Storage** - JSON-based portable project files
@@ -44,7 +45,8 @@ cp .env.example .env
 streamlit run src/app.py
 ```
 
-Get your free DeepSeek API key at [platform.deepseek.com](https://platform.deepseek.com/)
+**Recommended:** Get a DeepSeek API key at [platform.deepseek.com](https://platform.deepseek.com/) (best value)  
+Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 
 ### 📖 Usage
 
@@ -54,10 +56,21 @@ Get your free DeepSeek API key at [platform.deepseek.com](https://platform.deeps
 4. **AI Analysis** - Click nodes to view Scene Checkup with AI insights
 5. **Chat** - Ask AI questions about your story in natural language
 
-**v1.0 - Vector Search** ✅ 
+### 🏗️ Tech Stack
+
+- **Streamlit** - Interactive web framework
+- **LangGraph** - AI agent orchestration
+- **LiteLLM** - Multi-provider LLM routing (DeepSeek, OpenAI, Anthropic, Google, Ollama)
+- **FAISS** - Vector search (CPU-optimized)
+- **Pydantic** - Data validation
+
+### 🛣️ Roadmap
+
+**v1.0 - Vector Search** ✅
 - [x] Vector-based retrieval (FAISS - migrated from ChromaDB)
 - [x] Semantic similarity search with 384-dim embeddings
 - [x] Auto-indexing on project load
+- [x] Multi-LLM support with model selection UI
 - [ ] Character arc analysis
 - [ ] Route analysis
 - [ ] Emotional pacing
@@ -67,76 +80,10 @@ Get your free DeepSeek API key at [platform.deepseek.com](https://platform.deeps
 - [ ] Advanced What-if simulation
 - [ ] Consistency reports
 
----
+### 📚 Documentation
 
-## 中文
-
-### ✨ Features
-
-- 🌳 **交互式剧情图谱** - 基于 Streamlit Flow 的可视化流程图
-- ✏️ **完整编辑功能** - 内联表单编辑场景、角色和分支选项
-- 📊 **统计面板** - 实时场景、结局、选择统计
-- 👥 **角色档案** - 集中管理角色特征、目标和关系
-- 🤖 **AI 智能分析**
-  - 场景摘要生成
-  - 世界观设定提取
-  - OOC（人设崩坏）检测
-  - 与故事对话（基于关键词检索的 RAG）
-- 🌍 **双语界面** - 完整的中英文支持和动态切换
-- 💬 **聊天历史** - SQLite 持久化存储
-- 💾 **本地优先存储** - 简单的 JSON 项目文件
-
-### 🚀 Quick Start
-
-#### Prerequisites
-- Python 3.10+
-- DeepSeek API Key ([Get one here](https://platform.deepseek.com/))
-
-#### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/story-graph-assistant.git
-cd story-graph-assistant
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-# Edit .env and add your DEEPSEEK_API_KEY
-```
-
-#### Run the Application
-
-```bash
-streamlit run src/app.py
-```
-
-Open your browser at `http://localhost:8501`
-
-### 🏗️ Tech Stack
-
-- **Streamlit** - Interactive web framework
-- **LangGraph** - AI agent orchestration
-- **DeepSeek** - LLM provider
-- **FAISS** - Vector search (CPU-optimized)
-- **Pydantic** - Data validation
-
-### 🛣️ Roadmap
-
-- [x] Interactive graph with drag-and-drop
-- [x] Scene Checkup panel with AI analysis
-- [x] Sample projects (Chinese/English)
-- [x] Vector search with FAISS
-- [x] Chat history with SQLite
-- [ ] Play Path feature (experience player routes)
-- [ ] Timeline view
-- [ ] Multi-scene consistency checking
+- [Getting Started Guide](GETTING_STARTED.en.md)
+- [Developer Guide](docs/developer_guide.en.md)
 
 ---
 
@@ -145,9 +92,11 @@ Open your browser at `http://localhost:8501`
 ### ✨ 功能特色
 
 - 🌳 **交互式剧情图谱** - 拖拽可视化，多种布局算法
+- ✏️ **完整编辑功能** - 内联表单编辑场景、角色和分支选项
 - 📋 **场景体检面板** - AI 驱动的场景分析，带缓存机制
 - 👥 **角色档案管理** - 集中管理角色信息和关系
-- 🤖 **AI 智能助手** - LangGraph 对话代理，支持自然语言查询
+- 🤖 **AI 智能助手** - LangGraph 对话代理，支持自然语言查询，基于 FAISS 语义搜索
+- 🅱️ **多模型支持** - 通过 LiteLLM 支持 DeepSeek、OpenAI、Anthropic、Google、本地模型
 - 📚 **示例项目** - 一键加载中英文范例故事
 - 🌍 **双语界面** - 完整中英文 UI，动态切换
 - 💾 **简洁存储** - 基于 JSON 的可移植项目文件
@@ -170,7 +119,8 @@ copy .env.example .env
 streamlit run src/app.py
 ```
 
-在 [platform.deepseek.com](https://platform.deepseek.com/) 获取免费 API 密钥
+**推荐使用：** 在 [platform.deepseek.com](https://platform.deepseek.com/) 获取 DeepSeek API 密钥（性价比最高）  
+也支持：OpenAI、Anthropic、Google Gemini、本地模型（Ollama）
 
 ### 📖 使用方法
 
@@ -180,24 +130,34 @@ streamlit run src/app.py
 4. **AI 分析** - 点击节点查看场景体检报告
 5. **对话查询** - 用自然语言向 AI 提问
 
-### 🏭️ 技术栈
+### 🏗️ 技术栈
 
 - **Streamlit** - 交互式 Web 框架
 - **LangGraph** - AI 智能体编排
-- **DeepSeek** - 大语言模型
+- **LiteLLM** - 多提供商 LLM 路由（DeepSeek、OpenAI、Anthropic、Google、Ollama）
 - **FAISS** - 向量检索（CPU 优化）
 - **Pydantic** - 数据验证
 
 ### 🛣️ 开发路线
 
-- [x] 可交互图谱，支持拖拽
-- [x] 场景体检面板（AI 分析）
-- [x] 中英文示例项目
-- [x] FAISS 向量搜索
-- [x] SQLite 聊天记录
-- [ ] 路径试玩功能
-- [ ] 时间线视图
-- [ ] 多场景一致性检查
+**v1.0 - 向量搜索** ✅
+- [x] 基于向量的检索（FAISS - 从 ChromaDB 迁移）
+- [x] 384 维嵌入的语义相似度搜索
+- [x] 项目加载时自动索引
+- [x] 多模型支持和模型选择 UI
+- [ ] 角色弧分析
+- [ ] 路线分析
+- [ ] 情感节奏分析
+
+**v2.0 - 世界模拟**
+- [ ] WorldState 和 StoryThread
+- [ ] 高级假设模拟
+- [ ] 一致性报告
+
+### 📚 文档
+
+- [入门指南](GETTING_STARTED.zh.md)
+- [开发者指南](docs/developer_guide.zh.md)
 
 ---
 
@@ -236,6 +196,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [Streamlit](https://streamlit.io/) - For the amazing web framework
 - [LangGraph](https://github.com/langchain-ai/langgraph) - For agent orchestration
 - [DeepSeek](https://www.deepseek.com/) - For powerful AI models
+- [LiteLLM](https://github.com/BerriAI/litellm) - For unified LLM interface
 - [FAISS](https://github.com/facebookresearch/faiss) - For efficient vector search
 
 ---

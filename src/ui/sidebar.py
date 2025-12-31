@@ -167,44 +167,152 @@ def render_sidebar():
         # API Settings
         st.divider()
         with st.expander(f"⚙️ {i18n.t('sidebar.api_settings')}"):
-            # Get current API key from DB
-            current_api_key = app_db.get_setting("deepseek_api_key", "")
+            st.caption("🔑 LLM API Keys - Choose your provider")
             
-            # Show status
-            if current_api_key:
-                st.success(f"✅ {i18n.t('sidebar.api_key_configured')}")
-            else:
-                st.warning(f"⚠️ {i18n.t('sidebar.api_key_not_set')}")
+            # Tabs for different providers
+            provider_tab1, provider_tab2, provider_tab3, provider_tab4, provider_tab5 = st.tabs([
+                "🚀 DeepSeek", 
+                "🧠 OpenAI", 
+                "🤖 Anthropic",
+                "🌎 Google",
+                "💻 Local"
+            ])
             
-            # Input form
-            with st.form("api_settings_form"):
-                api_key_input = st.text_input(
-                    i18n.t('sidebar.deepseek_api_key'),
-                    value=current_api_key if current_api_key else "",
-                    type="password",
-                    placeholder="sk-...",
-                    help=i18n.t('sidebar.api_key_help')
-                )
+            # DeepSeek
+            with provider_tab1:
+                current_deepseek = app_db.get_setting("deepseek_api_key", "")
+                if current_deepseek:
+                    st.success(f"✅ {i18n.t('sidebar.api_key_configured')}")
                 
-                col_save, col_clear = st.columns(2)
-                with col_save:
-                    save_btn = st.form_submit_button(i18n.t('common.save'), use_container_width=True)
-                with col_clear:
-                    clear_btn = st.form_submit_button(i18n.t('sidebar.clear_key'), use_container_width=True)
+                with st.form("deepseek_form"):
+                    deepseek_key = st.text_input(
+                        "DeepSeek API Key",
+                        value=current_deepseek,
+                        type="password",
+                        placeholder="sk-...",
+                        help="Get from platform.deepseek.com"
+                    )
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.form_submit_button("💾 Save", use_container_width=True):
+                            if deepseek_key:
+                                app_db.set_setting("deepseek_api_key", deepseek_key)
+                                os.environ["DEEPSEEK_API_KEY"] = deepseek_key
+                                st.success("✅ Saved!")
+                                st.rerun()
+                    with col2:
+                        if st.form_submit_button("🗑️ Clear", use_container_width=True):
+                            app_db.set_setting("deepseek_api_key", "")
+                            if "DEEPSEEK_API_KEY" in os.environ:
+                                del os.environ["DEEPSEEK_API_KEY"]
+                            st.success("✅ Cleared!")
+                            st.rerun()
+            
+            # OpenAI
+            with provider_tab2:
+                current_openai = app_db.get_setting("openai_api_key", "")
+                if current_openai:
+                    st.success(f"✅ {i18n.t('sidebar.api_key_configured')}")
                 
-                if save_btn and api_key_input:
-                    app_db.set_setting("deepseek_api_key", api_key_input)
-                    # Update environment variable for current session
-                    os.environ["DEEPSEEK_API_KEY"] = api_key_input
-                    st.success(f"✅ {i18n.t('settings.save_success')}")
-                    st.rerun()
+                with st.form("openai_form"):
+                    openai_key = st.text_input(
+                        "OpenAI API Key",
+                        value=current_openai,
+                        type="password",
+                        placeholder="sk-...",
+                        help="Get from platform.openai.com/api-keys"
+                    )
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.form_submit_button("💾 Save", use_container_width=True):
+                            if openai_key:
+                                app_db.set_setting("openai_api_key", openai_key)
+                                os.environ["OPENAI_API_KEY"] = openai_key
+                                st.success("✅ Saved!")
+                                st.rerun()
+                    with col2:
+                        if st.form_submit_button("🗑️ Clear", use_container_width=True):
+                            app_db.set_setting("openai_api_key", "")
+                            if "OPENAI_API_KEY" in os.environ:
+                                del os.environ["OPENAI_API_KEY"]
+                            st.success("✅ Cleared!")
+                            st.rerun()
+            
+            # Anthropic
+            with provider_tab3:
+                current_anthropic = app_db.get_setting("anthropic_api_key", "")
+                if current_anthropic:
+                    st.success(f"✅ {i18n.t('sidebar.api_key_configured')}")
                 
-                if clear_btn:
-                    app_db.set_setting("deepseek_api_key", "")
-                    if "DEEPSEEK_API_KEY" in os.environ:
-                        del os.environ["DEEPSEEK_API_KEY"]
-                    st.success(f"✅ {i18n.t('sidebar.api_key_cleared')}")
-                    st.rerun()
+                with st.form("anthropic_form"):
+                    anthropic_key = st.text_input(
+                        "Anthropic API Key",
+                        value=current_anthropic,
+                        type="password",
+                        placeholder="sk-ant-...",
+                        help="Get from console.anthropic.com"
+                    )
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.form_submit_button("💾 Save", use_container_width=True):
+                            if anthropic_key:
+                                app_db.set_setting("anthropic_api_key", anthropic_key)
+                                os.environ["ANTHROPIC_API_KEY"] = anthropic_key
+                                st.success("✅ Saved!")
+                                st.rerun()
+                    with col2:
+                        if st.form_submit_button("🗑️ Clear", use_container_width=True):
+                            app_db.set_setting("anthropic_api_key", "")
+                            if "ANTHROPIC_API_KEY" in os.environ:
+                                del os.environ["ANTHROPIC_API_KEY"]
+                            st.success("✅ Cleared!")
+                            st.rerun()
+            
+            # Google
+            with provider_tab4:
+                current_gemini = app_db.get_setting("gemini_api_key", "")
+                if current_gemini:
+                    st.success(f"✅ {i18n.t('sidebar.api_key_configured')}")
+                
+                with st.form("gemini_form"):
+                    gemini_key = st.text_input(
+                        "Google Gemini API Key",
+                        value=current_gemini,
+                        type="password",
+                        placeholder="AIza...",
+                        help="Get from aistudio.google.com"
+                    )
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        if st.form_submit_button("💾 Save", use_container_width=True):
+                            if gemini_key:
+                                app_db.set_setting("gemini_api_key", gemini_key)
+                                os.environ["GEMINI_API_KEY"] = gemini_key
+                                st.success("✅ Saved!")
+                                st.rerun()
+                    with col2:
+                        if st.form_submit_button("🗑️ Clear", use_container_width=True):
+                            app_db.set_setting("gemini_api_key", "")
+                            if "GEMINI_API_KEY" in os.environ:
+                                del os.environ["GEMINI_API_KEY"]
+                            st.success("✅ Cleared!")
+                            st.rerun()
+            
+            # Local Models
+            with provider_tab5:
+                st.info("💻 Local models (Ollama, LM Studio) don't need API keys!")
+                st.markdown("""
+                **Setup:**
+                1. Install [Ollama](https://ollama.ai/) or [LM Studio](https://lmstudio.ai/)
+                2. Pull a model: `ollama pull llama3`
+                3. In Settings tab, set model to `ollama/llama3`
+                
+                **Supported formats:**
+                - `ollama/llama3`
+                - `ollama/mistral`
+                - `ollama/qwen`
+                - `openai/custom` (for LM Studio/vLLM OpenAI-compatible mode)
+                """)
         
         # Language switch
         st.divider()

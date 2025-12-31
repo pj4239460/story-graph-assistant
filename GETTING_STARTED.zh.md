@@ -4,7 +4,12 @@
 
 ### 环境要求
 - Python 3.10+
-- DeepSeek API 密钥（[免费获取](https://platform.deepseek.com/)）
+- LLM API 密钥（支持多种提供商）
+  - DeepSeek：[免费获取](https://platform.deepseek.com/)
+  - OpenAI：[API Keys](https://platform.openai.com/api-keys)
+  - Anthropic Claude：[Console](https://console.anthropic.com/)
+  - Google Gemini：[AI Studio](https://aistudio.google.com/)
+  - 或使用本地模型（Ollama, LM Studio 等）
 
 ### 安装步骤
 
@@ -22,7 +27,12 @@ pip install -r requirements.txt
 
 # 4. 配置 API 密钥
 copy .env.example .env
-# 编辑 .env 文件，设置: DEEPSEEK_API_KEY=你的密钥
+# 编辑 .env 文件，设置：
+# DeepSeek: DEEPSEEK_API_KEY=sk-...
+# OpenAI: OPENAI_API_KEY=sk-...
+# Anthropic: ANTHROPIC_API_KEY=sk-ant-...
+# Google: GEMINI_API_KEY=...
+# 本地模型: 无需密钥，直接使用 ollama/模型名
 
 # 5. 运行应用
 streamlit run src/app.py
@@ -95,12 +105,58 @@ AI 驱动的分析包括：
 
 ### AI 对话助手
 
-自然语言查询：
+基于 LiteLLM 的多模型支持，自然语言查询：
 - "故事中有几个角色？"
 - "scene-001 中提到了谁？"
 - "故事有几个结局？"
 
 使用 FAISS 语义搜索实现准确检索。
+
+**支持的 LLM 提供商（截至 2025-12-31）：**
+- 🚀 **DeepSeek** - 性价比最高，推荐使用
+  - `deepseek-chat` (对话)
+  - `deepseek-reasoner` (推理)
+- 🧠 **OpenAI** - 最新GPT系列
+  - GPT-5 系列: `gpt-5.2`, `gpt-5.2-pro`, `gpt-5-mini`
+  - o 推理系列: `o3`, `o3-pro`, `o4-mini`
+  - GPT-4.x: `gpt-4.1`, `gpt-4o`, `gpt-4o-mini`
+- 🤖 **Anthropic** - Claude 4.5 最新系列
+  - Claude 4.5: `claude-sonnet-4-5`, `claude-opus-4-5`, `claude-haiku-4-5`
+  - Claude 3.x: `claude-3-7-sonnet-latest`, `claude-3-5-haiku-latest`
+- 🌎 **Google** - Gemini 2.5/3.0 系列
+  - Gemini 3: `gemini-3-pro-preview`, `gemini-3-flash-preview`
+  - Gemini 2.5: `gemini-2.5-pro`, `gemini-2.5-flash`
+  - Gemini 2.0: `gemini-2.0-flash`
+- 💻 **本地模型** - Ollama 最新版本
+  - Llama: `ollama/llama3.3`, `ollama/llama3.2`
+  - Qwen: `ollama/qwen2.5`
+  - 其他: `ollama/mistral`, `ollama/deepseek-coder-v2`, `ollama/gemma2`, `ollama/phi4`
+
+**配置示例：**
+```bash
+# .env 文件
+# 使用 DeepSeek（推荐）
+DEEPSEEK_API_KEY=sk-...
+
+# 或使用 OpenAI GPT-5
+OPENAI_API_KEY=sk-...
+# 在设置中选择模型: gpt-5.2 / gpt-5-mini / o3
+
+# 或使用 Claude 4.5
+ANTHROPIC_API_KEY=sk-ant-...
+# 在设置中选择: claude-sonnet-4-5 / claude-opus-4-5
+
+# 或使用 Gemini 2.5/3.0
+GEMINI_API_KEY=AIza...
+# 在设置中选择: gemini-2.5-pro / gemini-3-flash-preview
+
+# 或使用本地 Ollama（无需 API Key）
+# 1. 安装 Ollama: https://ollama.ai/
+# 2. 拉取模型: ollama pull llama3.3
+# 3. 在设置中选择: ollama/llama3.3
+```
+
+在应用的「⚙️ 设置」标签页中，可以选择不同的模型。LiteLLM 会自动识别模型格式并路由到对应的提供商。
 
 ### 项目管理
 
@@ -120,8 +176,17 @@ AI 驱动的分析包括：
 
 **API 密钥问题**
 - 确认项目根目录存在 `.env` 文件
-- 检查密钥格式：`DEEPSEEK_API_KEY=sk-...`
+- 检查密钥格式：
+  - DeepSeek: `DEEPSEEK_API_KEY=sk-...`
+  - OpenAI: `OPENAI_API_KEY=sk-...`
+  - Anthropic: `ANTHROPIC_API_KEY=sk-ant-...`
+  - Google: `GEMINI_API_KEY=...`
 - 编辑 `.env` 后重启应用
+
+**本地模型配置**
+- 使用 Ollama：先安装 [Ollama](https://ollama.ai/)，然后运行 `ollama pull llama3`
+- 在设置中将模型改为 `ollama/llama3` 或 `ollama/qwen`
+- LM Studio/vLLM：设置为 OpenAI 兼容模式，使用 `openai/模型名`
 
 **FAISS 不工作**
 - 应用可以在没有 FAISS 的情况下工作（回退到关键词搜索）
