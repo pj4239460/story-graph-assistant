@@ -6,6 +6,8 @@ Enhanced with:
 - RAG tool: search_story_context
 - Scene analysis tool: analyze_scene  
 - Intent classification: chat vs qa modes
+- Dynamic state tools: get_character_state, get_relationship, explain_state_change
+- Token usage tracking via callback handler
 """
 from typing import Literal, Optional
 from typing_extensions import TypedDict
@@ -14,10 +16,34 @@ from langgraph.prebuilt import ToolNode
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
 from langchain_litellm import ChatLiteLLM
 from langchain_core.tools import tool
+from langchain_core.callbacks import BaseCallbackHandler
 
 from ..models.project import Project
 from .search_service import SearchService
 from .ai_service import AIService
+from .state_service import StateService
+from ..infra.token_stats import record_usage
+
+
+class TokenTrackingCallback(BaseCallbackHandler):
+    """Callback handler to track token usage from LangChain LLM calls"""
+    
+    def __init__(self, project: Project, feature: str = "agent_chat"):
+        self.project = project
+        self.feature = feature
+    
+    def on_llm_end(self, response, **kwargs):
+        """Called when LLM finishes"""
+        try:
+            # Extract token usage from response
+            if hasattr(response, 'llm_output') and response.llm_output:
+                usage = response.llm_output.get('token_usage', {})
+                if usage:
+                    # Record usage
+                    record_usage(self.project, self.feature, usage)
+        except Exception as e:
+            # Silently fail - don't break agent execution
+            pass
 
 
 class LangGraphAgentService:
@@ -32,22 +58,29 @@ class LangGraphAgentService:
     
     def __init__(self, project: Project, model: str = "deepseek/deepseek-chat", 
                  search_service: Optional[SearchService] = None,
-                 ai_service: Optional[AIService] = None):
+                 ai_service: Optional[AIService] = None,
+                 state_service: Optional[StateService] = None):
         self.project = project
         self.model = model
         self.search_service = search_service or SearchService()
         self.ai_service = ai_service or AIService()
+        self.state_service = state_service or StateService()
         
-        # Initialize ChatLiteLLM
+        # Token tracking callback
+        self.token_callback = TokenTrackingCallback(project, feature="agent_chat")
+        
+        # Initialize ChatLiteLLM with callback
         self.llm = ChatLiteLLM(
             model=model,
             temperature=0.2,
+            callbacks=[self.token_callback]
         )
         
-        # Initialize classifier LLM (lighter model for intent classification)
+        # Initialize classifier LLM with callback
         self.classifier_llm = ChatLiteLLM(
             model=model,
             temperature=0.0,
+            callbacks=[self.token_callback]
         )
         
         # Create tools
@@ -64,8 +97,166 @@ class LangGraphAgentService:
         project = self.project
         search_service = self.search_service
         ai_service = self.ai_service
+        state_service = self.state_service
         
-        # ===== NEW: RAG Tool =====
+        # ===== NEW: Dynamic State Query Tools =====
+        
+        @tool
+        def get_character_state(character_id: str, thread_id: str, step_index: int) -> str:
+            """Get a character's dynamic state at a specific point in a story thread.
+            
+            Use this when user asks about a character's state at a specific moment like:
+            - "在第3章Alice的心情如何？" / "What's Alice's mood in chapter 3?"
+            - "Bob在这个时候有什么目标？" / "What are Bob's goals at this point?"
+            - "角色在这条路线上有什么变化？" / "How has the character changed in this route?"
+            
+            Args:
+                character_id: Character ID to query
+                thread_id: Story thread (route) ID
+                step_index: Step number (0-based index) in the thread
+            
+            Returns:
+                Formatted character state at that point
+            """
+            try:
+                char_state = state_service.get_character_state_at_step(
+                    project, thread_id, step_index, character_id
+                )
+                
+                if not char_state:
+                    return f"Character '{character_id}' not found or no state available."
+                
+                # Get base character info
+                char = project.characters.get(character_id)
+                char_name = char.name if char else character_id
+                
+                result = f"**{char_name}** at Thread '{thread_id}', Step {step_index}\n\n"
+                
+                if char_state.mood:
+                    result += f"- **Mood:** {char_state.mood}\n"
+                if char_state.status:
+                    result += f"- **Status:** {char_state.status}\n"
+                if char_state.location:
+                    result += f"- **Location:** {char_state.location}\n"
+                
+                if char_state.active_traits:
+                    result += f"- **Active Traits:** {', '.join(char_state.active_traits)}\n"
+                if char_state.active_goals:
+                    result += f"- **Current Goals:** {', '.join(char_state.active_goals)}\n"
+                if char_state.active_fears:
+                    result += f"- **Active Fears:** {', '.join(char_state.active_fears)}\n"
+                
+                if char_state.vars:
+                    result += f"\n**Custom State Variables:**\n"
+                    for key, val in char_state.vars.items():
+                        result += f"  - {key}: {val}\n"
+                
+                return result
+                
+            except Exception as e:
+                return f"Error getting character state: {str(e)}"
+        
+        @tool
+        def get_relationship(char_a_id: str, char_b_id: str, thread_id: str, step_index: int) -> str:
+            """Get the relationship state between two characters at a specific point.
+            
+            Use when user asks about relationships like:
+            - "Alice和Bob的关系怎么样？" / "What's the relationship between Alice and Bob?"
+            - "在这个时候他们是否信任彼此？" / "Do they trust each other at this point?"
+            
+            Args:
+                char_a_id: First character ID
+                char_b_id: Second character ID
+                thread_id: Story thread ID
+                step_index: Step number in the thread
+            
+            Returns:
+                Relationship state information
+            """
+            try:
+                _, _, rel_states = state_service.compute_state(project, thread_id, step_index)
+                
+                # Try both orderings
+                rel_key = f"{char_a_id}|{char_b_id}"
+                rel_key_rev = f"{char_b_id}|{char_a_id}"
+                
+                rel_data = rel_states.get(rel_key) or rel_states.get(rel_key_rev)
+                
+                if not rel_data:
+                    return f"No relationship data found between '{char_a_id}' and '{char_b_id}' at this point."
+                
+                char_a = project.characters.get(char_a_id)
+                char_b = project.characters.get(char_b_id)
+                name_a = char_a.name if char_a else char_a_id
+                name_b = char_b.name if char_b else char_b_id
+                
+                result = f"**{name_a} ↔ {name_b}** at Thread '{thread_id}', Step {step_index}\n\n"
+                
+                for key, val in rel_data.items():
+                    result += f"- {key}: {val}\n"
+                
+                return result
+                
+            except Exception as e:
+                return f"Error getting relationship: {str(e)}"
+        
+        @tool
+        def explain_state_change(target: str, thread_id: str, from_step: int, to_step: int) -> str:
+            """Explain what changed in character/world state between two points in the story.
+            
+            Use when user asks:
+            - "Alice从第2章到第5章发生了什么变化？" / "How did Alice change from chapter 2 to 5?"
+            - "这条路线上世界状态有什么不同？" / "What world state changes in this route?"
+            
+            Args:
+                target: What to check changes for ("world" or character_id)
+                thread_id: Story thread ID
+                from_step: Starting step
+                to_step: Ending step
+            
+            Returns:
+                Description of changes
+            """
+            try:
+                diff = state_service.diff_state(project, thread_id, from_step, to_step)
+                
+                result = f"**Changes from Step {from_step} → {to_step}** in Thread '{thread_id}'\n\n"
+                
+                if target == "world":
+                    if diff["world"]:
+                        result += "## World Changes:\n"
+                        for var_name, (old_val, new_val) in diff["world"].items():
+                            result += f"- {var_name}: {old_val} → {new_val}\n"
+                    else:
+                        result += "No world state changes.\n"
+                
+                elif target in project.characters:
+                    if target in diff["characters"]:
+                        char = project.characters[target]
+                        result += f"## {char.name} Changes:\n"
+                        for field, change in diff["characters"][target].items():
+                            if isinstance(change, tuple):
+                                old_val, new_val = change
+                                result += f"- {field}: {old_val} → {new_val}\n"
+                            else:
+                                result += f"- {field}: {change}\n"
+                    else:
+                        result += f"No changes for character '{target}'.\n"
+                else:
+                    result += "Invalid target. Use 'world' or a valid character_id.\n"
+                
+                # Also show relationship changes
+                if diff["relationships"]:
+                    result += "\n## Relationship Changes:\n"
+                    for rel_key, (old_val, new_val) in diff["relationships"].items():
+                        result += f"- {rel_key}: {old_val} → {new_val}\n"
+                
+                return result
+                
+            except Exception as e:
+                return f"Error explaining state change: {str(e)}"
+        
+        # ===== RAG Tool =====
         @tool
         def search_story_context(query: str) -> str:
             """Search the entire story database for relevant context about characters, scenes, and worldview.
@@ -295,8 +486,14 @@ class LangGraphAgentService:
             return result
         
         return [
-            search_story_context,  # NEW: RAG tool (priority)
-            analyze_scene,         # NEW: Scene analysis tool
+            # State query tools (NEW - highest priority for dynamic character analysis)
+            get_character_state,
+            get_relationship,
+            explain_state_change,
+            # RAG and analysis tools
+            search_story_context,
+            analyze_scene,
+            # Basic query tools
             get_all_characters,
             get_character_by_name,
             get_all_scenes,

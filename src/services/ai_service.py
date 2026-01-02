@@ -3,9 +3,11 @@ AI Service - AI functionality service (MVP version)
 """
 from __future__ import annotations
 from typing import Dict, List
+import uuid
 
 from ..models.project import Project
 from ..models.scene import Scene
+from ..models.world import WorldFact
 from ..infra.llm_client import LLMClient
 from ..infra.token_stats import check_token_limit
 from .search_service import SearchService
@@ -56,16 +58,17 @@ class AIService:
         
         return summary
     
-    def extract_facts(self, project: Project, scene: Scene) -> List[str]:
+    def extract_facts(self, project: Project, scene: Scene, save_to_project: bool = True) -> List[str]:
         """
-        Extract worldview facts from scene
+        Extract worldview facts from scene and optionally save to project.worldState.facts
         
         Args:
             project: Project object
             scene: Scene object
+            save_to_project: Whether to persist extracted facts to project (default: True)
             
         Returns:
-            List of extracted facts
+            List of extracted fact content strings (for backward compatibility)
         """
         can_proceed, message = check_token_limit(project, estimated_tokens=800)
         if not can_proceed:
@@ -88,7 +91,11 @@ Please extract key information from this scene, including:
 2. Worldview settings
 3. Important plot threads
 
-Each piece of information should be on one line, format: [Type] Content
+Each piece of information should be on one line, format: [Category] Content
+Example:
+[Character] Alice is a skilled hacker
+[Setting] The city is under constant surveillance
+[Plot] A mysterious virus is spreading through the network
 """
             }
         ]
@@ -100,9 +107,36 @@ Each piece of information should be on one line, format: [Type] Content
             max_tokens=500,
         )
         
-        # Simple parsing of returned list
-        facts = [line.strip() for line in response.split('\n') if line.strip()]
-        return facts
+        # Parse and structure the facts
+        fact_contents = []
+        for line in response.split('\n'):
+            line = line.strip()
+            if not line:
+                continue
+                
+            # Parse [Category] Content format
+            category = None
+            content = line
+            if line.startswith('[') and ']' in line:
+                end_bracket = line.index(']')
+                category = line[1:end_bracket].strip().lower()
+                content = line[end_bracket + 1:].strip()
+            
+            if content:
+                fact_contents.append(content)
+                
+                # Save to project if requested
+                if save_to_project:
+                    fact_id = f"fact_{scene.id}_{uuid.uuid4().hex[:8]}"
+                    world_fact = WorldFact(
+                        id=fact_id,
+                        content=content,
+                        category=category,
+                        sourceSceneId=scene.id
+                    )
+                    project.worldState.facts[fact_id] = world_fact
+        
+        return fact_contents
     
     def check_ooc(
         self,

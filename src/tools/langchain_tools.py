@@ -49,11 +49,11 @@ def get_character_by_name(name: str, project: Project) -> str:
     
     for char in project.characters:
         if (char.name.lower() == name_lower or 
-            any(alias.lower() == name_lower for alias in char.aliases)):
+            (char.alias and char.alias.lower() == name_lower)):
             
             result = f"Character: {char.name}\n"
-            if char.aliases:
-                result += f"Aliases: {', '.join(char.aliases)}\n"
+            if char.alias:
+                result += f"Alias: {char.alias}\n"
             if char.description:
                 result += f"\nDescription:\n{char.description}\n"
             if char.traits:
@@ -86,7 +86,7 @@ def get_all_scenes(project: Project) -> str:
     
     # Group by chapter
     chapters = {}
-    for scene in project.scenes:
+    for scene in project.scenes.values():
         chapter = scene.chapter or "No Chapter"
         if chapter not in chapters:
             chapters[chapter] = []
@@ -114,7 +114,7 @@ def get_scene_by_id(scene_id: str, project: Project) -> str:
         
     Use this tool when you need full scene details after finding it in the scene list.
     """
-    for scene in project.scenes:
+    for scene in project.scenes.values():
         if scene.id == scene_id:
             result = f"Scene: {scene.title}\n"
             result += f"ID: {scene.id}\n"
@@ -151,7 +151,7 @@ def search_scenes(keyword: str, project: Project) -> str:
     keyword_lower = keyword.lower()
     matching_scenes = []
     
-    for scene in project.scenes:
+    for scene in project.scenes.values():
         if (keyword_lower in scene.title.lower() or
             (scene.summary and keyword_lower in scene.summary.lower()) or
             (scene.body and keyword_lower in scene.body.lower()) or
@@ -184,7 +184,7 @@ def count_endings(project: Project) -> str:
     """
     endings = []
     
-    for scene in project.scenes:
+    for scene in project.scenes.values():
         # A scene is an ending if it has no choices or all choices lead nowhere
         if not scene.choices or all(not choice.nextSceneId for choice in scene.choices):
             endings.append(scene)
@@ -212,14 +212,15 @@ def get_world_facts(project: Project) -> str:
     - "这个故事的世界观是什么？" / "What is the world setting?"
     - "有哪些世界观设定？" / "What world-building facts are there?"
     """
-    if not project.worldFacts:
+    facts_list = list(project.worldState.facts.values()) if project.worldState.facts else []
+    if not facts_list:
         return "No world-building facts have been extracted yet."
     
-    result = f"World Facts ({len(project.worldFacts)} total):\n\n"
+    result = f"World Facts ({len(facts_list)} total):\n\n"
     
     # Group by category if available
     categorized = {}
-    for fact in project.worldFacts:
+    for fact in facts_list:
         category = getattr(fact, 'category', 'General')
         if category not in categorized:
             categorized[category] = []

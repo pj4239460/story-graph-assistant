@@ -3,10 +3,13 @@ Story routes view - Enhanced version with Streamlit Flow
 """
 import streamlit as st
 import math
+import uuid
 from streamlit_flow import streamlit_flow
 from streamlit_flow.elements import StreamlitFlowNode, StreamlitFlowEdge
 from streamlit_flow.state import StreamlitFlowState
 from streamlit_flow.layouts import TreeLayout, ManualLayout
+
+from ..models.world import StoryThread, ThreadStep
 
 
 def calculate_layout(nodes, edges, layout_type="Tree", direction="down"):
@@ -690,3 +693,179 @@ def render_routes_view():
                         if from_scene and to_scene:
                             st.markdown(f"➡️ {from_scene.title} → {to_scene.title}")
                             st.caption(f"   💬 {edge['label'][:40]}..." if len(edge['label']) > 40 else f"   💬 {edge['label']}")
+    
+    # ===== NEW: Play Path Mode =====
+    st.divider()
+    with st.expander("🎮 Play Path Mode - Walk Through Story" if st.session_state.locale == "en" else "🎮 路径试玩模式 - 体验故事"):
+        render_play_path_mode(project, scene_service, i18n)
+
+
+def render_play_path_mode(project, scene_service, i18n):
+    """
+    Render Play Path mode where users can walk through the story by clicking choices.
+    This generates a StoryThread automatically.
+    """
+    # Initialize play state
+    if "play_thread_steps" not in st.session_state:
+        st.session_state.play_thread_steps = []
+    if "play_current_scene" not in st.session_state:
+        st.session_state.play_current_scene = None
+    
+    scenes = list(project.scenes.values())
+    if not scenes:
+        st.info("No scenes to play. Create some scenes first!" if st.session_state.locale == "en" else "没有场景可以试玩。请先创建一些场景！")
+        return
+    
+    # Start new playthrough
+    if st.session_state.play_current_scene is None:
+        st.subheader("🎬 Start New Playthrough" if st.session_state.locale == "en" else "🎬 开始新的试玩")
+        
+        # Find root scenes (scenes with no incoming edges)
+        all_targets = set()
+        for scene in scenes:
+            for choice in scene.choices:
+                if choice.targetSceneId:
+                    all_targets.add(choice.targetSceneId)
+        
+        root_scenes = [s for s in scenes if s.id not in all_targets]
+        if not root_scenes:
+            root_scenes = [scenes[0]]  # Fallback
+        
+        st.write("Select starting scene:" if st.session_state.locale == "en" else "选择起始场景：")
+        for scene in root_scenes[:5]:  # Show top 5 roots
+            if st.button(f"▶️ {scene.title}", key=f"start_{scene.id}"):
+                st.session_state.play_current_scene = scene.id
+                st.session_state.play_thread_steps = [{"sceneId": scene.id, "choiceId": None}]
+                st.rerun()
+        
+        return
+    
+    # Continue playthrough
+    current_scene_id = st.session_state.play_current_scene
+    current_scene = project.scenes.get(current_scene_id)
+    
+    if not current_scene:
+        st.error("Scene not found!" if st.session_state.locale == "en" else "场景未找到！")
+        if st.button("🔄 Reset"):
+            st.session_state.play_current_scene = None
+            st.session_state.play_thread_steps = []
+            st.rerun()
+        return
+    
+    # Display current path
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.caption(f"**Current Path ({len(st.session_state.play_thread_steps)} steps):**" if st.session_state.locale == "en" else f"**当前路径 ({len(st.session_state.play_thread_steps)} 步):**")
+        path_display = " → ".join([
+            project.scenes[step["sceneId"]].title 
+            for step in st.session_state.play_thread_steps 
+            if step["sceneId"] in project.scenes
+        ])
+        st.text(path_display[:100] + "..." if len(path_display) > 100 else path_display)
+    with col2:
+        if st.button("🔄 Restart" if st.session_state.locale == "en" else "🔄 重新开始"):
+            st.session_state.play_current_scene = None
+            st.session_state.play_thread_steps = []
+            st.rerun()
+    
+    st.divider()
+    
+    # Display current scene
+    st.subheader(f"📄 {current_scene.title}")
+    if current_scene.chapter:
+        st.caption(f"Chapter: {current_scene.chapter}" if st.session_state.locale == "en" else f"章节：{current_scene.chapter}")
+    
+    if current_scene.body:
+        with st.container(border=True):
+            st.markdown(current_scene.body)
+    
+    st.divider()
+    
+    # Show choices
+    if current_scene.choices and not current_scene.isEnding:
+        st.write("**Choose your action:**" if st.session_state.locale == "en" else "**选择你的行动：**")
+        
+        for i, choice in enumerate(current_scene.choices):
+            target_scene = project.scenes.get(choice.targetSceneId) if choice.targetSceneId else None
+            button_text = f"{i+1}. {choice.text}"
+            if target_scene:
+                button_text += f" → {target_scene.title}"
+            
+            if st.button(button_text, key=f"choice_{choice.id}", use_container_width=True):
+                # Record this step
+                st.session_state.play_thread_steps.append({
+                    "sceneId": choice.targetSceneId or current_scene_id,
+                    "choiceId": choice.id
+                })
+                st.session_state.play_current_scene = choice.targetSceneId
+                st.rerun()
+    
+    else:
+        # Reached an ending
+        st.success("🏁 **THE END**" if st.session_state.locale == "en" else "🏁 **结局**")
+        if current_scene.endingType:
+            st.info(f"Ending Type: {current_scene.endingType}" if st.session_state.locale == "en" else f"结局类型：{current_scene.endingType}")
+        
+        st.divider()
+        
+        # Save thread option
+        st.subheader("💾 Save this playthrough as a Story Thread?" if st.session_state.locale == "en" else "💾 保存这次试玩为故事线？")
+        
+        with st.form("save_thread_form"):
+            thread_name = st.text_input(
+                "Thread Name" if st.session_state.locale == "en" else "故事线名称",
+                value=f"Playthrough {len(project.threads) + 1}",
+                placeholder="My favorite route"
+            )
+            thread_desc = st.text_area(
+                "Description (optional)" if st.session_state.locale == "en" else "描述（可选）",
+                placeholder="This is the path where..."
+            )
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.form_submit_button("💾 Save Thread" if st.session_state.locale == "en" else "💾 保存故事线", use_container_width=True):
+                    # Create StoryThread
+                    thread_id = f"thread_{uuid.uuid4().hex[:8]}"
+                    thread = StoryThread(
+                        id=thread_id,
+                        name=thread_name,
+                        description=thread_desc,
+                        steps=[ThreadStep(**step) for step in st.session_state.play_thread_steps]
+                    )
+                    project.threads[thread_id] = thread
+                    
+                    # Save project
+                    project_service = st.session_state.project_service
+                    project_service.save_project(project)
+                    
+                    st.success(f"✅ Thread '{thread_name}' saved!" if st.session_state.locale == "en" else f"✅ 故事线「{thread_name}」已保存！")
+                    st.balloons()
+            
+            with col2:
+                if st.form_submit_button("🔄 Play Again" if st.session_state.locale == "en" else "🔄 再玩一次", use_container_width=True):
+                    st.session_state.play_current_scene = None
+                    st.session_state.play_thread_steps = []
+                    st.rerun()
+    
+    # Show saved threads
+    if project.threads:
+        st.divider()
+        st.subheader(f"📚 Saved Threads ({len(project.threads)})" if st.session_state.locale == "en" else f"📚 已保存的故事线 ({len(project.threads)})")
+        
+        for thread_id, thread in list(project.threads.items())[:5]:  # Show first 5
+            with st.expander(f"📖 {thread.name} ({len(thread.steps)} steps)"):
+                if thread.description:
+                    st.caption(thread.description)
+                
+                st.write("**Path:**" if st.session_state.locale == "en" else "**路径：**")
+                for i, step in enumerate(thread.steps):
+                    scene = project.scenes.get(step.sceneId)
+                    if scene:
+                        st.text(f"{i+1}. {scene.title}")
+                
+                if st.button("🗑️ Delete" if st.session_state.locale == "en" else "🗑️ 删除", key=f"del_thread_{thread_id}"):
+                    del project.threads[thread_id]
+                    project_service = st.session_state.project_service
+                    project_service.save_project(project)
+                    st.rerun()

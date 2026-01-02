@@ -29,6 +29,8 @@ story_graph.db
 .streamlit/secrets.toml
 
 # Vector stores
+.chromadb/
+.vectordb/
 vector_store/
 *.faiss
 *.index

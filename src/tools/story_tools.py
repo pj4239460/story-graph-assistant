@@ -77,13 +77,13 @@ class GetCharacterByNameTool(BaseTool):
         """Get character by name"""
         name_lower = name.lower()
         
-        for char in self.project.characters:
+        for char in self.project.characters.values():
             if (char.name.lower() == name_lower or 
-                any(alias.lower() == name_lower for alias in char.aliases)):
+                (char.alias and char.alias.lower() == name_lower)):
                 
                 result = f"Character: {char.name}\n"
-                if char.aliases:
-                    result += f"Aliases: {', '.join(char.aliases)}\n"
+                if char.alias:
+                    result += f"Alias: {char.alias}\n"
                 if char.description:
                     result += f"\nDescription:\n{char.description}\n"
                 if char.traits:
@@ -131,7 +131,7 @@ class GetAllScenesTool(BaseTool):
         
         # Group by chapter
         chapters = {}
-        for scene in self.project.scenes:
+        for scene in self.project.scenes.values():
             chapter = scene.chapter or "No Chapter"
             if chapter not in chapters:
                 chapters[chapter] = []
@@ -179,7 +179,7 @@ class GetSceneByIdTool(BaseTool):
     
     def execute(self, scene_id: str, **kwargs) -> str:
         """Get scene by ID"""
-        for scene in self.project.scenes:
+        for scene in self.project.scenes.values():
             if scene.id == scene_id:
                 result = f"Scene: {scene.title}\n"
                 result += f"ID: {scene.id}\n"
@@ -234,7 +234,7 @@ class SearchScenesTool(BaseTool):
         keyword_lower = keyword.lower()
         matching_scenes = []
         
-        for scene in self.project.scenes:
+        for scene in self.project.scenes.values():
             if (keyword_lower in scene.title.lower() or
                 (scene.summary and keyword_lower in scene.summary.lower()) or
                 (scene.body and keyword_lower in scene.body.lower()) or
@@ -283,7 +283,7 @@ class CountEndingsTool(BaseTool):
         """Count endings"""
         endings = []
         
-        for scene in self.project.scenes:
+        for scene in self.project.scenes.values():
             # A scene is an ending if it has no choices or all choices lead nowhere
             if not scene.choices or all(not choice.nextSceneId for choice in scene.choices):
                 endings.append(scene)
@@ -327,14 +327,15 @@ class GetWorldFactsTool(BaseTool):
     
     def execute(self, **kwargs) -> str:
         """Get world facts"""
-        if not self.project.worldFacts:
+        facts_list = list(self.project.worldState.facts.values()) if self.project.worldState.facts else []
+        if not facts_list:
             return "No world-building facts have been extracted yet."
         
-        result = f"World Facts ({len(self.project.worldFacts)} total):\n\n"
+        result = f"World Facts ({len(facts_list)} total):\n\n"
         
         # Group by category if available
         categorized = {}
-        for fact in self.project.worldFacts:
+        for fact in facts_list:
             category = getattr(fact, 'category', 'General')
             if category not in categorized:
                 categorized[category] = []

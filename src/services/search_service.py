@@ -146,7 +146,7 @@ class SearchService:
         """
         Generate a contextual summary for the query (for RAG context)
         
-        Returns a formatted string containing only relevant information
+        Returns a formatted string containing relevant characters, scenes, and world facts
         """
         results = self.search_relevant_content(project, query)
         
@@ -186,11 +186,31 @@ class SearchService:
                 if scene.tags:
                     context += f"Tags: {', '.join(scene.tags)}\n"
         
+        # Add world facts if they exist and are relevant
+        if project.worldState.facts:
+            # Simple keyword matching for facts (can be enhanced with vector search later)
+            relevant_facts = []
+            query_lower = query.lower()
+            for fact in project.worldState.facts.values():
+                if any(word in fact.content.lower() for word in query_lower.split() if len(word) > 2):
+                    relevant_facts.append(fact)
+            
+            if relevant_facts:
+                context += "\n=== WORLD FACTS & LORE ===\n"
+                for fact in relevant_facts[:5]:  # Limit to top 5 facts
+                    context += f"\n- {fact.content}"
+                    if fact.category:
+                        context += f" [{fact.category}]"
+                    if fact.sourceSceneId:
+                        context += f" (from scene: {fact.sourceSceneId})"
+                    context += "\n"
+        
         # If nothing matched, provide a general summary
-        if not results["characters"] and not results["scenes"]:
+        if not results["characters"] and not results["scenes"] and not project.worldState.facts:
             context += "\n=== GENERAL PROJECT INFO ===\n"
             context += f"Total Characters: {len(project.characters)}\n"
             context += f"Total Scenes: {len(project.scenes)}\n"
+            context += f"Total World Facts: {len(project.worldState.facts)}\n"
             context += "\nNote: No specific matches found for your query. You may want to be more specific.\n"
         
         return context
