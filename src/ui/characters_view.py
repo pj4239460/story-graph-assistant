@@ -2,6 +2,7 @@
 Characters management view
 """
 import streamlit as st
+from ..services.state_service import StateService
 
 
 def render_characters_view():
@@ -164,3 +165,158 @@ def render_characters_view():
                         if cancelled:
                             st.session_state[f"editing_char_{character.id}"] = False
                             st.rerun()
+    
+    # ===== NEW: Dynamic State Viewer =====
+    st.divider()
+    with st.expander("🔮 Dynamic State Viewer - See Character States at Any Point" if st.session_state.locale == "en" else "🔮 动态状态查看器 - 查看任意时间点的角色状态", expanded=False):
+        render_state_viewer(project, i18n)
+
+
+def render_state_viewer(project, i18n):
+    """Render dynamic state viewer for saved threads"""
+    if not project.threads:
+        st.info("No saved story threads yet. Use Play Path mode in Routes to create threads!" if st.session_state.locale == "en" else "还没有保存的故事线。请在路线图的路径试玩模式中创建故事线！")
+        return
+    
+    st.caption("Select a saved thread and step to view character states at that point" if st.session_state.locale == "en" else "选择一个已保存的故事线和步骤，查看该时间点的角色状态")
+    
+    # Thread selection
+    thread_options = {tid: thread.name for tid, thread in project.threads.items()}
+    selected_thread_id = st.selectbox(
+        "Story Thread" if st.session_state.locale == "en" else "故事线",
+        options=list(thread_options.keys()),
+        format_func=lambda x: f"{thread_options[x]} ({len(project.threads[x].steps)} steps)"
+    )
+    
+    if not selected_thread_id:
+        return
+    
+    thread = project.threads[selected_thread_id]
+    
+    # Step selection
+    step_options = {}
+    for i, step in enumerate(thread.steps):
+        scene = project.scenes.get(step.sceneId)
+        step_label = f"Step {i+1}: {scene.title if scene else step.sceneId}"
+        step_options[i] = step_label
+    
+    selected_step = st.selectbox(
+        "Time Point (Step)" if st.session_state.locale == "en" else "时间点（步骤）",
+        options=list(step_options.keys()),
+        format_func=lambda x: step_options[x]
+    )
+    
+    if selected_step is None:
+        return
+    
+    # Compute state at this point
+    state_service = StateService()
+    
+    try:
+        world_state, char_states, rel_states = state_service.compute_state(
+            project, 
+            selected_thread_id, 
+            selected_step
+        )
+        
+        st.divider()
+        st.subheader(f"📊 State at {step_options[selected_step]}" if st.session_state.locale == "en" else f"📊 {step_options[selected_step]} 的状态")
+        
+        # Character states
+        if char_states:
+            st.markdown("### 👤 Character States" if st.session_state.locale == "en" else "### 👤 角色状态")
+            
+            for char_id, state in char_states.items():
+                char = project.characters.get(char_id)
+                if not char:
+                    continue
+                
+                with st.expander(f"👤 {char.name}", expanded=len(char_states) <= 2):
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("**Basic Info**" if st.session_state.locale == "en" else "**基本信息**")
+                        if state.mood:
+                            st.write(f"😊 Mood: {state.mood}" if st.session_state.locale == "en" else f"😊 心情：{state.mood}")
+                        if state.status:
+                            st.write(f"📍 Status: {state.status}" if st.session_state.locale == "en" else f"📍 状态：{state.status}")
+                        if state.location:
+                            st.write(f"🗺️ Location: {state.location}" if st.session_state.locale == "en" else f"🗺️ 位置：{state.location}")
+                        
+                        if state.active_traits:
+                            st.markdown("**Active Traits**" if st.session_state.locale == "en" else "**当前特质**")
+                            for trait in state.active_traits:
+                                st.caption(f"  • {trait}")
+                    
+                    with col2:
+                        if state.active_goals:
+                            st.markdown("**Active Goals**" if st.session_state.locale == "en" else "**当前目标**")
+                            for goal in state.active_goals:
+                                st.caption(f"  🎯 {goal}")
+                        
+                        if state.active_fears:
+                            st.markdown("**Active Fears**" if st.session_state.locale == "en" else "**当前恐惧**")
+                            for fear in state.active_fears:
+                                st.caption(f"  😰 {fear}")
+                        
+                        if state.vars:
+                            st.markdown("**Custom Variables**" if st.session_state.locale == "en" else "**自定义变量**")
+                            for key, value in state.vars.items():
+                                st.caption(f"  `{key}`: {value}")
+        
+        # Relationship states
+        if rel_states:
+            st.markdown("### 💕 Relationship States" if st.session_state.locale == "en" else "### 💕 关系状态")
+            
+            for rel_key, rel_data in rel_states.items():
+                char_ids = rel_key.split("|")
+                char_names = []
+                for cid in char_ids:
+                    if cid in project.characters:
+                        char_names.append(project.characters[cid].name)
+                
+                if char_names:
+                    rel_name = " & ".join(char_names)
+                    with st.expander(f"💕 {rel_name}"):
+                        for key, value in rel_data.items():
+                            st.write(f"**{key}**: {value}")
+        
+        # World state
+        if world_state.vars:
+            st.markdown("### 🌍 World State" if st.session_state.locale == "en" else "### 🌍 世界状态")
+            
+            with st.expander("🌍 Global Variables" if st.session_state.locale == "en" else "🌍 全局变量", expanded=True):
+                for key, value in world_state.vars.items():
+                    st.write(f"**{key}**: `{value}`")
+        
+        # Show state diff option
+        if selected_step > 0:
+            st.divider()
+            if st.button("🔍 Show Changes Since Previous Step" if st.session_state.locale == "en" else "🔍 显示与上一步的变化"):
+                diff = state_service.diff_state(project, selected_thread_id, selected_step - 1, selected_step)
+                
+                st.markdown("### 📝 Changes" if st.session_state.locale == "en" else "### 📝 变化")
+                
+                if diff.get("characters"):
+                    st.markdown("**Character Changes:**" if st.session_state.locale == "en" else "**角色变化：**")
+                    for char_id, changes in diff["characters"].items():
+                        char = project.characters.get(char_id)
+                        if char:
+                            st.write(f"**{char.name}:**")
+                            for field, (old_val, new_val) in changes.items():
+                                st.caption(f"  • {field}: `{old_val}` → `{new_val}`")
+                
+                if diff.get("relationships"):
+                    st.markdown("**Relationship Changes:**" if st.session_state.locale == "en" else "**关系变化：**")
+                    for rel_key, changes in diff["relationships"].items():
+                        st.write(f"**{rel_key}:**")
+                        for field, (old_val, new_val) in changes.items():
+                            st.caption(f"  • {field}: `{old_val}` → `{new_val}`")
+                
+                if diff.get("world"):
+                    st.markdown("**World Changes:**" if st.session_state.locale == "en" else "**世界变化：**")
+                    for field, (old_val, new_val) in diff["world"].items():
+                        st.caption(f"  • {field}: `{old_val}` → `{new_val}`")
+    
+    except Exception as e:
+        st.error(f"Error computing state: {str(e)}" if st.session_state.locale == "en" else f"计算状态时出错：{str(e)}")

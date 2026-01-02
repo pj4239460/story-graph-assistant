@@ -48,6 +48,26 @@
       "endingType": null,
       "timeIndex": 0,
       "timeLabel": "2025年1月1日",
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "set",
+          "path": "state.mood",
+          "value": "紧张不安",
+          "reason": "初次进入神秘实验室",
+          "sourceSceneId": "scene-001"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.discovered_lab",
+          "value": true,
+          "reason": "发现了时间旅行实验室",
+          "sourceSceneId": "scene-001"
+        }
+      ],
       "worldEffects": []
     },
     "scene-002": {
@@ -76,6 +96,35 @@
       "endingType": null,
       "timeIndex": 1,
       "timeLabel": null,
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "set",
+          "path": "state.mood",
+          "value": "兴奋好奇",
+          "reason": "看到时间机器启动",
+          "sourceSceneId": "scene-002"
+        },
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "traits",
+          "value": "冒险精神",
+          "reason": "愿意尝试时间旅行",
+          "sourceSceneId": "scene-002"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.machine_activated",
+          "value": true,
+          "reason": "时间机器已启动",
+          "sourceSceneId": "scene-002"
+        }
+      ],
       "worldEffects": []
     },
     "scene-003": {
@@ -104,6 +153,44 @@
       "endingType": null,
       "timeIndex": 1,
       "timeLabel": null,
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "set",
+          "path": "state.mood",
+          "value": "震惊困惑",
+          "reason": "发现教授的警告和神秘信息",
+          "sourceSceneId": "scene-003"
+        },
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "goals",
+          "value": "找出1955年发生了什么",
+          "reason": "日志中提到1955年的秘密",
+          "sourceSceneId": "scene-003"
+        },
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "vars.knows_warnings",
+          "value": true,
+          "reason": "了解了时间旅行的三大警告",
+          "sourceSceneId": "scene-003"
+        },
+        {
+          "scope": "relationship",
+          "target": "char-001|char-002",
+          "op": "set",
+          "path": "curiosity",
+          "value": 10,
+          "reason": "李明对史密斯教授更加好奇",
+          "sourceSceneId": "scene-003"
+        }
+      ],
       "worldEffects": []
     }
   },
@@ -134,7 +221,8 @@
   "events": {},
   "worldState": {
     "facts": {},
-    "history": []
+    "vars": {},
+    "relations": {}
   },
   "threads": {}
 }

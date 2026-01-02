@@ -48,7 +48,26 @@
       "endingType": null,
       "timeIndex": 0,
       "timeLabel": "January 1, 2025",
-      "worldEffects": []
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "set",
+          "path": "mood",
+          "value": "nervous",
+          "reason": "Entering mysterious abandoned laboratory",
+          "sourceSceneId": "scene-001"
+        },
+        {
+          "scope": "world",
+          "target": "global",
+          "op": "set",
+          "path": "vars.discovered_lab",
+          "value": true,
+          "reason": "Player discovers the hidden laboratory",
+          "sourceSceneId": "scene-001"
+        }
+      ]
     },
     "scene-002": {
       "id": "scene-002",
@@ -76,7 +95,35 @@
       "endingType": null,
       "timeIndex": 1,
       "timeLabel": null,
-      "worldEffects": []
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "set",
+          "path": "mood",
+          "value": "excited",
+          "reason": "Time machine activated, adventure begins",
+          "sourceSceneId": "scene-002"
+        },
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "traits",
+          "value": "adventurous",
+          "reason": "Gains courage to operate unknown machine",
+          "sourceSceneId": "scene-002"
+        },
+        {
+          "scope": "world",
+          "target": "global",
+          "op": "set",
+          "path": "vars.machine_activated",
+          "value": true,
+          "reason": "Time machine powered on for first time",
+          "sourceSceneId": "scene-002"
+        }
+      ]
     },
     "scene-003": {
       "id": "scene-003",
@@ -104,7 +151,44 @@
       "endingType": null,
       "timeIndex": 1,
       "timeLabel": null,
-      "worldEffects": []
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "set",
+          "path": "mood",
+          "value": "shocked",
+          "reason": "Discovers disturbing warnings in journal",
+          "sourceSceneId": "scene-003"
+        },
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "goals",
+          "value": "Find out what happened in 1955",
+          "reason": "Journal mentions mysterious 1955 event",
+          "sourceSceneId": "scene-003"
+        },
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "set",
+          "path": "vars.knows_warnings",
+          "value": true,
+          "reason": "Read Professor Smith's time travel warnings",
+          "sourceSceneId": "scene-003"
+        },
+        {
+          "scope": "relationship",
+          "target": "char-001|char-002",
+          "op": "set",
+          "path": "curiosity",
+          "value": 10,
+          "reason": "Alex becomes fascinated by mysterious Professor Smith",
+          "sourceSceneId": "scene-003"
+        }
+      ]
     }
   },
   "characters": {
@@ -134,7 +218,8 @@
   "events": {},
   "worldState": {
     "facts": {},
-    "history": []
+    "vars": {},
+    "relations": {}
   },
   "threads": {}
 }

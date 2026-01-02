@@ -1,21 +1,28 @@
 """
 Data models
 """
+from .world import WorldState, StoryThread, ThreadStep, WorldEffect, Effect, WorldFact
 from .scene import Scene, Choice
-from .character import Character, Relationship, CharacterTimelineItem
+from .character import Character, Relationship, CharacterTimelineItem, CharacterState
 from .event import Event
-from .world import WorldState, StoryThread, ThreadStep, WorldEffect
 from .ai import AISettings, TokenStats
 from .project import Project
+
+# Rebuild models to resolve forward references
+Scene.model_rebuild()
+Project.model_rebuild()
 
 __all__ = [
     "Scene",
     "Choice",
     "Character",
+    "CharacterState",
     "Relationship",
     "CharacterTimelineItem",
     "Event",
     "WorldState",
+    "WorldFact",
+    "Effect",
     "StoryThread",
     "ThreadStep",
     "WorldEffect",

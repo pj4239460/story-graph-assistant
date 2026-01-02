@@ -9,7 +9,163 @@ from streamlit_flow.elements import StreamlitFlowNode, StreamlitFlowEdge
 from streamlit_flow.state import StreamlitFlowState
 from streamlit_flow.layouts import TreeLayout, ManualLayout
 
-from ..models.world import StoryThread, ThreadStep
+from ..models.world import StoryThread, ThreadStep, Effect
+
+
+def render_effects_editor(scene, project, scene_service, i18n):
+    """Render Effects editor for a scene"""
+    st.subheader("⚡ Dynamic Effects" if st.session_state.locale == "en" else "⚡ 动态效果")
+    st.caption("Define how this scene changes character/relationship/world state" if st.session_state.locale == "en" else "定义这个场景如何改变角色/关系/世界状态")
+    
+    # Display existing effects
+    if scene.effects:
+        for i, effect in enumerate(scene.effects):
+            with st.expander(f"Effect {i+1}: {effect.scope} → {effect.target} ({effect.op} {effect.path})"):
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    st.write(f"**Scope:** {effect.scope}")
+                    st.write(f"**Target:** {effect.target}")
+                    st.write(f"**Operation:** {effect.op}")
+                    st.write(f"**Path:** {effect.path}")
+                    st.write(f"**Value:** {effect.value}")
+                    if effect.reason:
+                        st.caption(f"Reason: {effect.reason}")
+                with col2:
+                    if st.button("🗑️", key=f"del_effect_{scene.id}_{i}"):
+                        scene.effects.pop(i)
+                        scene_service.update_scene(project, scene.id, effects=scene.effects)
+                        st.success("Effect deleted!" if st.session_state.locale == "en" else "效果已删除！")
+                        st.rerun()
+    else:
+        st.info("No effects defined yet. Add effects to make this scene change character states!" if st.session_state.locale == "en" else "尚未定义效果。添加效果来让这个场景改变角色状态！")
+    
+    # Add new effect
+    if st.button("➕ Add Effect" if st.session_state.locale == "en" else "➕ 添加效果", key=f"add_effect_btn_{scene.id}"):
+        st.session_state[f"adding_effect_{scene.id}"] = True
+        st.rerun()
+    
+    if st.session_state.get(f"adding_effect_{scene.id}", False):
+        with st.form(f"add_effect_form_{scene.id}"):
+            st.caption("➕ Add New Effect" if st.session_state.locale == "en" else "➕ 添加新效果")
+            
+            scope = st.selectbox(
+                "Scope" if st.session_state.locale == "en" else "作用域",
+                ["character", "relationship", "world"],
+                help="What this effect modifies" if st.session_state.locale == "en" else "这个效果修改什么"
+            )
+            
+            # Target selection based on scope
+            if scope == "character":
+                char_options = {c.id: c.name for c in project.characters.values()}
+                if char_options:
+                    target = st.selectbox(
+                        "Target Character" if st.session_state.locale == "en" else "目标角色",
+                        options=list(char_options.keys()),
+                        format_func=lambda x: char_options[x]
+                    )
+                else:
+                    st.warning("No characters available. Create characters first!" if st.session_state.locale == "en" else "没有可用角色。请先创建角色！")
+                    target = st.text_input("Target Character ID" if st.session_state.locale == "en" else "目标角色ID")
+            
+            elif scope == "relationship":
+                char_list = list(project.characters.values())
+                if len(char_list) >= 2:
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        char_a = st.selectbox(
+                            "Character A" if st.session_state.locale == "en" else "角色A",
+                            options=[c.id for c in char_list],
+                            format_func=lambda x: project.characters[x].name
+                        )
+                    with col2:
+                        char_b = st.selectbox(
+                            "Character B" if st.session_state.locale == "en" else "角色B",
+                            options=[c.id for c in char_list if c.id != char_a],
+                            format_func=lambda x: project.characters[x].name
+                        )
+                    target = f"{char_a}|{char_b}"
+                else:
+                    st.warning("Need at least 2 characters for relationship effects!" if st.session_state.locale == "en" else "关系效果需要至少2个角色！")
+                    target = st.text_input("Target (e.g., alice|bob)" if st.session_state.locale == "en" else "目标（例如：alice|bob）")
+            
+            else:  # world
+                target = "world"
+                st.info("World scope affects global variables" if st.session_state.locale == "en" else "世界作用域影响全局变量")
+            
+            op = st.selectbox(
+                "Operation" if st.session_state.locale == "en" else "操作",
+                ["set", "add", "remove", "merge"],
+                help="set=replace, add=append/increment, remove=delete, merge=deep merge" if st.session_state.locale == "en" else "set=替换，add=追加/增加，remove=删除，merge=深度合并"
+            )
+            
+            # Path suggestions based on scope
+            if scope == "character":
+                path_suggestions = ["mood", "status", "location", "traits", "goals", "fears", "vars.trust_level", "vars.secret_known"]
+            elif scope == "relationship":
+                path_suggestions = ["trust", "status", "intimacy"]
+            else:
+                path_suggestions = ["vars.flag_name", "vars.counter"]
+            
+            path = st.selectbox(
+                "Path" if st.session_state.locale == "en" else "路径",
+                options=["custom"] + path_suggestions,
+                help="Dot notation path to the property" if st.session_state.locale == "en" else "属性的点记法路径"
+            )
+            
+            if path == "custom":
+                path = st.text_input(
+                    "Custom Path" if st.session_state.locale == "en" else "自定义路径",
+                    placeholder="state.mood" if scope == "character" else "vars.my_variable"
+                )
+            
+            value = st.text_input(
+                "Value" if st.session_state.locale == "en" else "值",
+                help="The value to set/add/remove. For numbers, will be converted automatically." if st.session_state.locale == "en" else "要设置/添加/删除的值。数字会自动转换。"
+            )
+            
+            reason = st.text_input(
+                "Reason (optional)" if st.session_state.locale == "en" else "原因（可选）",
+                placeholder="Alice becomes paranoid after seeing the lab" if st.session_state.locale == "en" else "Alice在看到实验室后变得偏执"
+            )
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                add_submitted = st.form_submit_button("💾 Add Effect" if st.session_state.locale == "en" else "💾 添加效果", use_container_width=True)
+            with col2:
+                add_cancelled = st.form_submit_button("Cancel" if st.session_state.locale == "en" else "取消", use_container_width=True)
+            
+            if add_submitted and path and value:
+                # Convert value type
+                converted_value = value
+                try:
+                    if value.lower() in ['true', 'false']:
+                        converted_value = value.lower() == 'true'
+                    elif value.replace('-', '').replace('.', '').isdigit():
+                        converted_value = float(value) if '.' in value else int(value)
+                except:
+                    pass  # Keep as string
+                
+                # Create new effect
+                new_effect = Effect(
+                    scope=scope,
+                    target=target,
+                    op=op,
+                    path=path,
+                    value=converted_value,
+                    reason=reason if reason else None,
+                    sourceSceneId=scene.id
+                )
+                
+                scene.effects.append(new_effect)
+                scene_service.update_scene(project, scene.id, effects=scene.effects)
+                
+                st.session_state[f"adding_effect_{scene.id}"] = False
+                st.success("✅ Effect added!" if st.session_state.locale == "en" else "✅ 效果已添加！")
+                st.rerun()
+            
+            if add_cancelled:
+                st.session_state[f"adding_effect_{scene.id}"] = False
+                st.rerun()
 
 
 def calculate_layout(nodes, edges, layout_type="Tree", direction="down"):
@@ -430,6 +586,15 @@ def render_routes_view():
                         st.session_state[f"adding_choice_{scene.id}"] = True
                         st.rerun()
                     
+                    # Display effects (read-only in view mode)
+                    if scene.effects:
+                        st.markdown("**⚡ " + ("Dynamic Effects" if st.session_state.locale == "en" else "动态效果") + "**")
+                        for i, effect in enumerate(scene.effects):
+                            effect_desc = f"{effect.scope} → {effect.target}: {effect.op} {effect.path} = {effect.value}"
+                            st.caption(f"{i+1}. {effect_desc}")
+                            if effect.reason:
+                                st.caption(f"   ↳ {effect.reason}")
+                    
                     # Add choice form
                     if st.session_state.get(f"adding_choice_{scene.id}", False):
                         with st.form(f"add_choice_form_{scene.id}"):
@@ -516,6 +681,10 @@ def render_routes_view():
                         if cancelled:
                             st.session_state[f"editing_scene_{scene.id}"] = False
                             st.rerun()
+                    
+                    # Effects Management (outside form)
+                    st.divider()
+                    render_effects_editor(scene, project, scene_service, i18n)
     
     # Interactive Flow Visualization
     if scenes:
@@ -778,6 +947,30 @@ def render_play_path_mode(project, scene_service, i18n):
     if current_scene.body:
         with st.container(border=True):
             st.markdown(current_scene.body)
+    
+    # Show state changes from this scene's effects
+    if current_scene.effects:
+        st.divider()
+        with st.expander(f"⚡ State Changes in This Scene ({len(current_scene.effects)})" if st.session_state.locale == "en" else f"⚡ 本场景的状态变化 ({len(current_scene.effects)})", expanded=False):
+            for effect in current_scene.effects:
+                icon = "👤" if effect.scope == "character" else ("💕" if effect.scope == "relationship" else "🌍")
+                target_name = effect.target
+                
+                # Get character name if available
+                if effect.scope == "character" and effect.target in project.characters:
+                    target_name = project.characters[effect.target].name
+                elif effect.scope == "relationship" and "|" in effect.target:
+                    char_ids = effect.target.split("|")
+                    names = []
+                    for cid in char_ids:
+                        if cid in project.characters:
+                            names.append(project.characters[cid].name)
+                    if names:
+                        target_name = " & ".join(names)
+                
+                st.markdown(f"{icon} **{target_name}**: {effect.path} → `{effect.value}` ({effect.op})")
+                if effect.reason:
+                    st.caption(f"  ↳ {effect.reason}")
     
     st.divider()
     

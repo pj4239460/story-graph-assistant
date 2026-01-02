@@ -124,11 +124,11 @@ class StateService:
         path_parts = effect.path.split('.')
         
         # Simple path resolution for common cases
-        if effect.path == "state.mood":
+        if effect.path in ["mood", "state.mood"]:
             char_state.mood = effect.value if effect.op == "set" else char_state.mood
-        elif effect.path == "state.status":
+        elif effect.path in ["status", "state.status"]:
             char_state.status = effect.value if effect.op == "set" else char_state.status
-        elif effect.path == "state.location":
+        elif effect.path in ["location", "state.location"]:
             char_state.location = effect.value if effect.op == "set" else char_state.location
         elif effect.path == "traits":
             if effect.op == "add" and effect.value not in char_state.active_traits:

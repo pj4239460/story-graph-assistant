@@ -2,8 +2,11 @@
 Scene data models
 """
 from __future__ import annotations
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 from pydantic import BaseModel, field_validator
+
+if TYPE_CHECKING:
+    from .world import Effect
 
 
 class Choice(BaseModel):
