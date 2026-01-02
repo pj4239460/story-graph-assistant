@@ -21,9 +21,14 @@ A powerful tool for narrative game developers to manage complex branching storie
 - ✏️ **Full Editing Support** - Edit scenes, characters, and choices with inline forms
 - 📋 **Scene Checkup Panel** - AI-powered comprehensive scene analysis with caching
 - 👥 **Character Management** - Centralized profiles and relationships
+- ⚡ **Dynamic Character States** - Effect-based state mutation system with temporal replay
+  - Define Effects to change character mood, traits, goals, relationships, and world variables
+  - Play Path mode shows real-time state changes as story progresses
+  - State Viewer shows complete character state at any point in saved threads
+  - AI agent tools for querying character states and relationships
 - 🤖 **AI Agent Assistant** - LangGraph-powered conversational queries with FAISS semantic search
 - 🅱️ **Multi-LLM Support** - Works with DeepSeek, OpenAI, Anthropic, Google, local models via LiteLLM
-- 📚 **Sample Projects** - One-click Chinese/English example stories
+- 📚 **Sample Projects** - One-click Chinese/English example stories with dynamic state examples
 - 🌍 **Bilingual Interface** - Full Chinese/English UI with dynamic switching
 - 💾 **Simple Storage** - JSON-based portable project files
 
@@ -71,14 +76,25 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [x] Semantic similarity search with 384-dim embeddings
 - [x] Auto-indexing on project load
 - [x] Multi-LLM support with model selection UI
-- [ ] Character arc analysis
-- [ ] Route analysis
-- [ ] Emotional pacing
 
-**v2.0 - World Simulation**
-- [ ] WorldState & StoryThread
+**v1.5 - Dynamic Character States** ✅
+- [x] Effect model with scope/target/operation/path/value structure
+- [x] StateService for temporal state computation and replay
+- [x] Character state tracking (mood, status, traits, goals, fears, custom vars)
+- [x] Relationship state tracking
+- [x] World state tracking (global variables)
+- [x] Effects editor UI with add/edit/delete
+- [x] Play Path mode with real-time state visualization
+- [x] State Viewer for querying states at any thread step
+- [x] AI agent tools for state queries
+- [x] Example projects with Effects demonstrations
+
+**v2.0 - Advanced Analytics & Simulation**
+- [ ] Character arc analysis
+- [ ] Route analysis with state progression visualization
+- [ ] Emotional pacing analysis
 - [ ] Advanced What-if simulation
-- [ ] Consistency reports
+- [ ] Consistency reports and validation
 
 ### 📚 Documentation
 
@@ -95,9 +111,14 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - ✏️ **完整编辑功能** - 内联表单编辑场景、角色和分支选项
 - 📋 **场景体检面板** - AI 驱动的场景分析，带缓存机制
 - 👥 **角色档案管理** - 集中管理角色信息和关系
+- ⚡ **动态角色状态系统** - 基于效果（Effect）的状态变更系统，支持时序回放
+  - 定义效果来改变角色心情、特质、目标、关系和世界变量
+  - 路径试玩模式实时显示剧情推进时的状态变化
+  - 状态查看器可查询任意已保存故事线中的完整角色状态
+  - AI 代理工具支持查询角色状态和关系
 - 🤖 **AI 智能助手** - LangGraph 对话代理，支持自然语言查询，基于 FAISS 语义搜索
 - 🅱️ **多模型支持** - 通过 LiteLLM 支持 DeepSeek、OpenAI、Anthropic、Google、本地模型
-- 📚 **示例项目** - 一键加载中英文范例故事
+- 📚 **示例项目** - 一键加载中英文范例故事，包含动态状态演示
 - 🌍 **双语界面** - 完整中英文 UI，动态切换
 - 💾 **简洁存储** - 基于 JSON 的可移植项目文件
 
@@ -145,14 +166,25 @@ streamlit run src/app.py
 - [x] 384 维嵌入的语义相似度搜索
 - [x] 项目加载时自动索引
 - [x] 多模型支持和模型选择 UI
-- [ ] 角色弧分析
-- [ ] 路线分析
-- [ ] 情感节奏分析
 
-**v2.0 - 世界模拟**
-- [ ] WorldState 和 StoryThread
+**v1.5 - 动态角色状态系统** ✅
+- [x] Effect 模型（作用域/目标/操作/路径/值）结构
+- [x] StateService 实现时序状态计算和回放
+- [x] 角色状态追踪（心情、状态、特质、目标、恐惧、自定义变量）
+- [x] 关系状态追踪
+- [x] 世界状态追踪（全局变量）
+- [x] 效果编辑器 UI（添加/编辑/删除）
+- [x] 路径试玩模式实时状态可视化
+- [x] 状态查看器支持查询任意故事线步骤的状态
+- [x] AI 代理状态查询工具
+- [x] 示例项目包含效果演示
+
+**v2.0 - 高级分析与模拟**
+- [ ] 角色弧分析
+- [ ] 路线分析与状态演进可视化
+- [ ] 情感节奏分析
 - [ ] 高级假设模拟
-- [ ] 一致性报告
+- [ ] 一致性报告和验证
 
 ### 📚 文档
 
