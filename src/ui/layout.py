@@ -8,6 +8,7 @@ from .routes_view import render_routes_view
 from .characters_view import render_characters_view
 from .ai_tools_view import render_ai_tools_view
 from .chat_view import render_chat_view
+from .director_view import render_director_view
 from .settings_view import render_settings_view
 
 
@@ -73,9 +74,10 @@ def render_main_layout():
     st.divider()
     
     # Tabs
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
         f"📊 {i18n.t('tabs.routes')}", 
         f"👥 {i18n.t('tabs.characters')}", 
+        f"🎬 World Director",
         f"🤖 {i18n.t('tabs.ai_tools')}",
         f"💬 {i18n.t('tabs.chat')}",
         f"⚙️ {i18n.t('tabs.settings')}"
@@ -88,12 +90,15 @@ def render_main_layout():
         render_characters_view()
     
     with tab3:
+        render_director_view()
+    
+    with tab4:
         render_ai_tools_view()
         
-    with tab4:
+    with tab5:
         render_chat_view()
         
-    with tab5:
+    with tab6:
         render_settings_view()
     
     # Footer with copyright

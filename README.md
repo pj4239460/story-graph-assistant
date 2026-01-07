@@ -1,13 +1,13 @@
 # Story Graph Assistant / 故事图谱助手
 
-> **Visual AI assistant for branching game stories.**  
-> **用图谱 + AI，捋清你的分支剧情。**
+> **Visual AI assistant for emergent game narratives.**  
+> **用 AI 导演 + 故事片段，自动演化你的游戏世界。**
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-red.svg)](https://streamlit.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-A powerful tool for narrative game developers to manage complex branching stories with AI-powered analysis and scene validation.
+A powerful tool for narrative game developers featuring **World Director** - an AI-powered system that creates emergent, replayable stories using storylets and dynamic state management.
 
 **[English](#english)** | **[中文](#中文)**
 
@@ -15,20 +15,38 @@ A powerful tool for narrative game developers to manage complex branching storie
 
 ## English
 
-### ✨ Features
+### ✨ Core Features
 
+#### 🎬 World Director (NEW!)
+Our **differentiated approach** to narrative design - move beyond manual branching and AI NPCs:
+
+- **Storylets System** - Define reusable narrative fragments with preconditions and effects
+- **Quality-Based Narrative (QBN)** - Story emerges from state + rules, not manual branching
+- **AI Director Pacing** - Automatic intensity control with peaks-and-valleys (inspired by Left 4 Dead)
+- **Deterministic Selection** - Same state + config = same result (fully reproducible)
+- **Explainable Decisions** - Every world tick includes human-readable rationale
+- **Replayable History** - Complete tick-by-tick record with state diffs
+
+#### 📝 Story Building
 - 🌳 **Interactive Story Graph** - Drag-and-drop visualization with multiple layouts
 - ✏️ **Full Editing Support** - Edit scenes, characters, and choices with inline forms
 - 📋 **Scene Checkup Panel** - AI-powered comprehensive scene analysis with caching
 - 👥 **Character Management** - Centralized profiles and relationships
-- ⚡ **Dynamic Character States** - Effect-based state mutation system with temporal replay
-  - Define Effects to change character mood, traits, goals, relationships, and world variables
-  - Play Path mode shows real-time state changes as story progresses
-  - State Viewer shows complete character state at any point in saved threads
-  - AI agent tools for querying character states and relationships
-- 🤖 **AI Agent Assistant** - LangGraph-powered conversational queries with FAISS semantic search
-- 🅱️ **Multi-LLM Support** - Works with DeepSeek, OpenAI, Anthropic, Google, local models via LiteLLM
-- 📚 **Sample Projects** - One-click Chinese/English example stories with dynamic state examples
+
+#### ⚡ Dynamic States
+- **Effect-Based Mutations** - Define character/world/relationship changes
+- **Play Path Mode** - Real-time state visualization as story progresses
+- **State Viewer** - Query complete state at any point in saved threads
+- **Temporal Replay** - Rewind and replay state changes
+
+#### 🤖 AI Integration
+- **Multi-LLM Support** - DeepSeek, OpenAI, Anthropic, Google, Ollama
+- **AI Agent Assistant** - LangGraph-powered conversational queries
+- **FAISS Semantic Search** - Vector-based scene retrieval
+- **AI Agent Tools** - Query character states and relationships
+
+#### 🌍 Other Features
+- 📚 **Sample Projects** - Example projects with World Director demonstrations
 - 🌍 **Bilingual Interface** - Full Chinese/English UI with dynamic switching
 - 💾 **Simple Storage** - JSON-based portable project files
 
@@ -55,11 +73,19 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 
 ### 📖 Usage
 
+#### Traditional Story Building
 1. **Try Samples** - Click 🇨🇳/🇺🇸 buttons in sidebar for example projects
 2. **Create Project** - Click ➕ New to start your story
 3. **Add Scenes** - Build your story graph with scenes and choices
 4. **AI Analysis** - Click nodes to view Scene Checkup with AI insights
 5. **Chat** - Ask AI questions about your story in natural language
+
+#### World Director (Emergent Narratives)
+1. **Load Example** - Try "Town of Riverhaven" faction politics example
+2. **View Storylets** - See 20 pre-defined narrative fragments in World Director tab
+3. **Configure Director** - Set events/tick, pacing preference, diversity penalty
+4. **Run Tick** - Watch the Director select and trigger storylets based on state
+5. **Review History** - Explore tick-by-tick evolution with complete rationale
 
 ### 🏗️ Tech Stack
 
@@ -67,7 +93,7 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - **LangGraph** - AI agent orchestration
 - **LiteLLM** - Multi-provider LLM routing (DeepSeek, OpenAI, Anthropic, Google, Ollama)
 - **FAISS** - Vector search (CPU-optimized)
-- **Pydantic** - Data validation
+- **Pydantic V2** - Data validation and serialization
 
 ### 🛣️ Roadmap
 
@@ -89,12 +115,26 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [x] AI agent tools for state queries
 - [x] Example projects with Effects demonstrations
 
-**v2.0 - Advanced Analytics & Simulation**
-- [ ] Character arc analysis
-- [ ] Route analysis with state progression visualization
-- [ ] Emotional pacing analysis
-- [ ] Advanced What-if simulation
-- [ ] Consistency reports and validation
+**v1.6 - World Director (MVP)** ✅
+- [x] Storylet data model (preconditions + effects + metadata)
+- [x] ConditionsEvaluator (deterministic condition checking)
+- [x] DirectorService (multi-stage selection pipeline)
+- [x] World Director UI (tick controls, history, visualization)
+- [x] Town of Riverhaven example (20 storylets, faction politics)
+- [x] Comprehensive test suite (13 tests, 35+ assertions)
+
+**v1.7 - Director Enhancements** (Next - 1-2 weeks)
+- [ ] Tick timeline navigation (prev/next, visual timeline)
+- [ ] Enhanced parameter tuning (presets, real-time tooltips)
+- [ ] Export capabilities (JSON, Markdown reports, statistics)
+- [ ] Visual intensity/pacing graphs
+
+**v2.0 - Integration & Advanced Features** (Future - 1-2 months)
+- [ ] Generate scene drafts from tick results
+- [ ] Advanced what-if simulation (compare different configs)
+- [ ] Storylet design assistant (AI-suggested preconditions/effects)
+- [ ] Visual storylet editor (graph-based condition builder)
+- [ ] Multi-actor simulation (parallel character decisions)
 
 ### 📚 Documentation
 

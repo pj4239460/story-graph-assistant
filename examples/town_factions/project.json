@@ -1,0 +1,1000 @@
+{
+  "id": "town-factions",
+  "name": "Town of Riverhaven - Faction Politics",
+  "locale": "en",
+  "createdAt": "2026-01-08T00:00:00.000Z",
+  "updatedAt": "2026-01-08T00:00:00.000Z",
+  "aiSettings": {
+    "provider": "deepseek",
+    "modelExtraction": "deepseek/deepseek-chat",
+    "modelOOC": "deepseek/deepseek-chat",
+    "modelWhatIf": "deepseek/deepseek-reasoner",
+    "maxTokensPerCall": 2000,
+    "worldSimEnabled": true,
+    "worldSimMaxTokensPerRun": 3000,
+    "projectTokenLimit": 50000,
+    "dailyTokenSoftLimit": 8000
+  },
+  "tokenStats": {
+    "projectUsed": 0,
+    "todayUsed": 0,
+    "byFeature": {},
+    "todayDate": ""
+  },
+  "scenes": {
+    "scene-001": {
+      "id": "scene-001",
+      "title": "Arriving at Riverhaven",
+      "body": "You arrive at the bustling town of Riverhaven, a crossroads of trade and intrigue. Three major factions compete for influence here:\n\n**The Merchants' Guild** controls most commerce, led by the shrewd Guildmaster Aldric. They value profit and stability above all.\n\n**The People's Assembly** represents the common folk, championed by the fiery orator Maya Chen. They demand fair treatment and voice in governance.\n\n**The Ironwatch Guard** maintains order, commanded by the stern Captain Thorne. They prioritize security and the rule of law.\n\nYour presence here will not go unnoticed...",
+      "summary": null,
+      "chapter": "Arrival",
+      "tags": ["opening", "introduction"],
+      "participants": ["char-001"],
+      "choices": [
+        {
+          "id": "choice-001",
+          "text": "Visit the Market District",
+          "targetSceneId": "scene-002",
+          "conditions": []
+        },
+        {
+          "id": "choice-002",
+          "text": "Attend the Assembly Hall",
+          "targetSceneId": "scene-003",
+          "conditions": []
+        }
+      ],
+      "isEnding": false,
+      "endingType": null,
+      "timeIndex": 0,
+      "timeLabel": "Day 1",
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.day",
+          "value": 1,
+          "reason": "Start of simulation",
+          "sourceSceneId": "scene-001"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 60,
+          "reason": "Initial faction power",
+          "sourceSceneId": "scene-001"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.assembly_power",
+          "value": 40,
+          "reason": "Initial faction power",
+          "sourceSceneId": "scene-001"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.guard_power",
+          "value": 50,
+          "reason": "Initial faction power",
+          "sourceSceneId": "scene-001"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 70,
+          "reason": "Initial peace level",
+          "sourceSceneId": "scene-001"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 50,
+          "reason": "Neutral starting sentiment",
+          "sourceSceneId": "scene-001"
+        }
+      ]
+    },
+    "scene-002": {
+      "id": "scene-002",
+      "title": "Market District Encounter",
+      "body": "The Market District bustles with activity. Merchants hawk their wares, guards patrol the streets, and common folk go about their business. You sense tension in the air - recent price increases have angered many citizens.",
+      "summary": null,
+      "chapter": "Arrival",
+      "tags": ["market", "merchants"],
+      "participants": ["char-001", "char-002"],
+      "choices": [],
+      "isEnding": false,
+      "endingType": null,
+      "timeIndex": 1,
+      "timeLabel": null,
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "traits",
+          "value": "observant",
+          "reason": "Notices market tensions",
+          "sourceSceneId": "scene-002"
+        }
+      ]
+    },
+    "scene-003": {
+      "id": "scene-003",
+      "title": "Assembly Hall Gathering",
+      "body": "The Assembly Hall is filled with citizens voicing their grievances. Maya Chen stands at the podium, her words electrifying the crowd:\n\n\"Too long have we been silent while the merchants profit and the guards impose curfews! We demand representation! We demand justice!\"\n\nThe crowd roars in approval.",
+      "summary": null,
+      "chapter": "Arrival",
+      "tags": ["assembly", "politics"],
+      "participants": ["char-001", "char-003"],
+      "choices": [],
+      "isEnding": false,
+      "endingType": null,
+      "timeIndex": 1,
+      "timeLabel": null,
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "goals",
+          "value": "Understand the factional conflict",
+          "reason": "Witnesses political unrest",
+          "sourceSceneId": "scene-003"
+        }
+      ]
+    }
+  },
+  "characters": {
+    "char-001": {
+      "id": "char-001",
+      "name": "You",
+      "alias": "The Outsider",
+      "description": "A newcomer to Riverhaven, with no allegiance yet to any faction.",
+      "traits": ["neutral", "curious"],
+      "goals": ["Survive in Riverhaven", "Make a name for yourself"],
+      "fears": ["getting caught in factional violence"],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-002": {
+      "id": "char-002",
+      "name": "Guildmaster Aldric",
+      "alias": "The Merchant Prince",
+      "description": "Leader of the Merchants' Guild. Calculating, wealthy, and influential.",
+      "traits": ["shrewd", "pragmatic", "ambitious"],
+      "goals": ["Maximize guild profits", "Expand merchant influence"],
+      "fears": ["economic collapse", "losing control"],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-003": {
+      "id": "char-003",
+      "name": "Maya Chen",
+      "alias": "Voice of the People",
+      "description": "Charismatic leader of the People's Assembly. Passionate advocate for the common folk.",
+      "traits": ["charismatic", "passionate", "determined"],
+      "goals": ["Achieve political representation", "Improve living conditions"],
+      "fears": ["violent suppression", "losing popular support"],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-004": {
+      "id": "char-004",
+      "name": "Captain Thorne",
+      "alias": "The Iron Commander",
+      "description": "Commander of the Ironwatch Guard. Strict adherent to law and order.",
+      "traits": ["disciplined", "authoritarian", "dutiful"],
+      "goals": ["Maintain public order", "Enforce the law"],
+      "fears": ["civil unrest", "appearing weak"],
+      "relationships": [],
+      "timeline": []
+    }
+  },
+  "events": {},
+  "worldState": {
+    "facts": {},
+    "vars": {},
+    "relations": {}
+  },
+  "threads": {},
+  "storylets": {
+    "st-trade-boom": {
+      "id": "st-trade-boom",
+      "title": "Merchants Strike Gold",
+      "description": "A lucrative trade deal benefits the Merchants' Guild.",
+      "tags": ["economic", "merchants", "positive"],
+      "preconditions": [
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">=",
+          "value": 40
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 65,
+          "reason": "Successful trade deal increases merchant influence"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 45,
+          "reason": "Common folk resentful of merchant wealth"
+        }
+      ],
+      "weight": 1.2,
+      "cooldown": 3,
+      "once": false,
+      "intensity_delta": 0.05
+    },
+    "st-price-protest": {
+      "id": "st-price-protest",
+      "title": "Market Price Protests",
+      "description": "Citizens protest rising food prices in the market.",
+      "tags": ["conflict", "assembly", "economic"],
+      "preconditions": [
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">",
+          "value": 55
+        },
+        {
+          "path": "world.vars.public_sentiment",
+          "op": "<",
+          "value": 55
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.assembly_power",
+          "value": 45,
+          "reason": "Protest boosts Assembly's popular support"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 60,
+          "reason": "Tensions reduce market tranquility"
+        }
+      ],
+      "weight": 1.5,
+      "cooldown": 2,
+      "once": false,
+      "intensity_delta": 0.15
+    },
+    "st-guard-crackdown": {
+      "id": "st-guard-crackdown",
+      "title": "Ironwatch Crackdown",
+      "description": "Guards impose strict curfews and arrest protesters.",
+      "tags": ["conflict", "guard", "authoritarian"],
+      "preconditions": [
+        {
+          "path": "world.vars.market_peace",
+          "op": "<",
+          "value": 60
+        },
+        {
+          "path": "world.vars.guard_power",
+          "op": ">=",
+          "value": 45
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.guard_power",
+          "value": 55,
+          "reason": "Show of force increases guard authority"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 40,
+          "reason": "Public angered by heavy-handed tactics"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 75,
+          "reason": "Order restored by force"
+        }
+      ],
+      "weight": 1.3,
+      "cooldown": 3,
+      "once": false,
+      "intensity_delta": 0.2
+    },
+    "st-assembly-rally": {
+      "id": "st-assembly-rally",
+      "title": "People's Assembly Rally",
+      "description": "Maya Chen holds a massive rally, demanding reforms.",
+      "tags": ["politics", "assembly", "mobilization"],
+      "preconditions": [
+        {
+          "path": "world.vars.public_sentiment",
+          "op": "<",
+          "value": 50
+        },
+        {
+          "path": "world.vars.assembly_power",
+          "op": ">=",
+          "value": 35
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.assembly_power",
+          "value": 50,
+          "reason": "Rally boosts Assembly momentum"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 55,
+          "reason": "Citizens feel heard and hopeful"
+        }
+      ],
+      "weight": 1.4,
+      "cooldown": 4,
+      "once": false,
+      "intensity_delta": 0.1
+    },
+    "st-merchant-charity": {
+      "id": "st-merchant-charity",
+      "title": "Merchants' Charity Drive",
+      "description": "Guild donates food to win public favor.",
+      "tags": ["economic", "merchants", "goodwill"],
+      "preconditions": [
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">=",
+          "value": 50
+        },
+        {
+          "path": "world.vars.public_sentiment",
+          "op": "<",
+          "value": 60
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 55,
+          "reason": "Charity improves merchant reputation"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 58,
+          "reason": "Goodwill translates to influence"
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": -0.1
+    },
+    "st-tax-dispute": {
+      "id": "st-tax-dispute",
+      "title": "Tax Collection Dispute",
+      "description": "Guards and merchants clash over tax enforcement.",
+      "tags": ["conflict", "merchants", "guard"],
+      "preconditions": [
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">",
+          "value": 55
+        },
+        {
+          "path": "world.vars.guard_power",
+          "op": ">",
+          "value": 50
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 58,
+          "reason": "Merchants resist taxation"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.guard_power",
+          "value": 48,
+          "reason": "Guards lose face in standoff"
+        }
+      ],
+      "weight": 1.1,
+      "cooldown": 3,
+      "once": false,
+      "intensity_delta": 0.12
+    },
+    "st-festival-peace": {
+      "id": "st-festival-peace",
+      "title": "Harvest Festival",
+      "description": "Town-wide festival brings temporary harmony.",
+      "tags": ["cultural", "positive", "calm"],
+      "preconditions": [
+        {
+          "path": "world.vars.market_peace",
+          "op": ">=",
+          "value": 60
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 65,
+          "reason": "Festival lifts spirits"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 80,
+          "reason": "Celebrations ease tensions"
+        }
+      ],
+      "weight": 0.8,
+      "cooldown": 7,
+      "once": false,
+      "intensity_delta": -0.2
+    },
+    "st-smuggling-exposed": {
+      "id": "st-smuggling-exposed",
+      "title": "Smuggling Ring Exposed",
+      "description": "Guards uncover merchant smuggling operation.",
+      "tags": ["scandal", "merchants", "guard"],
+      "preconditions": [
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">=",
+          "value": 60
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 52,
+          "reason": "Scandal damages merchant reputation"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.guard_power",
+          "value": 55,
+          "reason": "Successful investigation boosts guard prestige"
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": 0.18
+    },
+    "st-workers-strike": {
+      "id": "st-workers-strike",
+      "title": "Dockworkers Strike",
+      "description": "Port workers refuse to unload ships, demanding better wages.",
+      "tags": ["economic", "assembly", "conflict"],
+      "preconditions": [
+        {
+          "path": "world.vars.assembly_power",
+          "op": ">=",
+          "value": 45
+        },
+        {
+          "path": "world.vars.public_sentiment",
+          "op": "<",
+          "value": 55
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 55,
+          "reason": "Strike disrupts merchant operations"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.assembly_power",
+          "value": 50,
+          "reason": "Strike demonstrates Assembly strength"
+        }
+      ],
+      "weight": 1.3,
+      "cooldown": 4,
+      "once": false,
+      "intensity_delta": 0.15
+    },
+    "st-guard-reform": {
+      "id": "st-guard-reform",
+      "title": "Guard Reform Initiative",
+      "description": "Captain Thorne implements community policing reforms.",
+      "tags": ["politics", "guard", "reform"],
+      "preconditions": [
+        {
+          "path": "world.vars.guard_power",
+          "op": ">=",
+          "value": 50
+        },
+        {
+          "path": "world.vars.public_sentiment",
+          "op": "<",
+          "value": 50
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 55,
+          "reason": "Reforms improve guard-citizen relations"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 75,
+          "reason": "Better policing reduces crime"
+        }
+      ],
+      "weight": 0.9,
+      "cooldown": 6,
+      "once": false,
+      "intensity_delta": -0.05
+    },
+    "st-fire-disaster": {
+      "id": "st-fire-disaster",
+      "title": "Warehouse Fire",
+      "description": "Major fire destroys merchant warehouses.",
+      "tags": ["disaster", "economic", "crisis"],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 50,
+          "reason": "Fire damages merchant assets"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 55,
+          "reason": "Chaos and confusion in market"
+        }
+      ],
+      "weight": 0.6,
+      "cooldown": 8,
+      "once": true,
+      "intensity_delta": 0.25
+    },
+    "st-election-call": {
+      "id": "st-election-call",
+      "title": "Call for Elections",
+      "description": "Assembly demands democratic elections for town council.",
+      "tags": ["politics", "assembly", "reform"],
+      "preconditions": [
+        {
+          "path": "world.vars.assembly_power",
+          "op": ">=",
+          "value": 55
+        },
+        {
+          "path": "world.vars.public_sentiment",
+          "op": ">=",
+          "value": 60
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.assembly_power",
+          "value": 60,
+          "reason": "Election call strengthens democratic movement"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 53,
+          "reason": "Merchants fear losing control"
+        }
+      ],
+      "weight": 1.5,
+      "cooldown": 10,
+      "once": true,
+      "intensity_delta": 0.3
+    },
+    "st-trade-embargo": {
+      "id": "st-trade-embargo",
+      "title": "Trade Embargo Threat",
+      "description": "Neighboring kingdom threatens trade embargo.",
+      "tags": ["economic", "crisis", "external"],
+      "preconditions": [
+        {
+          "path": "world.vars.merchants_power",
+          "op": "<",
+          "value": 55
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 45,
+          "reason": "Embargo threat weakens merchant position"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 45,
+          "reason": "Economic anxiety spreads"
+        }
+      ],
+      "weight": 0.7,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": 0.2
+    },
+    "st-guard-recruitment": {
+      "id": "st-guard-recruitment",
+      "title": "Guard Recruitment Drive",
+      "description": "Ironwatch recruits new members from citizenry.",
+      "tags": ["guard", "militarization"],
+      "preconditions": [
+        {
+          "path": "world.vars.guard_power",
+          "op": "<",
+          "value": 55
+        },
+        {
+          "path": "world.vars.market_peace",
+          "op": "<",
+          "value": 65
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.guard_power",
+          "value": 58,
+          "reason": "More guards increase authority"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 48,
+          "reason": "Citizens wary of militarization"
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 4,
+      "once": false,
+      "intensity_delta": 0.08
+    },
+    "st-merchant-monopoly": {
+      "id": "st-merchant-monopoly",
+      "title": "Guild Monopoly Expansion",
+      "description": "Merchants' Guild consolidates control over key industries.",
+      "tags": ["economic", "merchants", "power-grab"],
+      "preconditions": [
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">=",
+          "value": 65
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 70,
+          "reason": "Monopoly consolidates merchant dominance"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 35,
+          "reason": "Public outrage at monopolistic practices"
+        }
+      ],
+      "weight": 1.2,
+      "cooldown": 6,
+      "once": false,
+      "intensity_delta": 0.22
+    },
+    "st-peace-treaty": {
+      "id": "st-peace-treaty",
+      "title": "Factional Peace Treaty",
+      "description": "All three factions sign temporary peace accord.",
+      "tags": ["politics", "positive", "cooperation"],
+      "preconditions": [
+        {
+          "path": "world.vars.market_peace",
+          "op": ">=",
+          "value": 70
+        },
+        {
+          "path": "world.vars.public_sentiment",
+          "op": ">=",
+          "value": 55
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 85,
+          "reason": "Peace accord reduces tensions"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 70,
+          "reason": "Citizens celebrate cooperation"
+        }
+      ],
+      "weight": 0.8,
+      "cooldown": 8,
+      "once": false,
+      "intensity_delta": -0.3
+    },
+    "st-corruption-scandal": {
+      "id": "st-corruption-scandal",
+      "title": "Guard Corruption Exposed",
+      "description": "Officers caught taking bribes from merchants.",
+      "tags": ["scandal", "guard", "corruption"],
+      "preconditions": [
+        {
+          "path": "world.vars.guard_power",
+          "op": ">=",
+          "value": 55
+        },
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">=",
+          "value": 60
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.guard_power",
+          "value": 45,
+          "reason": "Scandal undermines guard credibility"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.assembly_power",
+          "value": 55,
+          "reason": "Assembly capitalizes on scandal"
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": 0.18
+    },
+    "st-food-shortage": {
+      "id": "st-food-shortage",
+      "title": "Food Shortage Crisis",
+      "description": "Poor harvest leads to food scarcity in town.",
+      "tags": ["crisis", "economic", "disaster"],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 40,
+          "reason": "Hunger breeds discontent"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 50,
+          "reason": "Desperation leads to unrest"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 68,
+          "reason": "Merchants profit from scarcity"
+        }
+      ],
+      "weight": 0.7,
+      "cooldown": 6,
+      "once": false,
+      "intensity_delta": 0.25
+    },
+    "st-assembly-concession": {
+      "id": "st-assembly-concession",
+      "title": "Merchants Grant Concessions",
+      "description": "Guild agrees to Assembly demands for better wages.",
+      "tags": ["politics", "positive", "compromise"],
+      "preconditions": [
+        {
+          "path": "world.vars.assembly_power",
+          "op": ">=",
+          "value": 55
+        },
+        {
+          "path": "world.vars.merchants_power",
+          "op": ">=",
+          "value": 55
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_sentiment",
+          "value": 65,
+          "reason": "Wage increases improve living standards"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.merchants_power",
+          "value": 52,
+          "reason": "Concessions reduce merchant profits"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 75,
+          "reason": "Compromise eases tensions"
+        }
+      ],
+      "weight": 1.1,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": -0.15
+    },
+    "st-riot-outbreak": {
+      "id": "st-riot-outbreak",
+      "title": "Street Riots Erupt",
+      "description": "Violent riots break out in response to oppression.",
+      "tags": ["conflict", "violence", "crisis"],
+      "preconditions": [
+        {
+          "path": "world.vars.public_sentiment",
+          "op": "<",
+          "value": 40
+        },
+        {
+          "path": "world.vars.market_peace",
+          "op": "<",
+          "value": 55
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.market_peace",
+          "value": 35,
+          "reason": "Riots destroy property and order"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.guard_power",
+          "value": 60,
+          "reason": "Guards deployed to restore order"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.assembly_power",
+          "value": 35,
+          "reason": "Violence discredits peaceful Assembly"
+        }
+      ],
+      "weight": 1.4,
+      "cooldown": 7,
+      "once": false,
+      "intensity_delta": 0.35
+    }
+  },
+  "tick_histories": {}
+}

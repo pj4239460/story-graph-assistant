@@ -73,6 +73,30 @@ Click any node in the graph to see:
 3. Add your first scene
 4. Build story by adding choices and connecting scenes
 
+### 5. Try World Director (NEW! v1.6)
+
+Experience emergent narratives with the World Director system:
+
+1. Load the **"Town of Riverhaven"** example (coming soon) or create a project with storylets
+2. Navigate to **🎬 World Director** tab
+3. Create a story thread (or select existing one)
+4. Configure Director settings:
+   - **Events/Tick**: How many storylets to trigger (1-5)
+   - **Pacing**: Calm/Balanced/Intense
+   - **Diversity**: How much to avoid repetition (0-100%)
+5. Click **▶️ Run Tick** to evolve the world
+6. Review results:
+   - See which storylets were selected and why
+   - View applied effects and state changes
+   - Explore intensity metrics
+7. Run multiple ticks to see emergent story development
+
+**What makes World Director different?**
+- **No Manual Branching**: Define storylets (conditions + effects), let the system combine them
+- **Deterministic**: Same state + config = same result (fully reproducible)
+- **Explainable**: Every decision has human-readable rationale
+- **Replayable**: Complete history with state diffs at each tick
+
 ## Key Features
 
 ### Full Editing Support ✅
@@ -325,6 +349,139 @@ story_graph_assistant/
 - Checks character behavior in scenes against character profiles
 - AI analyzes consistency with character traits
 - Provides detailed explanations and suggestions
+
+## 🎬 World Director Guide
+
+### Understanding the System
+
+The **World Director** is a fundamentally different approach to narrative design:
+
+**Traditional Approach:**
+- Manually author every story branch
+- Exponential complexity (100 scenes → 10,000 branches)
+- Difficult to maintain consistency
+
+**World Director Approach:**
+- Define storylets (narrative fragments with conditions)
+- System automatically combines them based on state
+- Linear effort (100 storylets → infinite combinations)
+
+### Core Concepts
+
+**1. Storylets**
+A storylet is a reusable narrative unit:
+```json
+{
+  "id": "st-trade-boom",
+  "title": "Trade Boom",
+  "description": "Merchant faction gains economic power",
+  "tags": ["economic", "positive"],
+  "preconditions": [
+    {"path": "world.vars.market_peace", "op": ">=", "value": 60}
+  ],
+  "effects": [
+    {
+      "scope": "world",
+      "target": "world",
+      "op": "add",
+      "path": "vars.merchants_power",
+      "value": 10,
+      "reason": "Successful trade increases merchant influence"
+    }
+  ],
+  "weight": 1.5,
+  "cooldown": 3,
+  "intensity_delta": 0.2
+}
+```
+
+**2. Preconditions**
+Conditions that must be met for a storylet to trigger:
+- `world.vars.<key>` - World state variables
+- `characters.<id>.<field>` - Character properties
+- `relationships.<a|b>.<field>` - Relationship values
+
+Supported operators:
+- Comparison: `==`, `!=`, `<`, `<=`, `>`, `>=`
+- Membership: `in`, `contains`
+
+**3. Effects**
+Changes applied when a storylet triggers:
+- `scope`: "world", "character", "relationship"
+- `op`: "set", "add", "remove"
+- `path`: Dot-notation to the value
+- `value`: New value or delta
+
+**4. Director Policy**
+Configuration for selection behavior:
+- **events_per_tick**: How many storylets to select (1-5)
+- **diversity_penalty**: Reduce weight for recently-used tags (0-100%)
+- **pacing_preference**: "calm", "balanced", or "intense"
+- **intensity control**: Min/max bounds, decay rate
+
+### Selection Pipeline
+
+The Director uses a multi-stage process:
+
+1. **Precondition Filtering**
+   - Check all storylets' conditions against current state
+   - Keep only those where ALL conditions are satisfied
+
+2. **Cooldown/Once Filtering**
+   - Remove storylets still on cooldown
+   - Remove "once" storylets that already triggered
+
+3. **Diversity Penalty**
+   - Check recent ticks for tag repetition
+   - Reduce weight: `weight *= (1 - penalty) ^ repetitions`
+
+4. **Pacing Adjustment**
+   - If intensity too high, favor calming storylets (negative delta)
+   - If intensity too low, favor escalating storylets (positive delta)
+
+5. **Weighted Selection**
+   - Normalize weights to probabilities
+   - Select N storylets without replacement
+   - Record rationale for each
+
+6. **Effect Application**
+   - Apply all selected storylets' effects
+   - Compute state diff (before/after comparison)
+   - Update intensity based on deltas
+
+### Best Practices
+
+**Storylet Design:**
+- Use clear, descriptive titles
+- Add tags for diversity tracking
+- Set appropriate weights (0.1 = rare, 10.0 = very common)
+- Use cooldowns to prevent repetition
+- Balance intensity_delta across storylets
+
+**Precondition Tips:**
+- Start with simple conditions
+- Use ranges rather than exact values: `>= 60` not `== 65`
+- Combine multiple conditions for specificity
+- Test edge cases (what if value is 0?)
+
+**Pacing Control:**
+- Higher diversity_penalty = more variety
+- Lower intensity_decay = longer intense/calm periods
+- "balanced" pacing works well for most stories
+- Monitor intensity in tick history
+
+### Example: Faction Politics
+
+See `examples/town_factions/project.json` for a complete example:
+- 3 competing factions (Merchants, Assembly, Guard)
+- 20 storylets covering economic, political, and conflict events
+- Dynamic power balance based on state changes
+- Emergent narratives from simple rules
+
+Try running 10+ ticks and observe:
+- Factions rise and fall based on events
+- Different runs produce different stories
+- Each tick has clear rationale
 
 ---
 

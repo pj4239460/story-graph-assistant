@@ -2,7 +2,7 @@
 Project data model
 """
 from __future__ import annotations
-from typing import Dict
+from typing import Dict, List, TYPE_CHECKING
 from pydantic import BaseModel, Field
 from datetime import datetime
 
@@ -11,6 +11,9 @@ from .character import Character
 from .event import Event
 from .world import WorldState, StoryThread
 from .ai import AISettings, TokenStats
+
+if TYPE_CHECKING:
+    from .storylet import Storylet, TickHistory
 
 
 class Project(BaseModel):
@@ -29,3 +32,7 @@ class Project(BaseModel):
     events: Dict[str, Event] = Field(default_factory=dict)
     worldState: WorldState = Field(default_factory=WorldState)
     threads: Dict[str, StoryThread] = Field(default_factory=dict)
+    
+    # World Director extensions
+    storylets: Dict[str, 'Storylet'] = Field(default_factory=dict)
+    tick_histories: Dict[str, 'TickHistory'] = Field(default_factory=dict)
