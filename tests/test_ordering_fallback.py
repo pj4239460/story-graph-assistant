@@ -1,5 +1,5 @@
 """
-Tests for ordering constraints and fallback storylets (v1.7.1)
+Tests for ordering constraints and fallback storylets (v0.7)
 
 Tests:
 - Ordering constraint filtering (requires_fired, forbids_fired)

@@ -1,7 +1,7 @@
 # 世界导演系统指南
 
-**版本：** 1.7.1  
-**最后更新：** 2024
+**版本：** 0.7  
+**最后更新：** 2026年1月
 
 本指南提供世界导演（World Director）系统的全面技术文档，这是一个动态叙事引擎，能够根据世界状态、前置条件、排序约束和节奏机制选择并触发故事片段（storylets）。
 
@@ -68,7 +68,7 @@
   ],
   
   # 选择权重
-  "weight": 1.5,
+  "weight": 0.4,
   
   # 触发控制
   "once": false,              # 如果为true，只能触发一次
@@ -80,7 +80,7 @@
   # 多样性标签
   "tags": ["economic", "conflict"],
   
-  # === v1.7.1 新增字段 ===
+  # === v0.7 新增字段 ===
   
   # 排序约束
   "requires_fired": ["st-worker-protest"],    # 必须在这些storylet触发后
@@ -157,7 +157,7 @@
 |-----|------|------|
 | `set` | 设置值 | `gold = 100` |
 | `add` | 增加值 | `gold += 50` |
-| `multiply` | 乘以值 | `damage *= 1.5` |
+| `multiply` | 乘以值 | `damage *= 0.4` |
 | `append` | 添加到列表 | `inventory.append("sword")` |
 | `remove` | 从列表移除 | `inventory.remove("key")` |
 
@@ -187,16 +187,16 @@
 ```python
 {
   "events_per_tick": 2,               # 每tick选择多少个storylet
-  "diversity_penalty": 0.5,           # 标签重复的权重惩罚（0.0-1.0）
+  "diversity_penalty": 0.5,           # 标签重复的权重惩罚（0.0-0.3）
   "diversity_window": 3,              # 检查最近多少个tick的标签
-  "pacing_scale": 0.3,                # 节奏调整的强度（0.0-1.0）
+  "pacing_scale": 0.3,                # 节奏调整的强度（0.0-0.3）
   
-  # v1.7.1 新增
+  # v0.7 新增
   "fallback_after_idle_ticks": 3      # 多少个空闲tick后触发备选
 }
 ```
 
-### Tick历史（TickHistory）v1.7.1
+### Tick历史（TickHistory）v0.7
 
 Tick历史跟踪所有已触发的 storylets 和系统状态：
 
@@ -211,7 +211,7 @@ Tick历史跟踪所有已触发的 storylets 和系统状态：
     "st-intro": true
   },
   
-  # v1.7.1 新增
+  # v0.7 新增
   "idle_tick_count": 0                 # 连续空闲tick计数
 }
 ```
@@ -220,7 +220,7 @@ Tick历史跟踪所有已触发的 storylets 和系统状态：
 
 ## 选择流程
 
-导演使用9阶段流程来选择 storylets（v1.7.1 更新）：
+导演使用9阶段流程来选择 storylets（v0.7 更新）：
 
 ### 阶段1：前置条件过滤
 
@@ -242,7 +242,7 @@ Storylet: "商人罢工"
 → 进入候选池
 ```
 
-### 阶段2：排序约束（v1.7.1 新增！）
+### 阶段2：排序约束（v0.7 新增！）
 
 ```
 候选池 → 检查排序 → 满足约束的候选
@@ -300,7 +300,7 @@ Storylet: "商人罢工"
 - 移除已触发的"once" storylets
   - 检查 `triggered_once[storylet_id] == true`
 
-### 阶段4：备选检查（v1.7.1 新增！）
+### 阶段4：备选检查（v0.7 新增！）
 
 ```
 可用池 → 检查是否为空 → 备选候选
@@ -353,7 +353,7 @@ Storylet: "商人罢工"
 Storylet: "贸易繁荣" (标签: ["economic", "positive"])
 最近标签: ["economic", "economic", "political"]
 惩罚计数: 2 (标签 "economic" 出现2次)
-新权重: 1.5 * (1 - 0.5)² = 0.375
+新权重: 0.4 * (1 - 0.5)² = 0.375
 ```
 
 ### 阶段6：节奏调整
@@ -373,7 +373,7 @@ Storylet: "贸易繁荣" (标签: ["economic", "positive"])
 Storylet: "和平条约" (intensity_delta: -0.3)
 目标: 降低强度
 调整: 偏好负delta
-新权重: weight * 1.5  // 提升平静storylets
+新权重: weight * 0.4  // 提升平静storylets
 ```
 
 ### 阶段7：加权选择
@@ -409,7 +409,7 @@ Storylet: "和平条约" (intensity_delta: -0.3)
 - 按顺序应用每个 storylet 的效果
 - 计算人类可读的状态差异（前后对比）
 - 根据 storylet 的 deltas 更新强度
-- 更新空闲tick计数器（v1.7.1）：
+- 更新空闲tick计数器（v0.7）：
   - 如果选中了常规 storylets：重置 `idle_tick_count = 0`
   - 如果没有选中：增加 `idle_tick_count += 1`
 
@@ -445,15 +445,15 @@ Tick结果 → 创建TickRecord → 追加到历史
   - 应用的效果
   - 状态差异
   - 前后强度
-  - 空闲tick计数（v1.7.1）
+  - 空闲tick计数（v0.7）
 - 更新冷却跟踪
 - 更新"once"跟踪
-- 更新 triggered_once 用于排序约束（v1.7.1）
+- 更新 triggered_once 用于排序约束（v0.7）
 - 追加到 `TickHistory`
 
 ---
 
-## 最佳实践与故障排除（v1.7.1 更新）
+## 最佳实践与故障排除（v0.7 更新）
 
 ### 有效使用排序约束
 

@@ -2,8 +2,8 @@
 
 > **Story Graph Assistant** - Technical documentation for contributors
 
-**Version:** 1.7.1  
-**Last Updated:** 2024
+**Version:** 0.7  
+**Last Updated:** January 2026
 
 This guide provides comprehensive technical documentation for developers working on Story Graph Assistant. It covers system architecture, code organization, data flow, testing strategies, and guidelines for adding new features.
 
@@ -14,7 +14,7 @@ This guide provides comprehensive technical documentation for developers working
 - [Architecture Overview](#architecture-overview)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [World Director System (v1.7.1)](#world-director-system-v171)
+- [World Director System (v0.7)](#world-director-system-v171)
 - [Data Flow & Pipelines](#data-flow--pipelines)
 - [State Management](#state-management)
 - [Testing Strategy](#testing-strategy)
@@ -41,7 +41,7 @@ This guide provides comprehensive technical documentation for developers working
                    ▼
 ┌─────────────────────────────────────────────────────┐
 │                Service Layer                        │
-│  - DirectorService (storylet selection v1.7.1)     │
+│  - DirectorService (storylet selection v0.7)     │
 │  - StateService (temporal state computation)        │
 │  - ProjectService (project CRUD)                    │
 │  - AIService (LLM integration)                      │
@@ -71,11 +71,11 @@ User clicks "▶️ Tick Forward" in director_view.py
     ↓
 DirectorService.tick(scene_id, config)
     ↓
-select_storylets() → 9-stage pipeline (v1.7.1)
+select_storylets() → 9-stage pipeline (v0.7)
     ├─ Stage 1: Precondition Filtering
-    ├─ Stage 2: Ordering Constraints (v1.7.1)
+    ├─ Stage 2: Ordering Constraints (v0.7)
     ├─ Stage 3: Cooldown & Once
-    ├─ Stage 4: Fallback Check (v1.7.1)
+    ├─ Stage 4: Fallback Check (v0.7)
     ├─ Stage 5: Diversity Penalty
     ├─ Stage 6: Pacing Adjustment
     ├─ Stage 7: Weighted Selection
@@ -115,7 +115,7 @@ src/
 ├── models/                       # Pydantic V2 data models
 │   ├── __init__.py
 │   ├── project.py               # Project container
-│   ├── storylet.py              # World Director models (v1.7.1)
+│   ├── storylet.py              # World Director models (v0.7)
 │   │   ├── Storylet            # Storylet definition
 │   │   ├── DirectorConfig      # Selection config
 │   │   ├── TickRecord          # Single tick result
@@ -133,11 +133,11 @@ src/
 │   ├── __init__.py
 │   ├── director_service.py     # World Director orchestration
 │   │   ├── DirectorService     # Main service class
-│   │   ├── select_storylets()  # 9-stage selection pipeline (v1.7.1)
+│   │   ├── select_storylets()  # 9-stage selection pipeline (v0.7)
 │   │   ├── apply_effects()     # Apply effects to state
 │   │   ├── tick()              # Execute one tick
-│   │   ├── _filter_by_ordering_constraints()  # v1.7.1
-│   │   └── _select_fallback_candidates()      # v1.7.1
+│   │   ├── _filter_by_ordering_constraints()  # v0.7
+│   │   └── _select_fallback_candidates()      # v0.7
 │   ├── state_service.py        # State computation
 │   │   ├── compute_state()     # Temporal state computation
 │   │   ├── compute_diffs()     # Before/after comparison
@@ -158,7 +158,7 @@ src/
 │   ├── __init__.py
 │   ├── layout.py               # Page structure and navigation
 │   ├── sidebar.py              # Sidebar navigation
-│   ├── director_view.py        # World Director UI (v1.7.1 updated)
+│   ├── director_view.py        # World Director UI (v0.7 updated)
 │   ├── characters_view.py      # Character editor
 │   ├── routes_view.py          # Scene editor
 │   └── ai_tools_view.py        # AI assistant interface
@@ -172,7 +172,7 @@ src/
 
 ---
 
-## World Director System (v1.7.1)
+## World Director System (v0.7)
 
 The World Director is the core dynamic narrative engine, responsible for selecting and triggering storylets based on preconditions, ordering constraints, pacing, and fallback mechanisms.
 
@@ -191,13 +191,13 @@ class Storylet(BaseModel):
         description: Full narrative content
         preconditions: List of conditions that must ALL be satisfied
         effects: List of state mutations to apply when triggered
-        weight: Base selection probability (default: 1.0)
+        weight: Base selection probability (default: 0.3)
         once: If True, can only trigger once per playthrough
         cooldown: Minimum ticks before can trigger again
-        intensity_delta: Change to narrative intensity (-1.0 to 1.0)
+        intensity_delta: Change to narrative intensity (-0.3 to 0.3)
         tags: For diversity penalty and grouping
         
-        # v1.7.1 NEW FIELDS:
+        # v0.7 NEW FIELDS:
         is_fallback: If True, only selected when idle threshold reached
         requires_fired: IDs of storylets that MUST have triggered first
         forbids_fired: IDs of storylets that must NOT have triggered
@@ -207,14 +207,14 @@ class Storylet(BaseModel):
     description: str = ""
     preconditions: List[Condition] = []
     effects: List[Effect] = []
-    weight: float = 1.0
+    weight: float = 0.3
     once: bool = False
     cooldown: int = 0
     intensity_delta: float = 0.0
     tags: List[str] = []
-    is_fallback: bool = False              # v1.7.1
-    requires_fired: List[str] = []         # v1.7.1
-    forbids_fired: List[str] = []          # v1.7.1
+    is_fallback: bool = False              # v0.7
+    requires_fired: List[str] = []         # v0.7
+    forbids_fired: List[str] = []          # v0.7
 ```
 
 #### 2. DirectorConfig
@@ -226,21 +226,21 @@ class DirectorConfig(BaseModel):
     
     Attributes:
         events_per_tick: Number of storylets to select per tick
-        diversity_penalty: Weight reduction for recently-used tags (0.0-1.0)
+        diversity_penalty: Weight reduction for recently-used tags (0.0-0.3)
         diversity_window: Number of recent ticks to check for tag repetition
-        pacing_scale: How strongly to adjust for intensity (0.0-1.0)
+        pacing_scale: How strongly to adjust for intensity (0.0-0.3)
         
-        # v1.7.1 NEW FIELD:
+        # v0.7 NEW FIELD:
         fallback_after_idle_ticks: Trigger fallback after N empty ticks
     """
     events_per_tick: int = 2
     diversity_penalty: float = 0.5
     diversity_window: int = 3
     pacing_scale: float = 0.3
-    fallback_after_idle_ticks: int = 3     # v1.7.1
+    fallback_after_idle_ticks: int = 3     # v0.7
 ```
 
-#### 3. TickHistory (v1.7.1 Updated)
+#### 3. TickHistory (v0.7 Updated)
 
 ```python
 class TickHistory(BaseModel):
@@ -252,20 +252,20 @@ class TickHistory(BaseModel):
         last_triggered: Mapping of storylet_id → last tick triggered
         triggered_once: Mapping of storylet_id → has ever triggered (for "once")
         
-        # v1.7.1 NEW FIELD:
+        # v0.7 NEW FIELD:
         idle_tick_count: Consecutive ticks with no regular storylets
     """
     records: List[TickRecord] = []
     last_triggered: Dict[str, int] = {}
     triggered_once: Dict[str, bool] = {}
-    idle_tick_count: int = 0               # v1.7.1
+    idle_tick_count: int = 0               # v0.7
 ```
 
 ---
 
 ## Data Flow & Pipelines
 
-### World Director Pipeline (v1.7.1)
+### World Director Pipeline (v0.7)
 
 The `select_storylets()` method implements a 9-stage pipeline:
 
@@ -497,7 +497,7 @@ perf: performance improvement
 - [ ] Multi-scene consistency checks
 - [ ] Export to Twine/Articy format
 
-### Future (v1.0)
+### Future (v0.3)
 - [ ] Character arc analysis
 - [ ] Emotional pacing visualization
 - [ ] What-if simulation
@@ -552,7 +552,7 @@ perf: performance improvement
 - [ ] Worldbuilding Q&A
 - [ ] Multi-scene OOC checking
 
-### v1.0 - Full RAG
+### v0.3 - Full RAG
 - [ ] Vector retrieval (FAISS/Chroma)
 - [ ] Character life arcs
 - [ ] Route analysis

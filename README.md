@@ -17,7 +17,7 @@ A powerful tool for narrative game developers featuring **World Director** - an 
 
 ### ✨ Core Features
 
-#### 🎬 World Director (v1.7.1)
+#### 🎬 World Director (v0.7 Current)
 Our **differentiated approach** to narrative design - move beyond manual branching and AI NPCs:
 
 **Core System:**
@@ -28,7 +28,7 @@ Our **differentiated approach** to narrative design - move beyond manual branchi
 - **Explainable Decisions** - Every world tick includes human-readable rationale
 - **Replayable History** - Complete tick-by-tick record with state diffs
 
-**Advanced Features (v1.7.1 NEW!):**
+**Advanced Features (v0.7 Current):**
 - **Ordering Constraints** - Define narrative sequence dependencies (requires/forbids storylets)
 - **Fallback Mechanism** - Prevents "world stuck" - triggers ambient storylets when no regular events qualify
 - **Idle Detection** - Automatically tracks consecutive ticks with no activity
@@ -104,70 +104,57 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 
 ### 🛣️ Roadmap
 
-**v1.0 - Vector Search** ✅
-- [x] Vector-based retrieval (FAISS - migrated from ChromaDB)
+**v0.3 - Vector Search** ✅
+- [x] Vector-based retrieval (FAISS)
 - [x] Semantic similarity search with 384-dim embeddings
 - [x] Auto-indexing on project load
-- [x] Multi-LLM support with model selection UI
+- [x] Multi-LLM support (DeepSeek, OpenAI, Anthropic, Google, Ollama)
 
-**v1.5 - Dynamic Character States** ✅
-- [x] Effect model with scope/target/operation/path/value structure
-- [x] StateService for temporal state computation and replay
-- [x] Character state tracking (mood, status, traits, goals, fears, custom vars)
-- [x] Relationship state tracking
-- [x] World state tracking (global variables)
-- [x] Effects editor UI with add/edit/delete
-- [x] Play Path mode with real-time state visualization
-- [x] State Viewer for querying states at any thread step
-- [x] AI agent tools for state queries
-- [x] Example projects with Effects demonstrations
+**v0.4 - Dynamic States** ✅
+- [x] Effect model (scope/target/operation/path/value)
+- [x] StateService for temporal computation
+- [x] Character/World/Relationship state tracking
+- [x] Effects editor UI
+- [x] Play Path mode with real-time visualization
+- [x] State Viewer and AI agent tools
 
-**v1.6 - World Director (MVP)** ✅
-- [x] Storylet data model (preconditions + effects + metadata)
-- [x] ConditionsEvaluator (deterministic condition checking)
-- [x] DirectorService (multi-stage selection pipeline)
-- [x] World Director UI (tick controls, history, visualization)
-- [x] Town of Riverhaven example (20 storylets, faction politics)
-- [x] Comprehensive test suite (13 tests, 35+ assertions)
+**v0.5 - World Director MVP** ✅
+- [x] Storylet model (preconditions + effects)
+- [x] ConditionsEvaluator (deterministic checking)
+- [x] DirectorService (7-stage pipeline)
+- [x] World Director UI
+- [x] Comprehensive test suite
 
-**v1.7.1 - Ordering & Fallback** ✅
+**v0.7 - Ordering & Fallback** ✅ (Current)
 - [x] Ordering constraints (requires_fired, forbids_fired)
-- [x] Fallback storylets (ambient events when world stuck)
-- [x] Idle tick tracking and reset logic
-- [x] Enhanced UI displays (ordering constraints, idle counter)
-- [x] Complete test suite (5 new tests for ordering/fallback)
-- [x] Demo example with quest chains
+- [x] Fallback mechanism (prevents world stuck)
+- [x] Idle tick tracking
+- [x] Enhanced UI and complete tests
+- [x] Full documentation
 
-**v1.7.2 - Actions Sequences** (In Progress - 1 week)
-- [ ] Multi-stage storylet progression (cursor-based)
-- [ ] Repeatable storylet support
-- [ ] Enhanced tick history with cursor tracking
-- [ ] Updated River Haven example with quest chains
+**v0.8 - Polish & Examples** (Next - 2 weeks)
+- [ ] Improved storylet editor UI
+- [ ] More example projects (templates)
+- [ ] Performance optimizations
+- [ ] Bug fixes and stability
 
-**v1.8 - UI/UX Enhancements** (Next - 1-2 weeks)
-- [ ] Tick timeline navigation (prev/next, jump to tick N)
-- [ ] Visual intensity/pacing graphs
-- [ ] Enhanced parameter tuning (presets, real-time tooltips)
-- [ ] Export capabilities (JSON, Markdown reports, statistics)
+**v0.9 - Beta Testing** (Future - 2-3 weeks)
+- [ ] Community feedback integration
+- [ ] Documentation refinement
+- [ ] Tutorial videos
+- [ ] Pre-release preparation
 
-**v1.9 - Author Tools** (Future - 1-2 weeks)
-- [ ] Trigger accuracy labeling (✅/❌ feedback)
-- [ ] Coverage report (dead content, spam detection)
-- [ ] Consistency validation (ordering conflicts, unreachable storylets)
-- [ ] Debugging dashboard
-
-**v2.0 - AI Integration** (Future - 2-4 weeks)
-- [ ] Natural language preconditions (LLM-based evaluation)
-- [ ] AI-assisted storylet design (suggest preconditions/effects)
-- [ ] Generate scene drafts from tick results
-- [ ] Advanced what-if simulation (compare different configs)
+**v0.3 - Public Release** (Future - 1 month)
+- [ ] Production-ready
+- [ ] Complete feature set
+- [ ] Full documentation
+- [ ] Marketing materials
 
 ### 📚 Documentation
 
 - [Getting Started Guide](GETTING_STARTED.en.md) - Quick start tutorial
 - [World Director Guide](docs/world_director_guide.md) - Comprehensive storylets reference
 - [Developer Guide](docs/developer_guide.en.md) - System architecture and internals
-- [API Documentation](docs/api_reference.md) - Complete API reference (Coming soon)
 
 ---
 
@@ -175,7 +162,7 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 
 ### ✨ 功能特色
 
-#### 🎬 世界导演系统 (v1.7.1)
+#### 🎬 世界导演系统 (v0.7 当前版本)
 我们的**差异化叙事设计方法** - 超越手工分支和AI NPC：
 
 **核心系统：**
@@ -186,7 +173,7 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - **可解释决策** - 每次世界tick都包含人类可读的选择理由
 - **可回放历史** - 完整的逐tick记录，包含状态差异
 
-**高级功能（v1.7.1 新增！）：**
+**高级功能（v0.7 当前版本）：**
 - **排序约束** - 定义叙事序列依赖（requires/forbids storylets）
 - **备选机制** - 防止"世界卡住" - 当常规事件无法触发时，触发氛围storylets
 - **空闲检测** - 自动跟踪连续无活动的ticks
@@ -249,79 +236,69 @@ streamlit run src/app.py
 
 ### 🛣️ 开发路线
 
-**v1.0 - 向量搜索** ✅
-- [x] 基于向量的检索（FAISS - 从 ChromaDB 迁移）
+### 🛣️ 开发路线
+
+**v0.3 - 向量搜索** ✅
+- [x] 基于向量的检索（FAISS）
 - [x] 384 维嵌入的语义相似度搜索
 - [x] 项目加载时自动索引
-- [x] 多模型支持和模型选择 UI
+- [x] 多模型支持（DeepSeek、OpenAI、Anthropic、Google、Ollama）
 
-**v1.5 - 动态角色状态系统** ✅
-- [x] Effect 模型（作用域/目标/操作/路径/值）结构
-- [x] StateService 实现时序状态计算和回放
-- [x] 角色状态追踪（心情、状态、特质、目标、恐惧、自定义变量）
-- [x] 关系状态追踪
-- [x] 世界状态追踪（全局变量）
-- [x] 效果编辑器 UI（添加/编辑/删除）
-- [x] 路径试玩模式实时状态可视化
-- [x] 状态查看器支持查询任意故事线步骤的状态
-- [x] AI 代理状态查询工具
-- [x] 示例项目包含效果演示
+**v0.4 - 动态状态系统** ✅
+- [x] Effect 模型（作用域/目标/操作/路径/值）
+- [x] StateService 时序状态计算
+- [x] 角色/世界/关系状态追踪
+- [x] 效果编辑器 UI
+- [x] 路径试玩模式实时可视化
 
-**v1.6 - 世界导演 MVP** ✅
-- [x] Storylet 模型（前置条件 + 效果）
-- [x] 7阶段选择流程（前置条件、冷却、多样性、节奏、选择、效果、记录）
+**v0.5 - 世界导演 MVP** ✅
+- [x] Storylet 系统（前置条件 + 效果）
+- [x] 7阶段选择流程
 - [x] DirectorService 实现
-- [x] TickHistory 跟踪
-- [x] 强度控制系统
+- [x] TickHistory 和强度控制
 - [x] 世界导演 UI
-- [x] 完整测试覆盖
 
-**v1.7.1 - 排序约束 + 备选机制** ✅
+**v0.7 - 排序约束 + 备选机制** ✅（当前版本）
 - [x] 排序约束（requires_fired、forbids_fired）
-- [x] 备选机制（is_fallback、fallback_after_idle_ticks）
-- [x] 空闲tick跟踪（idle_tick_count）
-- [x] 增强UI显示（排序标记、空闲计数器）
-- [x] 综合测试套件
-- [x] 完整文档更新
+- [x] 备选机制（防止世界卡住）
+- [x] 空闲tick跟踪
+- [x] 增强UI和完整测试
+- [x] 完整文档
 
-**v1.7.2 - 动作序列** 🔄（开发中）
-- [ ] 多步动作链（选择 → 动作序列 → 结果）
-- [ ] 条件性动作分支
-- [ ] 动作状态跟踪
-- [ ] 动作可视化UI
+**v0.8 - 完善与示例** （下一步 - 2周）
+- [ ] Storylet 编辑器UI改进
+- [ ] 更多示例项目和模板
+- [ ] 性能优化
+- [ ] Bug修复和稳定性改进
 
-**v1.8 - UI/UX 增强**
-- [ ] Storylet 编辑器UI
-- [ ] 可视化流程设计器
-- [ ] 增强的历史浏览器
-- [ ] 导出/导入功能
+**v0.9 - Beta测试** （未来 - 2-3周）
+- [ ] 社区反馈整合
+- [ ] 文档完善
+- [ ] 教程制作
+- [ ] 发布前准备
 
-**v1.9 - 创作工具**
-- [ ] Storylet 模板库
-- [ ] AI 辅助的 storylet 生成
-- [ ] 平衡和测试工具
-- [ ] 叙事分析仪表板
-
-**v2.0 - 高级分析与模拟**
-- [ ] 角色弧分析
-- [ ] 路线分析与状态演进可视化
-- [ ] 情感节奏分析
-- [ ] 高级假设模拟
-- [ ] 一致性报告和验证
+**v0.3 - 正式发布** （未来 - 1个月）
+- [ ] 生产就绪
+- [ ] 完整功能集
+- [ ] 完整文档
+- [ ] 宣传材料
 
 ### 📚 文档
 
-- [入门指南（中文）](GETTING_STARTED.zh.md)
-- [入门指南（英文）](GETTING_STARTED.en.md)
-- [开发者指南（英文）](docs/developer_guide.en.md)
-- [世界导演指南（英文）](docs/world_director_guide.md)
-- [世界导演指南（中文）](docs/world_director_guide.zh.md)
+**核心文档：**
+- [入门指南（中文）](GETTING_STARTED.zh.md) - 快速上手
+- [入门指南（英文）](GETTING_STARTED.en.md) - Quick Start
+- [开发者指南](docs/developer_guide.en.md) - 架构与API文档
+- [世界导演指南（英文）](docs/world_director_guide.md) - Storylet系统深度解析
+- [世界导演指南（中文）](docs/world_director_guide.zh.md) - Storylet系统中文详解
+
+**完整索引：** [docs/INDEX.md](docs/INDEX.md)
 
 ---
 
 ## 📝 License
 
-MIT License - Copyright (c) 2025 Ji PEI
+MIT License - Copyright (c) 2026 Ji PEI
 
 See [LICENSE](LICENSE) file for details.
 

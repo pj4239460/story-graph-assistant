@@ -158,11 +158,11 @@ class DirectorService:
         """
         Select storylets to trigger based on current state and director policy.
         
-        This implements the 9-stage World Director pipeline (v1.7.1):
+        This implements the 9-stage World Director pipeline (v0.7):
         1. Precondition Filtering - Keep only storylets whose conditions are met
-        2. Ordering Constraints (v1.7.1) - Check requires_fired and forbids_fired
+        2. Ordering Constraints (v0.7) - Check requires_fired and forbids_fired
         3. Cooldown & Once - Remove storylets on cooldown or already triggered
-        4. Fallback Check (v1.7.1) - Use fallback storylets if pool is empty
+        4. Fallback Check (v0.7) - Use fallback storylets if pool is empty
         5. Diversity Penalty - Reduce weight for recently-used tags
         6. Pacing Adjustment - Favor storylets that match desired intensity
         7. Weighted Selection - Probabilistic selection based on final weights
@@ -238,7 +238,7 @@ class DirectorService:
                 candidates.append((storylet, explanations))
         
         # ═══════════════════════════════════════════════════════════════════
-        # STAGE 3: Ordering Constraints (v1.7.1 NEW)
+        # STAGE 3: Ordering Constraints (v0.7 NEW)
         # ═══════════════════════════════════════════════════════════════════
         # Filter candidates by requires_fired and forbids_fired.
         # This enables quest chains, mutually exclusive paths, and narrative
@@ -250,7 +250,7 @@ class DirectorService:
         )
         
         # ═══════════════════════════════════════════════════════════════════
-        # STAGE 4: Fallback Check (v1.7.1 NEW)
+        # STAGE 4: Fallback Check (v0.7 NEW)
         # ═══════════════════════════════════════════════════════════════════
         # If no regular candidates remain, check if we should trigger fallback
         # storylets. This prevents the narrative from getting "stuck" when
@@ -291,7 +291,7 @@ class DirectorService:
             # Diversity penalty: reduce weight if tags appeared recently
             penalty_count = sum(1 for tag in storylet.tags if tag in recent_tags)
             if penalty_count > 0:
-                weight *= (1.0 - config.diversity_penalty) ** penalty_count
+                weight *= (0.3 - config.diversity_penalty) ** penalty_count
             
             # Pacing adjustment: prefer storylets that move toward target intensity
             intensity_adjustment = self._calculate_intensity_adjustment(
@@ -520,7 +520,7 @@ class DirectorService:
         tick_history: TickHistory
     ) -> List[Tuple[Storylet, List[str]]]:
         """
-        Filter candidates based on ordering constraints (v1.7.1).
+        Filter candidates based on ordering constraints (v0.7).
         
         This method implements narrative ordering logic without complex preconditions:
         
@@ -620,7 +620,7 @@ class DirectorService:
         tick_history: TickHistory
     ) -> List[Tuple[Storylet, List[str]]]:
         """
-        Select fallback storylet candidates (v1.7.1).
+        Select fallback storylet candidates (v0.7).
         
         Fallback storylets are "ambient" events that keep the narrative moving
         when regular storylets can't fire. Common reasons for needing fallbacks:
@@ -727,14 +727,14 @@ class DirectorService:
         if config.pacing_preference == "calm":
             # Prefer calming regardless of current intensity
             if storylet.intensity_delta < 0:
-                return 1.5
+                return 0.4
             elif storylet.intensity_delta > 0:
                 return 0.7
         
         elif config.pacing_preference == "intense":
             # Prefer escalating regardless
             if storylet.intensity_delta > 0:
-                return 1.5
+                return 0.4
             elif storylet.intensity_delta < 0:
                 return 0.7
         
@@ -749,7 +749,7 @@ class DirectorService:
             elif current_intensity < 0.4 and storylet.intensity_delta < 0:
                 return 0.8  # Don't stay too calm
         
-        return 1.0
+        return 0.3
     
     def _compute_diff(
         self,

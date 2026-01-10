@@ -73,7 +73,7 @@ Click any node in the graph to see:
 3. Add your first scene
 4. Build story by adding choices and connecting scenes
 
-### 5. Try World Director (NEW! v1.6)
+### 5. Try World Director (NEW! v0.5)
 
 Experience emergent narratives with the World Director system:
 
@@ -389,7 +389,7 @@ A storylet is a reusable narrative unit:
       "reason": "Successful trade increases merchant influence"
     }
   ],
-  "weight": 1.5,
+  "weight": 0.4,
   "cooldown": 3,
   "intensity_delta": 0.2
 }
@@ -427,7 +427,7 @@ The Director uses a multi-stage process:
    - Check all storylets' conditions against current state
    - Keep only those where ALL conditions are satisfied
 
-2. **Ordering Constraints** *(v1.7.1 NEW!)*
+2. **Ordering Constraints** *(v0.7 NEW!)*
    - **requires_fired**: Storylet only triggers AFTER specified storylets have fired
    - **forbids_fired**: Storylet only triggers if specified storylets have NOT fired
    - Use for: Quest chains, mutually exclusive paths, narrative dependencies
@@ -436,7 +436,7 @@ The Director uses a multi-stage process:
    - Remove storylets still on cooldown
    - Remove "once" storylets that already triggered
 
-4. **Fallback Check** *(v1.7.1 NEW!)*
+4. **Fallback Check** *(v0.7 NEW!)*
    - If no regular storylets qualify, check idle tick count
    - After N consecutive idle ticks, trigger fallback storylets
    - Fallback storylets are ambient events that keep world alive
@@ -484,7 +484,7 @@ The Director uses a multi-stage process:
 - Monitor intensity in tick history
 - Set fallback_after_idle_ticks=3 to prevent stuck worlds
 
-**Ordering Constraints (v1.7.1):**
+**Ordering Constraints (v0.7):**
 - Use `requires_fired` for quest sequences:
   - Example: "Quest Complete" requires ["Quest Start", "Quest Progress"]
 - Use `forbids_fired` for mutually exclusive paths:
@@ -492,7 +492,7 @@ The Director uses a multi-stage process:
 - Combine both for complex branching:
   - "Secret Ending" requires ["Clue 1", "Clue 2"] and forbids ["Bad Choice"]
 
-**Fallback Storylets (v1.7.1):**
+**Fallback Storylets (v0.7):**
 - Mark with `is_fallback: true`
 - Use for ambient events: weather, crowd activity, time passage
 - Don't require specific state conditions

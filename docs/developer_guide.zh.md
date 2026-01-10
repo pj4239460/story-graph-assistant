@@ -187,7 +187,7 @@ streamlit run src/app.py
 - [ ] 世界观问答
 - [ ] 多场景 OOC 检查
 
-### v1.0 - 完整 RAG
+### v0.3 - 完整 RAG
 - [ ] 向量检索（FAISS/Chroma）
 - [ ] 角色人生线
 - [ ] 路线分析

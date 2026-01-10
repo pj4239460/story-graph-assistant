@@ -97,7 +97,7 @@ A storylet is a self-contained narrative unit:
 - `weight`: Selection probability (higher = more likely)
 - `cooldown`: Minimum ticks before can trigger again
 - `once`: Can only trigger once per playthrough
-- `intensity_delta`: Impact on story intensity (-1.0 to +1.0)
+- `intensity_delta`: Impact on story intensity (-0.3 to +0.3)
 
 ### 2. Preconditions
 
@@ -218,14 +218,14 @@ The Director's behavior is controlled by policy parameters:
 **Parameters:**
 - `events_per_tick` (1-5): How many storylets to select each tick
 - `diversity_window` (0-20): How many recent ticks to check for repetition
-- `diversity_penalty` (0.0-1.0): Weight reduction for recently-used tags
-- `intensity_min/max` (0.0-1.0): Intensity bounds
+- `diversity_penalty` (0.0-0.3): Weight reduction for recently-used tags
+- `intensity_min/max` (0.0-0.3): Intensity bounds
 - `intensity_decay` (0.0-0.5): How quickly intensity returns to 0.5
 - `pacing_preference`: "calm", "balanced", or "intense"
 
 ## Selection Pipeline
 
-The Director uses a multi-stage process to select storylets (updated in v1.7.1):
+The Director uses a multi-stage process to select storylets (updated in v0.7):
 
 ### Stage 1: Precondition Filtering
 
@@ -247,7 +247,7 @@ Preconditions:
 → Candidate
 ```
 
-### Stage 2: Ordering Constraints (v1.7.1 NEW!)
+### Stage 2: Ordering Constraints (v0.7 NEW!)
 
 ```
 Candidates → Check Ordering → Ordered Candidates
@@ -305,7 +305,7 @@ Ordered Candidates → Check Cooldown/Once → Available
 - Remove "once" storylets that have already triggered
   - Check `triggered_once[storylet_id] == true`
 
-### Stage 4: Fallback Check (v1.7.1 NEW!)
+### Stage 4: Fallback Check (v0.7 NEW!)
 
 ```
 Available → Check if Empty → Fallback Candidates
@@ -358,7 +358,7 @@ Available → Apply Diversity Penalty → Weighted Candidates
 Storylet: "Trade Boom" (tags: ["economic", "positive"])
 Recent tags: ["economic", "economic", "political"]
 Penalty count: 2 (tag "economic" appears twice)
-New weight: 1.5 * (1 - 0.5)² = 0.375
+New weight: 0.4 * (1 - 0.5)² = 0.375
 ```
 
 ### Stage 6: Pacing Adjustment
@@ -378,7 +378,7 @@ Current intensity: 0.8 (too high)
 Storylet: "Peace Treaty" (intensity_delta: -0.3)
 Target: Reduce intensity
 Adjustment: Favor negative deltas
-New weight: weight * 1.5  // Boost calming storylets
+New weight: weight * 0.4  // Boost calming storylets
 ```
 
 ### Stage 7: Weighted Selection
@@ -450,10 +450,10 @@ Tick Results → Create TickRecord → Append to History
   - Applied effects
   - State diff
   - Intensity before/after
-  - Idle tick count (v1.7.1)
+  - Idle tick count (v0.7)
 - Update cooldown tracking
 - Update "once" tracking
-- Update triggered_once for ordering constraints (v1.7.1)
+- Update triggered_once for ordering constraints (v0.7)
 - Append to `TickHistory`
 
 ## Best Practices
@@ -474,7 +474,7 @@ Tick Results → Create TickRecord → Append to History
 
 **3. Set Appropriate Weights**
 - 0.1 - Very rare special events
-- 1.0 - Normal frequency
+- 0.3 - Normal frequency
 - 5.0 - Common recurring events
 - 10.0 - Almost always available
 
@@ -515,7 +515,7 @@ Negative (calming): -0.3 to -0.5
 
 ### Pacing Control
 
-**High Diversity Penalty (0.7-1.0)**
+**High Diversity Penalty (0.7-0.3)**
 - More variety in storylets
 - Prevents "spam" of same tags
 - Good for long playthroughs
@@ -634,7 +634,7 @@ Future enhancement: More complex condition logic
 
 ---
 
-## Best Practices & Troubleshooting (v1.7.1 Updated)
+## Best Practices & Troubleshooting (v0.7 Updated)
 
 ### Using Ordering Constraints Effectively
 
