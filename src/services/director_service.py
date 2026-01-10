@@ -158,24 +158,74 @@ class DirectorService:
         """
         Select storylets to trigger based on current state and director policy.
         
+        This implements the 9-stage World Director pipeline (v1.7.1):
+        1. Precondition Filtering - Keep only storylets whose conditions are met
+        2. Ordering Constraints (v1.7.1) - Check requires_fired and forbids_fired
+        3. Cooldown & Once - Remove storylets on cooldown or already triggered
+        4. Fallback Check (v1.7.1) - Use fallback storylets if pool is empty
+        5. Diversity Penalty - Reduce weight for recently-used tags
+        6. Pacing Adjustment - Favor storylets that match desired intensity
+        7. Weighted Selection - Probabilistic selection based on final weights
+        8. Effect Application - Apply selected storylets' effects to state
+        9. History Recording - Record results and update tracking
+        
+        Args:
+            available_storylets: All storylets in current scene/context
+            world_state: Current global world state
+            char_states: Current character states (by character ID)
+            rel_states: Current relationship states
+            tick_history: History of all previous ticks + tracking data
+            config: Director configuration (events_per_tick, diversity, pacing, etc.)
+            
         Returns:
-            (selected_storylets, rationales)
+            Tuple of:
+            - selected_storylets: List of Storylet objects chosen for this tick
+            - rationales: List of human-readable explanations for each selection
+            
+        Example:
+            >>> storylets = [...]  # Scene's storylet pool
+            >>> world = WorldState(vars={"gold": 100, ...})
+            >>> config = DirectorConfig(events_per_tick=2)
+            >>> selected, reasons = service.select_storylets(storylets, world, {}, {}, history, config)
+            >>> # selected = [<Storylet "Merchant Visit">, <Storylet "Weather Change">]
+            >>> # reasons = ["Preconditions satisfied (gold >= 50)", "Fallback (idle count=3)"]
         """
-        # Step 1: Filter by preconditions
+        # ═══════════════════════════════════════════════════════════════════
+        # STAGE 1: Separate Regular and Fallback Storylets
+        # ═══════════════════════════════════════════════════════════════════
+        # Regular storylets are the main narrative content. Fallback storylets
+        # are ambient events that only trigger when the narrative would otherwise
+        # be stuck (no regular storylets available for N consecutive ticks).
+        
+        regular_storylets = [s for s in available_storylets if not s.is_fallback]
+        fallback_storylets = [s for s in available_storylets if s.is_fallback]
+        
+        # ═══════════════════════════════════════════════════════════════════
+        # STAGE 2: Precondition Filtering
+        # ═══════════════════════════════════════════════════════════════════
+        # Evaluate preconditions for each regular storylet. Only storylets
+        # where ALL preconditions are satisfied become candidates.
+        # Also check basic cooldown and "once" flags here.
+        
         candidates = []
-        for storylet in available_storylets:
-            # Check cooldown
+        for storylet in regular_storylets:
+            # Check cooldown: Has enough time passed since last trigger?
+            # Formula: current_tick - last_triggered >= cooldown
             if storylet.cooldown > 0:
                 last_tick = tick_history.last_triggered.get(storylet.id, -999)
                 current_tick = len(tick_history.ticks)
                 if current_tick - last_tick < storylet.cooldown:
+                    # Still on cooldown, skip this storylet
                     continue
             
-            # Check once flag
+            # Check "once" flag: Has this storylet already triggered?
+            # Used for unique events like "Character Death", "Quest Complete"
             if storylet.once and tick_history.triggered_once.get(storylet.id, False):
+                # Already triggered and marked as "once", skip
                 continue
             
-            # Evaluate preconditions
+            # Evaluate all preconditions using ConditionsEvaluator
+            # Returns: (bool: all_satisfied, List[str]: explanations)
             satisfied, explanations = self.conditions_evaluator.evaluate_all(
                 storylet.preconditions,
                 world_state,
@@ -184,12 +234,54 @@ class DirectorService:
             )
             
             if satisfied:
+                # All preconditions met! Add to candidate pool
                 candidates.append((storylet, explanations))
         
-        if not candidates:
-            return [], ["No storylets satisfy preconditions"]
+        # ═══════════════════════════════════════════════════════════════════
+        # STAGE 3: Ordering Constraints (v1.7.1 NEW)
+        # ═══════════════════════════════════════════════════════════════════
+        # Filter candidates by requires_fired and forbids_fired.
+        # This enables quest chains, mutually exclusive paths, and narrative
+        # dependencies without complex precondition logic.
         
-        # Step 2: Apply diversity penalty (tag-based)
+        candidates = self._filter_by_ordering_constraints(
+            candidates,
+            tick_history
+        )
+        
+        # ═══════════════════════════════════════════════════════════════════
+        # STAGE 4: Fallback Check (v1.7.1 NEW)
+        # ═══════════════════════════════════════════════════════════════════
+        # If no regular candidates remain, check if we should trigger fallback
+        # storylets. This prevents the narrative from getting "stuck" when
+        # no regular storylets can fire (e.g., waiting for player to gain
+        # resources, time to pass, etc.).
+        
+        if not candidates:
+            # Check if we should trigger fallback
+            if (config.fallback_after_idle_ticks > 0 and 
+                tick_history.idle_tick_count >= config.fallback_after_idle_ticks):
+                # Use fallback storylets
+                candidates = self._select_fallback_candidates(
+                    fallback_storylets,
+                    world_state,
+                    char_states,
+                    rel_states,
+                    tick_history
+                )
+                
+                if not candidates:
+                    return [], ["No regular or fallback storylets available"]
+                
+                # Mark that we used fallback
+                is_fallback_tick = True
+            else:
+                # No candidates and not time for fallback yet
+                return [], ["No storylets satisfy preconditions"]
+        else:
+            is_fallback_tick = False
+        
+        # Step 5: Apply diversity penalty (tag-based)
         recent_tags = self._get_recent_tags(tick_history, config.diversity_window)
         
         weighted_candidates = []
@@ -211,7 +303,7 @@ class DirectorService:
             
             weighted_candidates.append((storylet, weight, explanations))
         
-        # Step 3: Sample based on weights
+        # Step 6: Sample based on weights
         total_weight = sum(w for _, w, _ in weighted_candidates)
         if total_weight <= 0:
             # Fallback: pick random
@@ -322,6 +414,19 @@ class DirectorService:
             config
         )
         
+        # Update idle tick count
+        if not selected:
+            tick_history.idle_tick_count += 1
+        else:
+            # Check if any selected storylets are NOT fallback
+            has_regular_storylet = any(not s.is_fallback for s in selected)
+            if has_regular_storylet:
+                # Reset idle counter when regular storylets trigger
+                tick_history.idle_tick_count = 0
+            else:
+                # Fallback storylets don't reset idle counter
+                tick_history.idle_tick_count += 1
+        
         # Create deep copies for diff comparison
         world_before = deepcopy(world_state)
         char_before = deepcopy(char_states)
@@ -408,6 +513,204 @@ class DirectorService:
                 pass
         
         return recent_tags
+    
+    def _filter_by_ordering_constraints(
+        self,
+        candidates: List[Tuple[Storylet, List[str]]],
+        tick_history: TickHistory
+    ) -> List[Tuple[Storylet, List[str]]]:
+        """
+        Filter candidates based on ordering constraints (v1.7.1).
+        
+        This method implements narrative ordering logic without complex preconditions:
+        
+        **requires_fired**: "This storylet can only trigger AFTER these storylets have fired"
+        - Use for: Quest chains, story progression, prerequisites
+        - Example: "Quest Part 2" requires_fired: ["quest_part_1"]
+        - Check: ALL required storylets must have triggered at least once
+        
+        **forbids_fired**: "This storylet can only trigger if these storylets have NOT fired"
+        - Use for: Mutually exclusive paths, consequences of choices
+        - Example: "Join Rebels" forbids_fired: ["join_guild"]
+        - Check: NONE of the forbidden storylets must have triggered
+        
+        Why This Matters:
+        Without ordering constraints, you'd need complex preconditions like:
+            {"scope": "world", "path": "vars.quest_part_1_complete", "op": "==", "value": true}
+        
+        With ordering constraints, simply:
+            requires_fired: ["quest_part_1"]
+        
+        This is:
+        - More explicit (clear intent)
+        - Easier to author (no manual state tracking)
+        - Automatically maintained (Director updates triggered_once)
+        
+        Args:
+            candidates: List of (Storylet, explanations) tuples from precondition filtering
+            tick_history: TickHistory containing triggered_once mapping
+                         (storylet_id → True if ever triggered, False/missing if not)
+        
+        Returns:
+            Filtered list of (Storylet, explanations) tuples that satisfy ordering constraints
+            
+        Example:
+            >>> # Setup: Quest chain
+            >>> history = TickHistory(triggered_once={"quest_start": True})
+            >>> candidates = [
+            ...     (Storylet(id="quest_middle", requires_fired=["quest_start"]), []),
+            ...     (Storylet(id="quest_end", requires_fired=["quest_middle"]), [])
+            ... ]
+            >>> filtered = service._filter_by_ordering_constraints(candidates, history)
+            >>> # Result: Only quest_middle passes (quest_start fired, but quest_middle hasn't)
+            >>> # quest_end blocked because quest_middle hasn't fired yet
+        """
+        filtered = []
+        
+        for storylet, explanations in candidates:
+            # ═══════════════════════════════════════════════════════════
+            # Check requires_fired: ALL required storylets must have fired
+            # ═══════════════════════════════════════════════════════════
+            # Loop through each required storylet ID and verify it has
+            # triggered at least once. If ANY required storylet is missing,
+            # this storylet is blocked.
+            
+            if storylet.requires_fired:
+                all_required_fired = all(
+                    tick_history.triggered_once.get(req_id, False)
+                    for req_id in storylet.requires_fired
+                )
+                if not all_required_fired:
+                    # Dependencies not met - skip this storylet
+                    # Could log which requirements are missing for debugging:
+                    # missing = [r for r in storylet.requires_fired 
+                    #           if not tick_history.triggered_once.get(r, False)]
+                    continue
+            
+            # ═══════════════════════════════════════════════════════════
+            # Check forbids_fired: NONE of forbidden storylets must have fired
+            # ═══════════════════════════════════════════════════════════
+            # Loop through each forbidden storylet ID. If ANY forbidden
+            # storylet has triggered, this storylet is blocked (it's now
+            # "too late" for this path).
+            
+            if storylet.forbids_fired:
+                any_forbidden_fired = any(
+                    tick_history.triggered_once.get(forbid_id, False)
+                    for forbid_id in storylet.forbids_fired
+                )
+                if any_forbidden_fired:
+                    # Forbidden constraint violated - skip this storylet
+                    # This prevents contradictory narrative paths:
+                    # e.g., can't join rebels if already joined guild
+                    continue
+            
+            # This storylet passes all ordering constraints!
+            # Add to filtered list with original explanations intact
+            filtered.append((storylet, explanations))
+        
+        return filtered
+    
+    def _select_fallback_candidates(
+        self,
+        fallback_storylets: List[Storylet],
+        world_state: WorldState,
+        char_states: Dict[str, CharacterState],
+        rel_states: Dict[str, Any],
+        tick_history: TickHistory
+    ) -> List[Tuple[Storylet, List[str]]]:
+        """
+        Select fallback storylet candidates (v1.7.1).
+        
+        Fallback storylets are "ambient" events that keep the narrative moving
+        when regular storylets can't fire. Common reasons for needing fallbacks:
+        - Player needs to accumulate resources
+        - Time needs to pass for cooldowns to expire
+        - World state needs to change before next plot point
+        
+        Design Philosophy:
+        Instead of hard-blocking (narrative stuck), provide low-impact ambient events:
+        - "Time passes quietly"
+        - "Weather changes"
+        - "Market activity"
+        - "Background conversations"
+        
+        These maintain world dynamism without forcing major plot progression.
+        
+        Important: Fallback storylets STILL undergo precondition checks!
+        This allows semi-conditional fallbacks like:
+            {"id": "rain", "is_fallback": true, "preconditions": [{"path": "vars.season", "op": "==", "value": "spring"}]}
+        
+        Args:
+            fallback_storylets: List of Storylet objects with is_fallback=True
+            world_state, char_states, rel_states: Current game state for precondition evaluation
+            tick_history: History for cooldown/once tracking (fallbacks can have cooldowns!)
+        
+        Returns:
+            List of (Storylet, explanations) tuples that qualify as fallback options
+            
+        Example:
+            >>> # Fallback after 3 idle ticks
+            >>> fallbacks = [
+            ...     Storylet(id="weather", is_fallback=True, preconditions=[], cooldown=2),
+            ...     Storylet(id="crowd", is_fallback=True, preconditions=[], cooldown=2)
+            ... ]
+            >>> candidates = service._select_fallback_candidates(fallbacks, world, {}, {}, history)
+            >>> # Returns both if not on cooldown, providing variety
+        """
+        candidates = []
+        current_tick = len(tick_history.ticks)
+        
+        for storylet in fallback_storylets:
+            # ═══════════════════════════════════════════════════════════
+            # Check cooldown (fallbacks can have cooldowns for variety!)
+            # ═══════════════════════════════════════════════════════════
+            # Without cooldowns, same fallback would trigger repeatedly.
+            # With cooldowns, you get variety: weather, then crowd, then weather...
+            
+            if storylet.cooldown > 0:
+                last_tick = tick_history.last_triggered.get(storylet.id, -999)
+                if current_tick - last_tick < storylet.cooldown:
+                    # This fallback recently triggered, skip
+                    continue
+            
+            # ═══════════════════════════════════════════════════════════
+            # Check "once" flag (rare for fallbacks, but supported)
+            # ═══════════════════════════════════════════════════════════
+            # Example use case: "First Snow" (fallback, but only once per playthrough)
+            
+            if storylet.once and tick_history.triggered_once.get(storylet.id, False):
+                # This "once" fallback already triggered
+                continue
+            
+            # ═══════════════════════════════════════════════════════════
+            # Evaluate preconditions (yes, fallbacks can have conditions!)
+            # ═══════════════════════════════════════════════════════════
+            # This allows contextual fallbacks:
+            # - "Rain" only in spring/summer
+            # - "Snow" only in winter
+            # - "Market bustle" only during day
+            
+            # Evaluate preconditions
+            satisfied, explanations = self.conditions_evaluator.evaluate_all(
+                storylet.preconditions,
+                world_state,
+                char_states,
+                rel_states
+            )
+            
+            if satisfied:
+                # Add "(FALLBACK)" marker to explanations
+                fallback_explanations = ["(FALLBACK STORYLET)"] + explanations
+                candidates.append((storylet, fallback_explanations))
+        
+        # Fallback storylets also respect ordering constraints
+        candidates = self._filter_by_ordering_constraints(
+            candidates,
+            tick_history
+        )
+        
+        return candidates
     
     def _calculate_intensity_adjustment(
         self,

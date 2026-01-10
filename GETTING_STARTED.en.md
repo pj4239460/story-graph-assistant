@@ -427,27 +427,38 @@ The Director uses a multi-stage process:
    - Check all storylets' conditions against current state
    - Keep only those where ALL conditions are satisfied
 
-2. **Cooldown/Once Filtering**
+2. **Ordering Constraints** *(v1.7.1 NEW!)*
+   - **requires_fired**: Storylet only triggers AFTER specified storylets have fired
+   - **forbids_fired**: Storylet only triggers if specified storylets have NOT fired
+   - Use for: Quest chains, mutually exclusive paths, narrative dependencies
+
+3. **Cooldown/Once Filtering**
    - Remove storylets still on cooldown
    - Remove "once" storylets that already triggered
 
-3. **Diversity Penalty**
+4. **Fallback Check** *(v1.7.1 NEW!)*
+   - If no regular storylets qualify, check idle tick count
+   - After N consecutive idle ticks, trigger fallback storylets
+   - Fallback storylets are ambient events that keep world alive
+
+5. **Diversity Penalty**
    - Check recent ticks for tag repetition
    - Reduce weight: `weight *= (1 - penalty) ^ repetitions`
 
-4. **Pacing Adjustment**
+6. **Pacing Adjustment**
    - If intensity too high, favor calming storylets (negative delta)
    - If intensity too low, favor escalating storylets (positive delta)
 
-5. **Weighted Selection**
+7. **Weighted Selection**
    - Normalize weights to probabilities
    - Select N storylets without replacement
    - Record rationale for each
 
-6. **Effect Application**
+8. **Effect Application**
    - Apply all selected storylets' effects
    - Compute state diff (before/after comparison)
    - Update intensity based on deltas
+   - Reset idle counter if regular storylet triggered
 
 ### Best Practices
 
@@ -457,6 +468,8 @@ The Director uses a multi-stage process:
 - Set appropriate weights (0.1 = rare, 10.0 = very common)
 - Use cooldowns to prevent repetition
 - Balance intensity_delta across storylets
+- Mark ambient events as fallback (is_fallback=true)
+- Use ordering constraints for quest chains
 
 **Precondition Tips:**
 - Start with simple conditions
@@ -469,6 +482,22 @@ The Director uses a multi-stage process:
 - Lower intensity_decay = longer intense/calm periods
 - "balanced" pacing works well for most stories
 - Monitor intensity in tick history
+- Set fallback_after_idle_ticks=3 to prevent stuck worlds
+
+**Ordering Constraints (v1.7.1):**
+- Use `requires_fired` for quest sequences:
+  - Example: "Quest Complete" requires ["Quest Start", "Quest Progress"]
+- Use `forbids_fired` for mutually exclusive paths:
+  - Example: "Peaceful Path" forbids ["Violent Path"]
+- Combine both for complex branching:
+  - "Secret Ending" requires ["Clue 1", "Clue 2"] and forbids ["Bad Choice"]
+
+**Fallback Storylets (v1.7.1):**
+- Mark with `is_fallback: true`
+- Use for ambient events: weather, crowd activity, time passage
+- Don't require specific state conditions
+- Keep intensity_delta near 0 (neutral pacing)
+- Add variety with different cooldowns
 
 ### Example: Faction Politics
 

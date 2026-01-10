@@ -91,6 +91,16 @@ def render_director_view():
             with col3:
                 st.caption(f"Cooldown: {storylet.cooldown} | Once: {storylet.once}")
             
+            # Show fallback and ordering constraints
+            if storylet.is_fallback:
+                st.info("🔄 Fallback storylet (triggers when world stuck)")
+            
+            if storylet.requires_fired:
+                st.caption(f"⛓️ Requires: {', '.join(storylet.requires_fired)}")
+            
+            if storylet.forbids_fired:
+                st.caption(f"🚫 Forbids: {', '.join(storylet.forbids_fired)}")
+            
             if storylet.preconditions:
                 st.caption(f"Conditions: {len(storylet.preconditions)}")
             if storylet.effects:
@@ -169,6 +179,19 @@ def render_director_view():
             key="director_diversity"
         )
     
+    # Advanced settings
+    with st.expander("⚙️ Advanced Settings" if st.session_state.locale == "en" else "⚙️ 高级设置"):
+        fallback_ticks = st.number_input(
+            "Fallback after idle ticks" if st.session_state.locale == "en" else "空闲tick后启用备选",
+            min_value=0,
+            max_value=10,
+            value=3,
+            help="Trigger fallback storylets after N consecutive ticks with no regular events (0=disabled)"
+                 if st.session_state.locale == "en"
+                 else "连续N个没有常规事件的tick后触发备选故事块（0=禁用）",
+            key="director_fallback"
+        )
+    
     # Tick button
     st.divider()
     
@@ -180,7 +203,8 @@ def render_director_view():
             config = DirectorConfig(
                 events_per_tick=events_per_tick,
                 pacing_preference=pacing_preference,
-                diversity_penalty=diversity_penalty
+                diversity_penalty=diversity_penalty,
+                fallback_after_idle_ticks=fallback_ticks
             )
             
             with st.spinner("Running tick..." if st.session_state.locale == "en" else "执行 tick..."):
@@ -204,10 +228,11 @@ def render_director_view():
         tick_history_key = f"tick_history_{selected_thread_id}"
         if hasattr(project, 'tick_histories') and tick_history_key in project.tick_histories:
             tick_history = project.tick_histories[tick_history_key]
+            idle_info = f" | Idle: {tick_history.idle_tick_count}" if tick_history.idle_tick_count > 0 else ""
             st.caption(
-                f"Tick history: {len(tick_history.ticks)} ticks | Intensity: {tick_history.current_intensity:.2f}"
+                f"Tick history: {len(tick_history.ticks)} ticks | Intensity: {tick_history.current_intensity:.2f}{idle_info}"
                 if st.session_state.locale == "en"
-                else f"Tick 历史：{len(tick_history.ticks)} 次 | 强度：{tick_history.current_intensity:.2f}"
+                else f"Tick 历史：{len(tick_history.ticks)} 次 | 强度：{tick_history.current_intensity:.2f}{idle_info}"
             )
     
     # Display last tick result

@@ -344,20 +344,6 @@ class ConditionsEvaluator:
         
         # Membership operators (for lists, sets, strings)
         elif op == "in":
-            # Check if expected is IN actual
-            # Example: "brave" in ["brave", "smart", "loyal"]
-            return expected in actual
-        
-        elif op == "contains" or op == "has_tag":
-            # Check if actual CONTAINS expected
-            # Example: ["brave", "smart"] contains "brave"
-            # This is the reverse of "in" and is more intuitive for trait checking
-            return expected in actual
-        
-        else:
-            raise ValueError(f"Unknown operator: {op}")
-        
-        elif op == "in":
             # Check if actual is in expected (expected should be list/set)
             if isinstance(expected, (list, set, tuple)):
                 return actual in expected

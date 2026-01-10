@@ -225,7 +225,7 @@ The Director's behavior is controlled by policy parameters:
 
 ## Selection Pipeline
 
-The Director uses a multi-stage process to select storylets:
+The Director uses a multi-stage process to select storylets (updated in v1.7.1):
 
 ### Stage 1: Precondition Filtering
 
@@ -233,7 +233,8 @@ The Director uses a multi-stage process to select storylets:
 All Storylets → Evaluate Preconditions → Candidates
 ```
 
-- Evaluate each storylet's preconditions against current state
+- Separate regular and fallback storylets
+- Evaluate each regular storylet's preconditions against current state
 - Keep only storylets where **ALL** preconditions are satisfied
 - Generate explanations for each evaluation
 
@@ -246,10 +247,57 @@ Preconditions:
 → Candidate
 ```
 
-### Stage 2: Cooldown & Once Filtering
+### Stage 2: Ordering Constraints (v1.7.1 NEW!)
 
 ```
-Candidates → Check Cooldown/Once → Available
+Candidates → Check Ordering → Ordered Candidates
+```
+
+**requires_fired**: Storylet can only trigger AFTER specified storylets have fired
+**forbids_fired**: Storylet can only trigger if specified storylets have NOT fired
+
+- Check `requires_fired` list: ALL must have triggered
+- Check `forbids_fired` list: NONE must have triggered
+- Use for: Quest chains, mutually exclusive paths, narrative dependencies
+
+**Example - Quest Chain:**
+```json
+{
+  "id": "quest_middle",
+  "title": "Quest Progress",
+  "requires_fired": ["quest_start"]
+}
+→ Will only appear after "quest_start" has triggered
+
+{
+  "id": "quest_end",
+  "title": "Quest Complete",
+  "requires_fired": ["quest_start", "quest_middle"]
+}
+→ Requires both previous steps
+```
+
+**Example - Mutually Exclusive Paths:**
+```json
+{
+  "id": "peaceful_resolution",
+  "title": "Peace Treaty",
+  "once": true
+}
+
+{
+  "id": "violent_resolution",
+  "title": "All-Out War",
+  "forbids_fired": ["peaceful_resolution"],
+  "once": true
+}
+→ Can't have war if peace treaty signed
+```
+
+### Stage 3: Cooldown & Once Filtering
+
+```
+Ordered Candidates → Check Cooldown/Once → Available
 ```
 
 - Remove storylets still on cooldown
@@ -257,7 +305,45 @@ Candidates → Check Cooldown/Once → Available
 - Remove "once" storylets that have already triggered
   - Check `triggered_once[storylet_id] == true`
 
-### Stage 3: Diversity Penalty
+### Stage 4: Fallback Check (v1.7.1 NEW!)
+
+```
+Available → Check if Empty → Fallback Candidates
+```
+
+If no regular storylets are available:
+- Check idle tick counter: `idle_tick_count >= fallback_after_idle_ticks`
+- If threshold reached, evaluate fallback storylets
+- Fallback storylets undergo same precondition/ordering/cooldown checks
+
+**Purpose**: Prevents "world stuck" - ensures story always progresses
+
+**Example Fallback Storylets:**
+```json
+{
+  "id": "weather_changes",
+  "title": "The Weather Shifts",
+  "is_fallback": true,
+  "preconditions": [],  // No requirements
+  "effects": [],  // Ambient event
+  "cooldown": 3,
+  "intensity_delta": 0.0  // Neutral
+}
+
+{
+  "id": "crowd_activity",
+  "title": "Market Crowd Activity",
+  "is_fallback": true,
+  "preconditions": [],
+  "effects": [
+    {"scope": "world", "op": "add", "path": "vars.market_activity", "value": 5}
+  ],
+  "cooldown": 2,
+  "intensity_delta": -0.1
+}
+```
+
+### Stage 5: Diversity Penalty
 
 ```
 Available → Apply Diversity Penalty → Weighted Candidates
@@ -275,7 +361,7 @@ Penalty count: 2 (tag "economic" appears twice)
 New weight: 1.5 * (1 - 0.5)² = 0.375
 ```
 
-### Stage 4: Pacing Adjustment
+### Stage 6: Pacing Adjustment
 
 ```
 Weighted Candidates → Apply Pacing Adjustment → Final Weights
@@ -295,7 +381,7 @@ Adjustment: Favor negative deltas
 New weight: weight * 1.5  // Boost calming storylets
 ```
 
-### Stage 5: Weighted Selection
+### Stage 7: Weighted Selection
 
 ```
 Final Weights → Normalize → Select N without Replacement
@@ -318,7 +404,7 @@ Select 2:
 → "Worker Strike" (30% chance)
 ```
 
-### Stage 6: Effect Application
+### Stage 8: Effect Application
 
 ```
 Selected Storylets → Apply Effects → New State + Diff
@@ -328,6 +414,9 @@ Selected Storylets → Apply Effects → New State + Diff
 - Apply each storylet's effects in order
 - Compute human-readable state diff (before/after)
 - Update intensity based on storylet deltas
+- Update idle tick counter:
+  - If regular storylets selected: Reset `idle_tick_count = 0`
+  - If no storylets selected: Increment `idle_tick_count += 1`
 
 **Example:**
 ```
@@ -344,9 +433,12 @@ After:
 
 Diff:
   world.vars.merchants_power: 60 → 70
+  
+Idle tracking:
+  Regular storylet selected → idle_tick_count = 0
 ```
 
-### Stage 7: History Recording
+### Stage 9: History Recording
 
 ```
 Tick Results → Create TickRecord → Append to History
@@ -358,8 +450,10 @@ Tick Results → Create TickRecord → Append to History
   - Applied effects
   - State diff
   - Intensity before/after
+  - Idle tick count (v1.7.1)
 - Update cooldown tracking
 - Update "once" tracking
+- Update triggered_once for ordering constraints (v1.7.1)
 - Append to `TickHistory`
 
 ## Best Practices
@@ -537,6 +631,214 @@ Future enhancement: More complex condition logic
   }
 }
 ```
+
+---
+
+## Best Practices & Troubleshooting (v1.7.1 Updated)
+
+### Using Ordering Constraints Effectively
+
+**When to use `requires_fired`:**
+- Quest chains with mandatory progression
+- Story arcs that must unfold in sequence
+- Prerequisites for branching narratives
+- Tutorial sequences
+
+**Example - Tutorial Chain:**
+```json
+[
+  {
+    "id": "tut_basics",
+    "title": "Tutorial: Basics",
+    "once": true
+  },
+  {
+    "id": "tut_advanced",
+    "title": "Tutorial: Advanced Techniques",
+    "requires_fired": ["tut_basics"],
+    "once": true
+  }
+]
+```
+
+**When to use `forbids_fired`:**
+- Mutually exclusive story paths
+- Consequences of previous choices
+- Preventing contradictory events
+- Alternative endings
+
+**Example - Faction Paths:**
+```json
+[
+  {
+    "id": "join_guild",
+    "title": "Join the Merchant Guild",
+    "once": true,
+    "effects": [{"scope": "world", "op": "set", "path": "vars.faction", "value": "guild"}]
+  },
+  {
+    "id": "join_rebels",
+    "title": "Join the Rebellion",
+    "forbids_fired": ["join_guild"],
+    "once": true,
+    "effects": [{"scope": "world", "op": "set", "path": "vars.faction", "value": "rebels"}]
+  },
+  {
+    "id": "guild_quest_1",
+    "title": "Guild Mission: Escort",
+    "requires_fired": ["join_guild"],
+    "forbids_fired": ["join_rebels"]
+  }
+]
+```
+
+### Designing Fallback Storylets
+
+**Characteristics of Good Fallback Storylets:**
+1. **No preconditions** or very minimal requirements
+2. **Ambient/atmospheric** - enhance world without major plot impact
+3. **Neutral intensity** (0.0 or slight negative like -0.1)
+4. **Moderate cooldown** (2-5 ticks) to provide variety
+
+**Example - Environmental Fallbacks:**
+```json
+[
+  {
+    "id": "weather_clear",
+    "title": "☀️ Clear Skies",
+    "is_fallback": true,
+    "preconditions": [],
+    "effects": [],
+    "cooldown": 3,
+    "intensity_delta": 0.0,
+    "tags": ["ambient", "weather"]
+  },
+  {
+    "id": "weather_rain",
+    "title": "🌧️ Rain Begins",
+    "is_fallback": true,
+    "preconditions": [],
+    "effects": [{"scope": "world", "op": "set", "path": "vars.weather", "value": "rain"}],
+    "cooldown": 3,
+    "intensity_delta": -0.05,
+    "tags": ["ambient", "weather"]
+  },
+  {
+    "id": "crowd_activity",
+    "title": "👥 Market Bustle",
+    "is_fallback": true,
+    "preconditions": [],
+    "effects": [{"scope": "world", "op": "add", "path": "vars.market_activity", "value": 5}],
+    "cooldown": 2,
+    "intensity_delta": -0.1,
+    "tags": ["ambient", "economic"]
+  }
+]
+```
+
+**Recommended Settings:**
+- `fallback_after_idle_ticks: 3` (default) - Good balance for most stories
+- Create 5-10 fallback storylets for variety
+- Use diversity tags to prevent repetition
+
+### Troubleshooting: World Gets Stuck
+
+**Symptom:** No storylets fire, idle tick count keeps increasing
+
+**Diagnostic Steps:**
+1. Check idle tick counter in UI status bar
+2. Review preconditions of all storylets
+3. Verify fallback storylets exist
+
+**Common Causes:**
+- All storylets have preconditions that can't be satisfied
+- No fallback storylets defined
+- Fallback storylets also have blocking preconditions
+- All storylets on cooldown simultaneously
+
+**Solutions:**
+```json
+// Add simple fallbacks with NO preconditions
+{
+  "id": "time_passes",
+  "title": "Time Passes Quietly",
+  "is_fallback": true,
+  "preconditions": [],  // IMPORTANT: Empty!
+  "effects": [],
+  "cooldown": 1,
+  "intensity_delta": -0.2
+}
+```
+
+### Troubleshooting: Quest Chain Broken
+
+**Symptom:** Middle steps of quest never appear
+
+**Diagnostic Steps:**
+1. Check `triggered_once` in tick history
+2. Verify spelling of storylet IDs in `requires_fired`
+3. Check if storylet has conflicting `forbids_fired`
+
+**Common Mistakes:**
+```json
+// ❌ WRONG - Typo in requires_fired
+{
+  "id": "quest_part_2",
+  "requires_fired": ["quest_part_1"],  // ID is actually "quest_pt_1"
+}
+
+// ✅ CORRECT - Match exact IDs
+{
+  "id": "quest_part_2",
+  "requires_fired": ["quest_pt_1"],
+}
+```
+
+### Troubleshooting: Fallbacks Not Triggering
+
+**Symptom:** idle_tick_count exceeds threshold, but fallbacks don't fire
+
+**Diagnostic Steps:**
+1. Check fallback storylets have `"is_fallback": true`
+2. Verify fallback preconditions are satisfied
+3. Check fallback cooldowns
+4. Confirm `fallback_after_idle_ticks` setting
+
+**Example Fix:**
+```json
+// ❌ PROBLEM - Fallback with blocking precondition
+{
+  "id": "fallback_event",
+  "is_fallback": true,
+  "preconditions": [
+    {"scope": "world", "path": "vars.impossible_condition", "op": "==", "value": 999}
+  ]
+}
+
+// ✅ SOLUTION - Remove preconditions or make them trivial
+{
+  "id": "fallback_event",
+  "is_fallback": true,
+  "preconditions": []
+}
+```
+
+### Performance Considerations
+
+**Large Storylet Pools (100+ storylets):**
+- Precondition evaluation is O(n)
+- Use specific preconditions to filter early
+- Consider splitting into separate scenes/contexts
+
+**Deep Quest Chains (10+ steps):**
+- Use `once: true` to prevent re-triggering
+- Verify chain completeness with tests
+- Consider using state variables for progress tracking
+
+**Recommended Limits:**
+- 50-100 storylets per context (good performance)
+- 5-10 storylets per tick (narrative clarity)
+- 3-5 levels of `requires_fired` depth (maintainability)
 
 ## References
 

@@ -86,6 +86,13 @@ class Storylet(BaseModel):
     # Pacing control: affects story intensity for peaks-and-valleys pacing
     intensity_delta: float = 0.0  # -1.0 (calming) to +1.0 (escalating)
     
+    # Fallback mechanism: prevents "world stuck" when no regular storylets qualify
+    is_fallback: bool = False  # If True, only triggers when no regular storylets available
+    
+    # Ordering constraints: enforce narrative sequence dependencies
+    requires_fired: List[str] = Field(default_factory=list)  # Must fire AFTER these storylet IDs
+    forbids_fired: List[str] = Field(default_factory=list)  # Must NOT fire if these have triggered
+    
     class Config:
         arbitrary_types_allowed = True
 
@@ -131,6 +138,7 @@ class TickHistory(BaseModel):
     - Cooldown state for each storylet
     - "Once" flag state (which storylets have already triggered)
     - Current intensity level for pacing
+    - Idle tick counter for fallback triggering
     
     This enables:
     - Full replay of world evolution
@@ -144,6 +152,7 @@ class TickHistory(BaseModel):
         last_triggered: Maps storylet_id to the tick when it last triggered
         triggered_once: Maps storylet_id to True if it has already triggered
         current_intensity: Current story intensity (0.0=calm, 1.0=intense)
+        idle_tick_count: How many consecutive ticks with no non-fallback events
     """
     thread_id: str
     ticks: List['TickRecord'] = Field(default_factory=list)
@@ -156,6 +165,9 @@ class TickHistory(BaseModel):
     
     # Current intensity level for pacing (0.0 = calm, 1.0 = intense)
     current_intensity: float = 0.5
+    
+    # Idle tracking: counts consecutive ticks with no regular (non-fallback) storylets
+    idle_tick_count: int = 0
 
 
 class TickRecord(BaseModel):
@@ -206,12 +218,14 @@ class DirectorConfig(BaseModel):
     - Diversity: Prevents the same tags from repeating too often
     - Intensity: Creates "peaks and valleys" pacing like Left 4 Dead's AI Director
     - Pacing preference: Bias toward calm, balanced, or intense stories
+    - Fallback: Prevents world from getting stuck when no storylets qualify
     
     You can tune these parameters to achieve different narrative feels:
     - High diversity_penalty = more variety, less repetition
     - Low intensity_decay = longer intense/calm periods
     - "calm" pacing = favors low-intensity storylets
     - "intense" pacing = favors high-intensity storylets
+    - Lower fallback_after_idle_ticks = more aggressive fallback triggering
     
     Attributes:
         events_per_tick: How many storylets to select (1-5)
@@ -221,6 +235,7 @@ class DirectorConfig(BaseModel):
         intensity_max: Maximum intensity threshold (0.0-1.0)
         intensity_decay: How much intensity decays per tick toward 0.5 (0.0-0.5)
         pacing_preference: Overall story pacing bias
+        fallback_after_idle_ticks: Trigger fallback storylets after N idle ticks (0=disabled)
     """
     # How many storylets to trigger per tick
     events_per_tick: int = Field(default=2, ge=1, le=5)
@@ -236,6 +251,9 @@ class DirectorConfig(BaseModel):
     
     # Pacing preference: affects storylet selection weighting
     pacing_preference: Literal["balanced", "calm", "intense"] = "balanced"
+    
+    # Fallback: trigger fallback storylets after N consecutive idle ticks (0 = disabled)
+    fallback_after_idle_ticks: int = Field(default=3, ge=0, le=10)
 
 
 # Forward references resolution

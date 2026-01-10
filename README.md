@@ -17,15 +17,22 @@ A powerful tool for narrative game developers featuring **World Director** - an 
 
 ### ✨ Core Features
 
-#### 🎬 World Director (NEW!)
+#### 🎬 World Director (v1.7.1)
 Our **differentiated approach** to narrative design - move beyond manual branching and AI NPCs:
 
+**Core System:**
 - **Storylets System** - Define reusable narrative fragments with preconditions and effects
 - **Quality-Based Narrative (QBN)** - Story emerges from state + rules, not manual branching
 - **AI Director Pacing** - Automatic intensity control with peaks-and-valleys (inspired by Left 4 Dead)
 - **Deterministic Selection** - Same state + config = same result (fully reproducible)
 - **Explainable Decisions** - Every world tick includes human-readable rationale
 - **Replayable History** - Complete tick-by-tick record with state diffs
+
+**Advanced Features (v1.7.1 NEW!):**
+- **Ordering Constraints** - Define narrative sequence dependencies (requires/forbids storylets)
+- **Fallback Mechanism** - Prevents "world stuck" - triggers ambient storylets when no regular events qualify
+- **Idle Detection** - Automatically tracks consecutive ticks with no activity
+- **Complex Quest Chains** - Build multi-stage narratives with explicit ordering requirements
 
 #### 📝 Story Building
 - 🌳 **Interactive Story Graph** - Drag-and-drop visualization with multiple layouts
@@ -123,23 +130,44 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [x] Town of Riverhaven example (20 storylets, faction politics)
 - [x] Comprehensive test suite (13 tests, 35+ assertions)
 
-**v1.7 - Director Enhancements** (Next - 1-2 weeks)
-- [ ] Tick timeline navigation (prev/next, visual timeline)
+**v1.7.1 - Ordering & Fallback** ✅
+- [x] Ordering constraints (requires_fired, forbids_fired)
+- [x] Fallback storylets (ambient events when world stuck)
+- [x] Idle tick tracking and reset logic
+- [x] Enhanced UI displays (ordering constraints, idle counter)
+- [x] Complete test suite (5 new tests for ordering/fallback)
+- [x] Demo example with quest chains
+
+**v1.7.2 - Actions Sequences** (In Progress - 1 week)
+- [ ] Multi-stage storylet progression (cursor-based)
+- [ ] Repeatable storylet support
+- [ ] Enhanced tick history with cursor tracking
+- [ ] Updated River Haven example with quest chains
+
+**v1.8 - UI/UX Enhancements** (Next - 1-2 weeks)
+- [ ] Tick timeline navigation (prev/next, jump to tick N)
+- [ ] Visual intensity/pacing graphs
 - [ ] Enhanced parameter tuning (presets, real-time tooltips)
 - [ ] Export capabilities (JSON, Markdown reports, statistics)
-- [ ] Visual intensity/pacing graphs
 
-**v2.0 - Integration & Advanced Features** (Future - 1-2 months)
+**v1.9 - Author Tools** (Future - 1-2 weeks)
+- [ ] Trigger accuracy labeling (✅/❌ feedback)
+- [ ] Coverage report (dead content, spam detection)
+- [ ] Consistency validation (ordering conflicts, unreachable storylets)
+- [ ] Debugging dashboard
+
+**v2.0 - AI Integration** (Future - 2-4 weeks)
+- [ ] Natural language preconditions (LLM-based evaluation)
+- [ ] AI-assisted storylet design (suggest preconditions/effects)
 - [ ] Generate scene drafts from tick results
 - [ ] Advanced what-if simulation (compare different configs)
-- [ ] Storylet design assistant (AI-suggested preconditions/effects)
-- [ ] Visual storylet editor (graph-based condition builder)
-- [ ] Multi-actor simulation (parallel character decisions)
 
 ### 📚 Documentation
 
-- [Getting Started Guide](GETTING_STARTED.en.md)
-- [Developer Guide](docs/developer_guide.en.md)
+- [Getting Started Guide](GETTING_STARTED.en.md) - Quick start tutorial
+- [World Director Guide](docs/world_director_guide.md) - Comprehensive storylets reference
+- [Developer Guide](docs/developer_guide.en.md) - System architecture and internals
+- [API Documentation](docs/api_reference.md) - Complete API reference (Coming soon)
 
 ---
 
@@ -147,20 +175,40 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 
 ### ✨ 功能特色
 
+#### 🎬 世界导演系统 (v1.7.1)
+我们的**差异化叙事设计方法** - 超越手工分支和AI NPC：
+
+**核心系统：**
+- **Storylets 系统** - 定义可复用的叙事片段，包含前置条件和效果
+- **质量驱动叙事（QBN）** - 故事从状态+规则中涌现，而非手工分支
+- **AI 导演节奏控制** - 自动强度控制，峰谷交替（受 Left 4 Dead 启发）
+- **确定性选择** - 相同状态+配置=相同结果（完全可重现）
+- **可解释决策** - 每次世界tick都包含人类可读的选择理由
+- **可回放历史** - 完整的逐tick记录，包含状态差异
+
+**高级功能（v1.7.1 新增！）：**
+- **排序约束** - 定义叙事序列依赖（requires/forbids storylets）
+- **备选机制** - 防止"世界卡住" - 当常规事件无法触发时，触发氛围storylets
+- **空闲检测** - 自动跟踪连续无活动的ticks
+- **复杂任务链** - 用显式排序要求构建多阶段叙事
+
+#### 📝 故事构建
 - 🌳 **交互式剧情图谱** - 拖拽可视化，多种布局算法
 - ✏️ **完整编辑功能** - 内联表单编辑场景、角色和分支选项
 - 📋 **场景体检面板** - AI 驱动的场景分析，带缓存机制
 - 👥 **角色档案管理** - 集中管理角色信息和关系
-- ⚡ **动态角色状态系统** - 基于效果（Effect）的状态变更系统，支持时序回放
-  - 定义效果来改变角色心情、特质、目标、关系和世界变量
-  - 路径试玩模式实时显示剧情推进时的状态变化
-  - 状态查看器可查询任意已保存故事线中的完整角色状态
-  - AI 代理工具支持查询角色状态和关系
-- 🤖 **AI 智能助手** - LangGraph 对话代理，支持自然语言查询，基于 FAISS 语义搜索
-- 🅱️ **多模型支持** - 通过 LiteLLM 支持 DeepSeek、OpenAI、Anthropic、Google、本地模型
-- 📚 **示例项目** - 一键加载中英文范例故事，包含动态状态演示
-- 🌍 **双语界面** - 完整中英文 UI，动态切换
-- 💾 **简洁存储** - 基于 JSON 的可移植项目文件
+
+#### ⚡ 动态状态系统
+- **基于效果的变更** - 定义角色/世界/关系变化
+- **路径试玩模式** - 故事推进时实时状态可视化
+- **状态查看器** - 查询任意已保存线程中任意点的完整状态
+- **时序回放** - 倒带和重放状态变化
+
+#### 🤖 AI 集成
+- **多模型支持** - DeepSeek、OpenAI、Anthropic、Google、Ollama
+- **LangGraph 代理** - 自然语言查询和分析
+- **语义搜索** - FAISS向量检索
+- **Token 管理** - 内置用量跟踪和限额
 
 ### 🚀 快速开始
 
@@ -219,6 +267,41 @@ streamlit run src/app.py
 - [x] AI 代理状态查询工具
 - [x] 示例项目包含效果演示
 
+**v1.6 - 世界导演 MVP** ✅
+- [x] Storylet 模型（前置条件 + 效果）
+- [x] 7阶段选择流程（前置条件、冷却、多样性、节奏、选择、效果、记录）
+- [x] DirectorService 实现
+- [x] TickHistory 跟踪
+- [x] 强度控制系统
+- [x] 世界导演 UI
+- [x] 完整测试覆盖
+
+**v1.7.1 - 排序约束 + 备选机制** ✅
+- [x] 排序约束（requires_fired、forbids_fired）
+- [x] 备选机制（is_fallback、fallback_after_idle_ticks）
+- [x] 空闲tick跟踪（idle_tick_count）
+- [x] 增强UI显示（排序标记、空闲计数器）
+- [x] 综合测试套件
+- [x] 完整文档更新
+
+**v1.7.2 - 动作序列** 🔄（开发中）
+- [ ] 多步动作链（选择 → 动作序列 → 结果）
+- [ ] 条件性动作分支
+- [ ] 动作状态跟踪
+- [ ] 动作可视化UI
+
+**v1.8 - UI/UX 增强**
+- [ ] Storylet 编辑器UI
+- [ ] 可视化流程设计器
+- [ ] 增强的历史浏览器
+- [ ] 导出/导入功能
+
+**v1.9 - 创作工具**
+- [ ] Storylet 模板库
+- [ ] AI 辅助的 storylet 生成
+- [ ] 平衡和测试工具
+- [ ] 叙事分析仪表板
+
 **v2.0 - 高级分析与模拟**
 - [ ] 角色弧分析
 - [ ] 路线分析与状态演进可视化
@@ -228,8 +311,11 @@ streamlit run src/app.py
 
 ### 📚 文档
 
-- [入门指南](GETTING_STARTED.zh.md)
-- [开发者指南](docs/developer_guide.zh.md)
+- [入门指南（中文）](GETTING_STARTED.zh.md)
+- [入门指南（英文）](GETTING_STARTED.en.md)
+- [开发者指南（英文）](docs/developer_guide.en.md)
+- [世界导演指南（英文）](docs/world_director_guide.md)
+- [世界导演指南（中文）](docs/world_director_guide.zh.md)
 
 ---
 
