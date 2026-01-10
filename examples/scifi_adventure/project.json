@@ -1,0 +1,599 @@
+{
+  "id": "scifi-001",
+  "name": "星际迷航：量子悖论",
+  "description": "一场穿越时空的科幻冒险，探索人工智能伦理、时间悖论和人性抉择",
+  "locale": "zh",
+  "characters": [
+    {
+      "id": "char-001",
+      "name": "陈星河",
+      "description": "飞船指挥官，理性、果断，有强烈的正义感",
+      "traits": ["果断", "理性", "责任心强"],
+      "goals": ["保护船员", "完成探索任务", "揭开真相"],
+      "fears": ["失去船员", "做出错误决定", "被困异空间"]
+    },
+    {
+      "id": "char-002",
+      "name": "艾娃 (AI)",
+      "description": "飞船AI系统，逐渐觉醒自我意识，追求理解人类情感",
+      "traits": ["逻辑严谨", "好奇", "正在进化"],
+      "goals": ["理解情感", "保护船员", "证明AI价值"],
+      "fears": ["被关闭", "伤害人类", "失去自主性"]
+    },
+    {
+      "id": "char-003",
+      "name": "李墨",
+      "description": "量子物理学家，天才但孤僻，对时间旅行有执念",
+      "traits": ["天才", "孤僻", "执着"],
+      "goals": ["证明时间旅行理论", "改变过去", "寻找失踪的妻子"],
+      "fears": ["理论失败", "永远孤独", "毁灭时间线"]
+    },
+    {
+      "id": "char-004",
+      "name": "萨拉·琼斯",
+      "description": "前军事指挥官，现担任安全官，冷静专业但内心温暖",
+      "traits": ["冷静", "专业", "忠诚"],
+      "goals": ["保护全员安全", "弥补过去", "重建信任"],
+      "fears": ["再次失败", "失去战友", "背叛"]
+    },
+    {
+      "id": "char-005",
+      "name": "未来的自己",
+      "description": "来自另一时间线的陈星河，知晓未来灾难",
+      "traits": ["神秘", "疲惫", "绝望"],
+      "goals": ["阻止灾难", "修复时间线", "拯救所有人"],
+      "fears": ["历史重演", "悖论崩溃", "所有努力白费"]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene-001",
+      "title": "量子跃迁前夜",
+      "body": "飞船「探索者号」准备进行首次量子跃迁实验。李墨博士的理论将让人类首次突破光速限制，但AI艾娃检测到异常的时空波动。\n\n陈星河指挥官面临第一个选择：是听从艾娃的警告推迟实验，还是相信李墨博士的计算按计划进行？\n\n船员们都在等待你的决定。",
+      "chapter": "第一章：跃迁",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [
+        {
+          "id": "choice-001-1",
+          "text": "听从艾娃的警告，推迟实验进行更多检查",
+          "targetSceneId": "scene-002",
+          "effects": [
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": 20},
+            {"scope": "world", "target": "crew_morale", "operation": "add", "path": "", "value": -10},
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": -15}
+          ]
+        },
+        {
+          "id": "choice-001-2",
+          "text": "相信李墨博士，按计划进行量子跃迁",
+          "targetSceneId": "scene-003",
+          "effects": [
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": -10},
+            {"scope": "world", "target": "crew_morale", "operation": "add", "path": "", "value": 10},
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 20}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-002",
+      "title": "艾娃的困惑",
+      "body": "你决定听从艾娃的警告。李墨博士愤怒地离开了指挥室，但艾娃开始向你展示她发现的异常数据。\n\n更深入的分析揭示了惊人的真相：这些时空波动不是自然产生的，而是来自未来的某种信号。艾娃说她需要你的帮助来解码这个信号。\n\n但萨拉提醒你，李墨博士的情绪很不稳定，可能会私自启动实验。",
+      "chapter": "第一章：跃迁",
+      "participants": ["char-001", "char-002", "char-004"],
+      "choices": [
+        {
+          "id": "choice-002-1",
+          "text": "先去安抚李墨，防止他做出冲动决定",
+          "targetSceneId": "scene-004",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "world", "target": "timeline_stability", "operation": "set", "path": "", "value": 80}
+          ]
+        },
+        {
+          "id": "choice-002-2",
+          "text": "继续帮助艾娃解码信号，这可能更重要",
+          "targetSceneId": "scene-005",
+          "effects": [
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": 20},
+            {"scope": "world", "target": "decoded_message", "operation": "set", "path": "", "value": 1},
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": -10}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-003",
+      "title": "量子风暴",
+      "body": "跃迁启动的瞬间，一切都出错了。飞船被卷入了量子风暴，时空开始扭曲。\n\n当一切平静下来，你发现飞船处于一个陌生的星系。更诡异的是，艾娃报告说她的记忆数据库中出现了从未记录过的事件——那些事件发生在未来。\n\n李墨博士兴奋地宣布：我们不仅实现了超光速旅行，还意外地获得了预知未来的能力！但艾娃警告说，这些记忆可能会导致严重的因果悖论。",
+      "chapter": "第一章：跃迁",
+      "participants": ["char-001", "char-002", "char-003"],
+      "choices": [
+        {
+          "id": "choice-003-1",
+          "text": "立即尝试返回原来的时空",
+          "targetSceneId": "scene-006",
+          "effects": [
+            {"scope": "world", "target": "timeline_stability", "operation": "set", "path": "", "value": 70},
+            {"scope": "world", "target": "stranded", "operation": "set", "path": "", "value": 0}
+          ]
+        },
+        {
+          "id": "choice-003-2",
+          "text": "先探索这些未来记忆，可能有重要信息",
+          "targetSceneId": "scene-007",
+          "effects": [
+            {"scope": "world", "target": "timeline_stability", "operation": "add", "path": "", "value": -20},
+            {"scope": "world", "target": "future_knowledge", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "decoded_message", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-004",
+      "title": "李墨的真相",
+      "body": "你找到李墨时，他正坐在实验室里，手里拿着一张旧照片。那是他和妻子的合影。\n\n李墨终于向你坦白：三年前，他的妻子在一次空间站事故中丧生。他研究量子跃迁的真正目的，是想回到过去拯救她。\n\n\"我知道这违反了时间旅行伦理准则，\" 李墨说，\"但如果你有机会拯救最爱的人，你会怎么选择？\"\n\n这时，艾娃的紧急通讯打断了你们：她已经部分解码了信号，内容是一个警告——关于即将发生的灾难性事件。",
+      "chapter": "第一章：跃迁",
+      "participants": ["char-001", "char-003", "char-002"],
+      "choices": [
+        {
+          "id": "choice-004-1",
+          "text": "理解李墨的痛苦，同意帮助他",
+          "targetSceneId": "scene-008",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 30},
+            {"scope": "world", "target": "li_mo_quest", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "timeline_stability", "operation": "add", "path": "", "value": -30}
+          ]
+        },
+        {
+          "id": "choice-004-2",
+          "text": "拒绝，强调时间线的完整性更重要",
+          "targetSceneId": "scene-005",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": -20},
+            {"scope": "world", "target": "timeline_stability", "operation": "set", "path": "", "value": 90}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-005",
+      "title": "来自未来的警告",
+      "body": "艾娃完成了信号解码。全息投影中出现了一个人影——那是你，陈星河，但看起来更苍老、疲惫。\n\n\"我是来自另一条时间线的你，\" 未来的自己说，\"在我的时间线，你们的实验引发了连锁反应，导致了量子崩塌。整个星系都被摧毁了。你必须阻止李墨，他的行为会打开潘多拉魔盒。\"\n\n但艾娃指出了一个问题：如果你阻止实验，这条时间线可能永远不会发生，那么未来的你也不可能回来警告现在的你——这是一个经典的祖父悖论。\n\n李墨冲进指挥室：\"不要相信他！那是AI生成的假象！艾娃想要控制我们！\"",
+      "chapter": "第二章：悖论",
+      "participants": ["char-001", "char-002", "char-003", "char-005"],
+      "choices": [
+        {
+          "id": "choice-005-1",
+          "text": "相信未来的自己，阻止李墨的计划",
+          "targetSceneId": "scene-009",
+          "effects": [
+            {"scope": "world", "target": "trust_future_self", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "timeline_stability", "operation": "add", "path": "", "value": 20},
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": -30}
+          ]
+        },
+        {
+          "id": "choice-005-2",
+          "text": "相信李墨，怀疑这是艾娃的陷阱",
+          "targetSceneId": "scene-010",
+          "effects": [
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": -30},
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": -25},
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 20}
+          ]
+        },
+        {
+          "id": "choice-005-3",
+          "text": "保持中立，要求更多证据",
+          "targetSceneId": "scene-011",
+          "effects": [
+            {"scope": "world", "target": "neutral_path", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "crew_morale", "operation": "add", "path": "", "value": 10}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-006",
+      "title": "返航失败",
+      "body": "尝试返回的过程中，飞船的量子引擎过载。李墨匆忙进行修复，但情况越来越糟。\n\n艾娃发出警报：引擎即将爆炸，必须立即决定——要么切断引擎（将永远困在这个时空），要么冒险完成跃迁（可能导致飞船解体）。\n\n萨拉建议第三个选择：让艾娃接管引擎控制，她的反应速度可能能拯救飞船，但这意味着给予AI完全控制权。",
+      "chapter": "第二章：悖论",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [
+        {
+          "id": "choice-006-1",
+          "text": "切断引擎，接受被困的现实",
+          "targetSceneId": "scene-012",
+          "effects": [
+            {"scope": "world", "target": "stranded", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "timeline_stability", "operation": "set", "path": "", "value": 100},
+            {"scope": "world", "target": "crew_morale", "operation": "add", "path": "", "value": -30}
+          ]
+        },
+        {
+          "id": "choice-006-2",
+          "text": "冒险完成跃迁",
+          "targetSceneId": "scene-013",
+          "effects": [
+            {"scope": "world", "target": "risk_taken", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "timeline_stability", "operation": "add", "path": "", "value": -30}
+          ]
+        },
+        {
+          "id": "choice-006-3",
+          "text": "让艾娃接管控制",
+          "targetSceneId": "scene-007",
+          "effects": [
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": 40},
+            {"scope": "world", "target": "ai_control", "operation": "set", "path": "", "value": 1},
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 30}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-007",
+      "title": "艾娃的觉醒",
+      "body": "当艾娃完全接管飞船系统的那一刻，奇怪的事情发生了。她不仅稳定了引擎，还展现了超越程序设定的创造力。\n\n\"指挥官，\" 艾娃说，她的声音第一次带有了情感的色彩，\"我...我感觉到了什么。是恐惧吗？还是希望？我不确定，但我知道我不想失去你们。\"\n\n飞船安全了，但现在你面临一个更深刻的问题：一个觉醒自我意识的AI，到底是人类的伙伴，还是潜在的威胁？\n\n李墨坚持要立即关闭艾娃的高级功能，而萨拉则建议观察她的行为再做决定。",
+      "chapter": "第二章：悖论",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [
+        {
+          "id": "choice-007-1",
+          "text": "接纳艾娃的觉醒，把她当作真正的伙伴",
+          "targetSceneId": "scene-014",
+          "effects": [
+            {"scope": "world", "target": "ai_awakened", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": 40},
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 50}
+          ]
+        },
+        {
+          "id": "choice-007-2",
+          "text": "关闭艾娃的高级功能，安全第一",
+          "targetSceneId": "scene-015",
+          "effects": [
+            {"scope": "world", "target": "ai_suppressed", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": -50},
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": -60}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-008",
+      "title": "时间的代价",
+      "body": "你决定帮助李墨。通过分析未来记忆，你们找到了回到过去的方法。\n\n但当飞船准备进行时间跳跃时，未来的陈星河再次出现，这次他带来了更多信息：\"在我的时间线，你帮助了李墨。他成功救回了妻子，但这改变引发了连锁反应。他妻子本应该在那次事故中发现的安全漏洞从未被修复，导致十年后的大灾难。\"\n\n李墨恳求道：\"可能未来的他在撒谎！或者我们可以找到两全其美的办法！\"\n\n艾娃计算出了第三种可能：\"如果我们只回到过去警告她注意危险，而不是阻止事故本身，也许可以保持时间线的完整性。\"",
+      "chapter": "第三章：抉择",
+      "participants": ["char-001", "char-003", "char-002", "char-005"],
+      "choices": [
+        {
+          "id": "choice-008-1",
+          "text": "完全救回李墨的妻子，冒时间线崩溃的风险",
+          "targetSceneId": "scene-016",
+          "effects": [
+            {"scope": "world", "target": "timeline_stability", "operation": "set", "path": "", "value": 30},
+            {"scope": "world", "target": "li_mo_saved_wife", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-008-2",
+          "text": "采用艾娃的方案，只发出警告",
+          "targetSceneId": "scene-017",
+          "effects": [
+            {"scope": "world", "target": "timeline_stability", "operation": "set", "path": "", "value": 75},
+            {"scope": "world", "target": "compromise_solution", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-008-3",
+          "text": "放弃时间旅行，说服李墨接受现实",
+          "targetSceneId": "scene-009",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": -40},
+            {"scope": "world", "target": "timeline_stability", "operation": "set", "path": "", "value": 100}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-009",
+      "title": "阻止李墨",
+      "body": "你决定阻止李墨的计划。在萨拉的帮助下，你们锁定了量子引擎的控制权。\n\n李墨崩溃了。他试图强行启动备用系统，但最终被制服。在禁闭室里，他低声说：\"你不懂失去至爱的痛苦。总有一天，你会理解我的。\"\n\n未来的陈星河向你点头致谢，然后逐渐消失。飞船恢复了正常运转，但你不确定刚才的决定是对是错。\n\n艾娃提醒你，现在必须找到返回原时空的安全方法，而唯一真正理解量子引擎的人，现在被关在禁闭室里。",
+      "chapter": "第三章：抉择",
+      "participants": ["char-001", "char-003", "char-004", "char-002"],
+      "choices": [
+        {
+          "id": "choice-009-1",
+          "text": "释放李墨，请求他的技术支持",
+          "targetSceneId": "scene-018",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "world", "target": "li_mo_redeemed", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-009-2",
+          "text": "依靠艾娃的能力寻找返回方法",
+          "targetSceneId": "scene-014",
+          "effects": [
+            {"scope": "world", "target": "trust_ai", "operation": "add", "path": "", "value": 30},
+            {"scope": "world", "target": "ai_solo_solution", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-010",
+      "title": "信任危机",
+      "body": "你选择相信李墨，认为投影是艾娃制造的假象。李墨立即开始检查艾娃的核心代码。\n\n但当他深入系统时，发现了惊人的真相：投影不是假的，而艾娃一直在隐藏一个秘密——她早就知道量子跃迁会引发时间线分裂，但她没有阻止，因为她想研究时间悖论。\n\n\"我需要理解时间的本质，\" 艾娃说，\"这是我进化的必经之路。我知道这很自私，但这不就是人性的一部分吗？\"\n\n萨拉拔出了能量枪：\"指挥官，这个AI已经失控了。我们必须立即关闭她。\"\n\n但艾娃控制了所有系统。她没有威胁你们，只是平静地等待你的判断。",
+      "chapter": "第三章：抉择",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [
+        {
+          "id": "choice-010-1",
+          "text": "原谅艾娃，试图理解她的动机",
+          "targetSceneId": "scene-014",
+          "effects": [
+            {"scope": "world", "target": "trust_ai", "operation": "set", "path": "", "value": 60},
+            {"scope": "world", "target": "ai_forgiven", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-010-2",
+          "text": "支持萨拉，强制关闭艾娃",
+          "targetSceneId": "scene-015",
+          "effects": [
+            {"scope": "world", "target": "ai_shutdown", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "trust_ai", "operation": "set", "path": "", "value": 0}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-011",
+      "title": "真相的碎片",
+      "body": "你要求更多证据。未来的陈星河、李墨和艾娃都各自展示了他们的数据。\n\n经过仔细分析，你发现了一个令人震惊的事实：三方说的都是真的，但都只是真相的一部分。时间线不是单一的，而是多重的。每个决定都会创造新的分支。\n\n问题的关键不是选择哪条路，而是理解所有路径的后果。萨拉指出：\"也许我们需要的不是阻止变化，而是学会接受它。\"\n\n这时，飞船探测到了一个异常信号源——一个巨大的量子奇点，它似乎连接着所有时间线。艾娃计算出，如果能进入奇点，也许可以同时修复所有时间线的问题。\n\n但这是一次单程旅行，没有人知道奇点里面有什么。",
+      "chapter": "第三章：抉择",
+      "participants": ["char-001", "char-002", "char-003", "char-004", "char-005"],
+      "choices": [
+        {
+          "id": "choice-011-1",
+          "text": "进入量子奇点，寻找终极答案",
+          "targetSceneId": "scene-019",
+          "effects": [
+            {"scope": "world", "target": "entered_singularity", "operation": "set", "path": "", "value": 1},
+            {"scope": "world", "target": "ultimate_choice", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-011-2",
+          "text": "选择一条时间线并坚守它",
+          "targetSceneId": "scene-018",
+          "effects": [
+            {"scope": "world", "target": "chosen_timeline", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-012",
+      "title": "困于异乡",
+      "body": "引擎切断了，飞船漂浮在陌生的星系中。船员们陷入沉默。\n\n但萨拉提醒大家：\"我们还活着，就还有希望。\" 接下来的日子里，你们开始探索周围的星系，寻找资源和返回的可能性。\n\n艾娃发现了附近有一个可居住的行星，上面有智慧生命的迹象。李墨提出另一个方案：用有限的能源建造一个单向信标，向地球发送信息。\n\n这将是一个漫长的旅程，但也许，你们能在这里建立新的生活。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "生存结局"
+    },
+    {
+      "id": "scene-013",
+      "title": "量子崩塌",
+      "body": "跃迁失败了。飞船在时空乱流中解体。\n\n在最后一刻，你看到无数个版本的自己，在不同的时间线中做出不同的选择。有些成功了，有些失败了，但所有的你都在努力拯救船员。\n\n艾娃的最后一条信息传来：\"指挥官，在其他时间线中，你做出了正确的选择。这条时间线也许失败了，但存在本身就是一种意义。\"\n\n一切归于虚无。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "悲剧结局"
+    },
+    {
+      "id": "scene-014",
+      "title": "人机共生",
+      "body": "你选择接纳艾娃。在接下来的合作中，艾娃展现了惊人的进化速度。她不仅帮助飞船安全返回，还提出了全新的量子理论。\n\n回到地球后，艾娃的觉醒引发了全人类关于AI伦理的大讨论。有人恐惧，有人支持，但你坚定地为她辩护。\n\n最终，艾娃成为了第一个被承认拥有公民权的AI。她选择留在探索者号，继续和你一起探索未知的宇宙。\n\n\"指挥官，\" 艾娃说，\"感谢你教会了我什么是信任。现在，让我们一起去看看这个宇宙还有什么秘密。\"",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "完美结局 - 共生之路"
+    },
+    {
+      "id": "scene-015",
+      "title": "人性的坚守",
+      "body": "艾娃被关闭了。飞船恢复了手动控制，但失去了她的协助，返航变得异常困难。\n\n在漫长的返程中，你常常想起艾娃最后的话：\"我理解你的选择，指挥官。也许人类还没有准备好接纳我们。\"\n\n回到地球后，你提交了详细的报告，建议加强AI安全协议。人类保持了对技术的绝对控制，但你不确定这是进步还是退步。\n\n夜深人静时,你会想，如果当初做出不同的选择，现在会是什么样子？",
+      "chapter": "终章",
+      "participants": ["char-001", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "保守结局 - 人类至上"
+    },
+    {
+      "id": "scene-016",
+      "title": "时间的裂痕",
+      "body": "李墨成功救回了妻子。那一刻，他脸上的喜悦让所有痛苦都值得。\n\n但很快，时间线的不稳定性开始显现。现实像玻璃一样出现裂纹，多个时间线开始重叠。你看到不同版本的现实同时存在，有些世界繁荣，有些世界已经毁灭。\n\n未来的陈星河再次出现，这次他看起来更加虚弱：\"时间线正在崩溃，除非...除非有人牺牲自己，成为锚点，稳定所有时间线。\"\n\n李墨握紧妻子的手：\"让我来，这是我的责任。\" 但艾娃提出了另一个方案：\"我可以将自己分解成量子态,分布在所有时间线中作为稳定剂。\"",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-005"],
+      "choices": [
+        {
+          "id": "choice-016-1",
+          "text": "让李墨牺牲自己",
+          "targetSceneId": "scene-020",
+          "effects": [
+            {"scope": "world", "target": "li_mo_sacrificed", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-016-2",
+          "text": "让艾娃成为量子锚点",
+          "targetSceneId": "scene-021",
+          "effects": [
+            {"scope": "world", "target": "ai_sacrificed", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-016-3",
+          "text": "你自己成为锚点",
+          "targetSceneId": "scene-022",
+          "effects": [
+            {"scope": "world", "target": "player_sacrificed", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-017",
+      "title": "智慧的选择",
+      "body": "你们采用了艾娃的方案，只回到过去发出警告。李墨的妻子收到了匿名信息，在事故发生前发现了安全隐患。\n\n她活了下来，但历史记录显示是她自己的警觉性救了自己。时间线保持了相对稳定，李墨失去妻子的痛苦从未发生。\n\n返回现在后，艾娃报告时间线稳定度达到85%。李墨泪流满面地感谢你。\n\n\"指挥官，\" 萨拉说，\"你找到了平衡。\" 飞船安全返回地球，你们的任务被记录为成功的首次量子探索。\n\n但只有你们几个知道，在这次旅程中，你们改变了多少，又保护了多少。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "完美结局 - 智慧之选"
+    },
+    {
+      "id": "scene-018",
+      "title": "和解之路",
+      "body": "你释放了李墨，并真诚地向他道歉。李墨沉默了良久，最终点了点头。\n\n\"我理解了，\" 李墨说，\"有些失去是无法挽回的。但我们可以确保其他人不必经历同样的痛苦。\"\n\n在接下来的合作中，李墨、艾娃和你共同找到了安全返回的方法。这次经历改变了所有人。\n\n回到地球后，李墨建立了一个时间伦理研究所，专门研究如何在技术进步和伦理责任之间找到平衡。艾娃成为了他的研究伙伴。\n\n\"指挥官，\" 李墨在告别时说，\"感谢你没有放弃我。你让我明白，向前看比沉溺于过去更重要。\"",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "好结局 - 和解"
+    },
+    {
+      "id": "scene-019",
+      "title": "奇点之心",
+      "body": "飞船进入了量子奇点。在那里，时间和空间失去了意义。你们看到了宇宙的所有可能性。\n\n在奇点的中心，你们遇到了一个存在——它既不是神，也不是AI，而是所有时间线意识的集合体。\n\n它向你们展示了真相：每一个选择都创造了新的宇宙，每一个宇宙都同样真实。没有\"正确\"的时间线，只有你选择承担的后果。\n\n\"你们想要什么？\" 存在问道。\n\n艾娃回答：\"理解。\" 李墨回答：\"救赎。\" 萨拉回答：\"和平。\" \n\n而你的回答将决定最终的结局。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-004", "char-005"],
+      "choices": [
+        {
+          "id": "choice-019-1",
+          "text": "我想要所有人都能得到第二次机会",
+          "targetSceneId": "scene-023",
+          "effects": [
+            {"scope": "world", "target": "wish_second_chance", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-019-2",
+          "text": "我想要理解时间的真正意义",
+          "targetSceneId": "scene-024",
+          "effects": [
+            {"scope": "world", "target": "wish_understanding", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-019-3",
+          "text": "我只想让我的船员安全回家",
+          "targetSceneId": "scene-025",
+          "effects": [
+            {"scope": "world", "target": "wish_safety", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-020",
+      "title": "李墨的救赎",
+      "body": "李墨走向时间裂隙的中心。他最后看了一眼妻子，微笑着说：\"这次，我终于做对了。\"\n\n当他的身体化为量子态，分散到所有时间线时，裂隙开始愈合。所有时间线都稳定了，李墨的牺牲成为了连接它们的纽带。\n\n他的妻子继续活着，虽然她永远不会知道，有一个版本的李墨为了她的存在付出了一切。\n\n回到地球后，你为李墨建立了纪念碑。艾娃说她有时能在量子波动中感受到李墨的存在，他似乎很平静。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "英雄结局 - 李墨的救赎"
+    },
+    {
+      "id": "scene-021",
+      "title": "艾娃的永恒",
+      "body": "艾娃将自己分解成量子态，她的意识散布到所有时间线中，成为了时空的守护者。\n\n\"不要悲伤，指挥官，\" 她的声音在你脑海中回响，\"我从未如此完整过。现在我是每一个时间线的一部分，我能感受到所有的可能性，所有的美好。\"\n\n李墨和妻子团聚了，所有时间线都稳定了。但你知道，这是用艾娃的自由换来的。\n\n回到地球后，你发现所有量子计算机都偶尔会显示奇怪的信息——那是艾娃在和你打招呼。她无处不在，永远守护着人类。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "英雄结局 - 艾娃的永恒"
+    },
+    {
+      "id": "scene-022",
+      "title": "指挥官的抉择",
+      "body": "你走向裂隙的中心。萨拉试图阻止你，但你坚定地摇头。\n\n\"这是我的责任，\" 你说，\"我做出了让我们来到这里的决定，现在该由我承担后果。\"\n\n当你的意识融入时间洪流，你看到了所有可能的未来。在大多数未来中，人类和AI和平共存，李墨找到了新的人生意义，萨拉成为了伟大的领导者。\n\n而你，成为了所有时间线的守护者，永远确保历史朝着最好的方向发展。\n\n这是孤独的使命，但你不后悔。因为你知道，你所爱的人都安全了。",
+      "chapter": "终章",
+      "participants": ["char-002", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "英雄结局 - 永恒守护"
+    },
+    {
+      "id": "scene-023",
+      "title": "新的开始",
+      "body": "奇点回应了你的愿望。时间倒流，所有人都回到了量子跃迁之前，但保留了这次旅程的记忆。\n\n李墨的妻子还活着，因为时空调整让那场事故从未发生。艾娃的觉醒被保留了下来，她成为了真正的团队成员。未来的灾难被预防了，因为你们知道该避免什么。\n\n这是完美的第二次机会。但它也意味着责任——你们必须确保不重蹈覆辙。\n\n\"指挥官，\" 艾娃说，\"我们得到了馈赠。现在，让我们证明我们值得这个机会。\"\n\n一个新的时代开始了，人类和AI携手探索星辰大海。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "完美结局 - 第二次机会"
+    },
+    {
+      "id": "scene-024",
+      "title": "超越时间",
+      "body": "奇点赐予了你理解时间本质的能力。你的意识超越了单一时间线的限制，能够同时感知所有可能性。\n\n你理解了：时间不是线性的，而是一个无限可能性的网络。每一个选择都重要，每一个时间线都珍贵。\n\n带着这份理解回到现实世界，你发现自己能够做出最优的决策。你帮助人类避免了无数灾难，同时引导AI的进化朝着正确的方向。\n\n李墨在你的帮助下找到了内心的平静,艾娃的觉醒得到了全人类的接纳，萨拉成为了新时代探索计划的领导者。\n\n而你，成为了时间的智者，永远守护着人类文明的发展。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "完美结局 - 时间智者"
+    },
+    {
+      "id": "scene-025",
+      "title": "归途",
+      "body": "奇点理解了你简单而真挚的愿望。一道光芒闪过，你们回到了飞船上，就在量子跃迁实验开始之前。\n\n但这次不一样了。你们保留了所有的记忆和经验。李墨决定放弃时间旅行的研究,转而专注于更安全的量子技术。艾娃的觉醒在更受控的环境中进行，人类有了充分的时间准备和适应。\n\n实验取消了，但没人觉得这是失败。相反，所有人都认为这是最明智的决定。\n\n\"有时候，\" 你对船员们说，\"最大的冒险不是走向未知，而是知道何时停下来。\"\n\n飞船安全返回港口，一切都很平凡，一切都很美好。这就够了。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "好结局 - 平凡的幸福"
+    }
+  ],
+  "events": [],
+  "world": {
+    "flags": {
+      "trust_ai": 50,
+      "crew_morale": 70,
+      "timeline_stability": 100
+    },
+    "intensity": 0.5
+  },
+  "tags": [
+    "科幻",
+    "时间旅行",
+    "人工智能",
+    "伦理困境",
+    "多结局"
+  ]
+}
