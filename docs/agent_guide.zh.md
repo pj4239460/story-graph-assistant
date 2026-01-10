@@ -1,28 +1,9 @@
 # AI Agent 开发指南
 
+**版本：** v0.7  
+**最后更新：** 2026年1月
+
 本指南介绍如何扩展故事图谱助手的 AI Agent 功能。
-
-## 🎯 最新更新
-
-### 已实现的增强功能
-
-✅ **RAG 工具** - `search_story_context(query)`: 语义搜索整个故事数据库  
-✅ **场景分析工具** - `analyze_scene(scene_id)`: 综合场景分析（摘要+设定提取）  
-✅ **意图分类** - 自动区分 QA 模式（事实查询）和 Chat 模式（讨论建议）
-
-### 架构升级
-
-```
-用户输入
-  ↓
-classify_intent (意图分类节点)
-  ├─ qa_agent (事实查询模式)
-  │   ├─ 优先使用 search_story_context
-  │   ├─ 可调用 analyze_scene
-  │   └─ 其他查询工具
-  └─ chat_agent (讨论模式)
-      └─ 创意讨论，按需使用工具
-```
 
 ## 架构概览
 

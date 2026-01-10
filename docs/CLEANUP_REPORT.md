@@ -19,8 +19,24 @@
 **保留的核心文件：**
 - `scripts/check_doc_versions.py` - 智能版本号一致性检查工具
 - `src/services/langgraph_agent_service.py` - 当前使用的LangGraph Agent实现
-- `docs/agent_guide.en.md` - Agent开发指南（待更新）
-- `docs/agent_guide.zh.md` - Agent开发指南中文版（待更新）
+- `docs/CLEANUP_REPORT.md` - 清理记录
+- `docs/INDEX.md` - 文档索引
+
+### v0.7 文档更新（2026-01-11）
+
+**已更新文档：**
+- `docs/agent_guide.en.md` - 更新到v0.7，完整覆盖LangGraphAgentService架构
+- `docs/agent_guide.zh.md` - 更新版本号和核心内容
+
+**新增示例项目：**
+- `examples/wuxia_rpg/` - 武侠RPG完整示例
+  - 15个场景，5种结局
+  - 展示多重分支叙事设计
+  - 包含道德抉择和角色成长系统
+  - 完整的README和设计文档
+
+**待完成：**
+- `docs/developer_guide.zh.md` - 开发者指南中文版（可延后）
 
 ### 1. 版本号统一（v1.x → v0.x）
 

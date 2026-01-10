@@ -1,67 +1,128 @@
 # AI Agent Development Guide
 
-This guide explains how to extend the Story Graph Assistant's AI Agent capabilities.
+**Version:** v0.7  
+**Last Updated:** January 2026
+
+This guide explains how to extend the Story Graph Assistant's AI Agent capabilities using LangGraph and ChatLiteLLM.
 
 ## Architecture Overview
 
 ### Technology Stack
-- **LangGraph**: AI Agent state machine framework
-- **ChatLiteLLM**: Unified LLM interface (supports DeepSeek, OpenAI, Claude, etc.)
-- **LangChain Tools**: Define tool functions using `@tool` decorator
+- **LangGraph**: State machine framework for agent workflow
+- **ChatLiteLLM**: Multi-provider LLM interface (DeepSeek, OpenAI, Anthropic, Google Gemini, Ollama)
+- **LangChain Tools**: Tool functions with `@tool` decorator
+- **Token Tracking**: Built-in usage monitoring via callbacks
 
 ### Core Components
 
 ```
-langgraph_agent_service.py
+src/services/langgraph_agent_service.py
 ├── LangGraphAgentService
-│   ├── __init__(): Initialize LLM and tools
-│   ├── _create_tools(): Define all tool functions
-│   ├── _build_graph(): Build StateGraph workflow
-│   └── chat(): Process user messages
+│   ├── __init__(): Initialize LLM, tools, and callbacks
+│   ├── _create_tools(): Define all story query tools
+│   ├── _build_graph(): Build StateGraph workflow with intent classification
+│   ├── _classify_intent(): Route between chat/qa modes
+│   └── chat(): Process user messages and return responses
+│
+├── TokenTrackingCallback
+│   └── on_llm_end(): Record token usage per feature
 │
 └── StateGraph workflow
-    ├── agent_node: LLM reasoning node
-    ├── tool_node: Tool execution node
-    └── should_continue: Routing decision
+    ├── classify: Intent classification (chat vs qa)
+    ├── chat_mode: Conversational responses
+    ├── qa_mode: Agent with tool calling
+    ├── agent: LLM reasoning with tool binding
+    ├── tools: Tool execution node
+    └── should_continue: Routing logic
 ```
+
+### Available Tools (v0.7)
+
+The agent has access to these story query tools:
+
+**Character & Scene Tools:**
+- `search_characters`: Search characters by traits/goals/fears
+- `get_character_info`: Get detailed character information
+- `search_scenes`: Search scenes by keywords
+- `get_scene_details`: Get complete scene information
+
+**Dynamic State Tools (v0.4+):**
+- `get_character_state`: Query character state at specific story point
+- `get_relationship`: Get relationship state between two characters
+- `explain_state_change`: Explain state changes from effects
+
+**Context Tools:**
+- `search_story_context`: Semantic search across all story content (v0.3 RAG)
+- `analyze_scene`: AI-powered scene analysis for plot/character insights
+
+**World Director Tools (v0.5+):**
+- `list_available_storylets`: Get currently available storylets
+- `explain_unavailable_storylet`: Explain why a storylet is unavailable
+- `get_storylet_details`: Get complete storylet information
 
 ## How to Add New Tools
 
-### 1. Define New Tool in `_create_tools()` Method
+### 1. Define Tool Function in `_create_tools()` Method
+
+Tools are defined using the `@tool` decorator from LangChain. Each tool should have:
+- Clear docstring with usage examples
+- Type-annotated parameters
+- Error handling
+- Formatted return string
+
+**Example: Adding a World Query Tool**
 
 ```python
 def _create_tools(self):
     """Create LangChain tools for story queries"""
     project = self.project
+    state_service = self.state_service  # Access injected services
     
     @tool
-    def your_new_tool(param1: str, param2: int) -> str:
-        """
-        Tool description: Clearly explain the purpose and usage scenarios
+    def get_world_fact(fact_category: str, fact_key: str) -> str:
+        """Get a world fact by category and key.
         
-        Use this tool when user asks about XXX, for example:
-        - "Example user question 1"
-        - "Example user question 2"
+        Use this when user asks about world information like:
+        - "What's the magic system in this world?"
+        - "Tell me about the political structure"
+        - "What's the history of the kingdom?"
         
         Args:
-            param1: Description of parameter 1
-            param2: Description of parameter 2
+            fact_category: Category name (e.g., "magic_system", "politics")
+            fact_key: Specific fact key within the category
             
         Returns:
-            Description of return value
+            Fact value or error message
         """
-        # Tool implementation logic
-        result = f"Processing result: {param1}, {param2}"
-        return result
+        try:
+            world_facts = project.world.facts.get(fact_category, {})
+            if fact_key in world_facts:
+                return f"**{fact_category}.{fact_key}**: {world_facts[fact_key]}"
+            else:
+                available_keys = ", ".join(world_facts.keys())
+                return f"Fact '{fact_key}' not found in category '{fact_category}'. Available: {available_keys}"
+        except Exception as e:
+            return f"Error retrieving world fact: {str(e)}"
     
     # Add new tool to return list
     return [
-        get_all_characters,
-        get_character_by_name,
-        # ... other tools ...
-        your_new_tool,  # Add here
+        # Character tools
+        search_characters,
+        get_character_info,
+        # State tools
+        get_character_state,
+        get_relationship,
+        # ... other existing tools ...
+        get_world_fact,  # ← Add your new tool here
     ]
 ```
+
+**Tool Design Best Practices:**
+1. **Descriptive docstrings**: Include 2-3 example user questions
+2. **Type hints**: Always annotate parameters and return types
+3. **Error handling**: Wrap logic in try/except blocks
+4. **Formatted output**: Return structured, readable strings
+5. **Context awareness**: Access `project`, `search_service`, `ai_service`, `state_service` from closure
 
 ### 2. Tool Definition Best Practices
 
