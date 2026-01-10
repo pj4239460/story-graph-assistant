@@ -36,7 +36,7 @@
   - 完整的README和设计文档
 
 **待完成：**
-- `docs/developer_guide.zh.md` - 开发者指南中文版（可延后）
+- ✅ `docs/developer_guide.zh.md` - 开发者指南中文版（已完成 2026-01-11）
 
 ### 1. 版本号统一（v1.x → v0.x）
 
