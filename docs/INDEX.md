@@ -15,14 +15,16 @@
 - **[世界导演指南（英文）](world_director_guide.md)** - World Director系统完整技术文档
 - **[世界导演指南（中文）](world_director_guide.zh.md)** - 世界导演系统中文技术文档
 - **[开发者指南（英文）](developer_guide.en.md)** - 系统架构和开发指南
+- **[开发者指南（中文）](developer_guide.zh.md)** - 系统架构和开发指南（中文版）
 
 ### 高级主题
-- **[Agent开发指南（英文）](agent_guide.en.md)** ⚠️ 待更新 - LangGraph Agent扩展开发
-- **[Agent开发指南（中文）](agent_guide.zh.md)** ⚠️ 待更新 - LangGraph Agent扩展开发
+- **[Agent开发指南（英文）](agent_guide.en.md)** - LangGraph Agent扩展开发指南
+- **[Agent开发指南（中文）](agent_guide.zh.md)** - LangGraph Agent扩展开发指南（中文版）
 
 ### 示例项目
 - **[examples/ordering_fallback_demo.py](../examples/ordering_fallback_demo.py)** - 排序约束和备选机制演示
-- **[examples/sample_project/](../examples/sample_project/)** - 基础示例项目
+- **[examples/sample_project/](../examples/sample_project/)** - 基础示例项目（穿越题材）
+- **[examples/wuxia_rpg/](../examples/wuxia_rpg/)** - 武侠RPG完整示例（15场景，5结局）
 
 ---
 
@@ -39,8 +41,9 @@ docs/
 ├── world_director_guide.md       # World Director技术参考（英文）
 ├── world_director_guide.zh.md    # World Director技术参考（中文）
 ├── developer_guide.en.md         # 开发者指南（英文）
-├── agent_guide.en.md            # ⚠️ Agent开发指南（待更新）
-├── agent_guide.zh.md            # ⚠️ Agent开发指南中文版（待更新）
+├── developer_guide.zh.md         # 开发者指南（中文）
+├── agent_guide.en.md            # Agent开发指南（英文）
+├── agent_guide.zh.md            # Agent开发指南（中文）
 └── archive/                      # 归档文档（历史参考）
     ├── agent_enhancement_report.md
     └── product_enhancement_report.md
