@@ -1,0 +1,552 @@
+{
+  "id": "romance-001",
+  "name": "樱花树下的约定",
+  "description": "都市恋爱模拟游戏，在樱花盛开的季节，与三位性格迥异的角色展开浪漫故事",
+  "locale": "zh",
+  "characters": [
+    {
+      "id": "char-001",
+      "name": "玩家",
+      "description": "刚转学到樱华学园的高中生，性格由玩家选择决定",
+      "traits": ["开朗", "善良", "有责任感"],
+      "goals": ["适应新环境", "找到真爱", "实现梦想"],
+      "fears": ["被拒绝", "失去重要的人", "辜负期望"]
+    },
+    {
+      "id": "char-002",
+      "name": "夏目凛",
+      "description": "学生会长，优等生，外表冷艳但内心温柔，擅长钢琴",
+      "traits": ["高冷", "完美主义", "责任心强", "隐藏温柔"],
+      "goals": ["保持完美形象", "实现音乐梦想", "保护学生会"],
+      "fears": ["展现软弱", "辜负期望", "失去控制"],
+      "relationship": {
+        "char-001": 0,
+        "char-003": -10,
+        "char-004": 20
+      }
+    },
+    {
+      "id": "char-003",
+      "name": "樱井美羽",
+      "description": "活泼开朗的邻家女孩，青梅竹马型，喜欢运动和美食",
+      "traits": ["开朗", "直率", "运动健将", "吃货"],
+      "goals": ["成为职业运动员", "保护重要的人", "品尝世界美食"],
+      "fears": ["失去友情", "达不到目标", "被忽视"],
+      "relationship": {
+        "char-001": 30,
+        "char-002": -10,
+        "char-004": 15
+      }
+    },
+    {
+      "id": "char-004",
+      "name": "月宫雪",
+      "description": "文学少女，安静内向，喜欢在图书馆读书写作，有些神秘",
+      "traits": ["文静", "敏感", "才华横溢", "神秘"],
+      "goals": ["成为作家", "理解人心", "找到归属感"],
+      "fears": ["孤独", "被误解", "失去灵感"],
+      "relationship": {
+        "char-001": 10,
+        "char-002": 20,
+        "char-003": 15
+      }
+    },
+    {
+      "id": "char-005",
+      "name": "林老师",
+      "description": "年轻的班主任，温柔体贴，是学生们的倾诉对象",
+      "traits": ["温柔", "善解人意", "可靠"],
+      "goals": ["帮助学生成长", "成为好老师"],
+      "fears": ["学生受伤", "失去信任"]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene-001",
+      "title": "樱花树下的相遇",
+      "body": "春天，樱花盛开的季节。你转学来到樱华学园，站在校门口的樱花树下，粉色的花瓣随风飘落。\n\n\"小心！\"一个声音传来，一个女孩冲过来拉开了你——原来是一辆失控的自行车冲了过来。\n\n\"太好了，没事吧？我是樱井美羽，高二三班的！\"她笑容灿烂，手里还拿着半个面包。\n\n就在这时，学生会长夏目凛走了过来：\"真是的，美羽，在校门口吃东西成何体统。\"她转向你，\"你就是新转学生吧？欢迎来到樱华学园。\"\n\n图书馆方向，一个抱着书的女孩静静地看着这一幕，然后转身离开了。",
+      "chapter": "第一章：初遇",
+      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "choices": [
+        {
+          "id": "choice-001-1",
+          "text": "向美羽道谢，她真是个热心的人",
+          "targetSceneId": "scene-002",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "world", "target": "first_impression", "operation": "set", "path": "", "value": "cheerful"}
+          ]
+        },
+        {
+          "id": "choice-001-2",
+          "text": "向学生会长打招呼，表现得有礼貌",
+          "targetSceneId": "scene-003",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "world", "target": "first_impression", "operation": "set", "path": "", "value": "polite"}
+          ]
+        },
+        {
+          "id": "choice-001-3",
+          "text": "注意到图书馆方向的那个女孩",
+          "targetSceneId": "scene-004",
+          "effects": [
+            {"scope": "character", "target": "char-004", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "world", "target": "first_impression", "operation": "set", "path": "", "value": "observant"}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-002",
+      "title": "活力少女的邀请",
+      "body": "\"嘿嘿，不用谢啦！\"美羽拍了拍你的肩膀，\"对了，要不要一起吃午饭？我知道学校附近有家超棒的拉面店！\"\n\n夏目凛微微皱眉：\"美羽，新同学第一天就带去校外，不太合适吧。\"但她的语气并不严厉。\n\n\"凛酱你也一起来嘛！\"美羽热情地邀请。\n\n这时林老师走了过来：\"新同学，先跟我去办公室办理入学手续吧。美羽，午休时间你来帮忙介绍校园。\"",
+      "chapter": "第一章：初遇",
+      "participants": ["char-001", "char-002", "char-003", "char-005"],
+      "choices": [
+        {
+          "id": "choice-002-1",
+          "text": "答应美羽的邀请，午休一起去拉面店",
+          "targetSceneId": "scene-005",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 15},
+            {"scope": "world", "target": "lunch_partner", "operation": "set", "path": "", "value": "miyu"}
+          ]
+        },
+        {
+          "id": "choice-002-2",
+          "text": "提议在学校食堂吃，顺便请学生会长一起",
+          "targetSceneId": "scene-006",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 5},
+            {"scope": "world", "target": "lunch_partner", "operation": "set", "path": "", "value": "both"}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-003",
+      "title": "完美会长的邀请",
+      "body": "\"很高兴认识你。\"夏目凛优雅地点头，\"作为学生会长，我有责任帮助新同学适应环境。如果有任何问题，随时可以来学生会办公室找我。\"\n\n美羽在一旁嘟囔：\"凛酱又开始她的完美会长模式了...\"\n\n夏目凛继续说：\"另外，我们学生会正在筹备春季音乐会，如果你有兴趣，欢迎参加。\"\n\n林老师走了过来：\"夏目同学总是这么认真。好了，新同学先跟我去办手续吧。\"",
+      "chapter": "第一章：初遇",
+      "participants": ["char-001", "char-002", "char-003", "char-005"],
+      "choices": [
+        {
+          "id": "choice-003-1",
+          "text": "表示对音乐会很感兴趣",
+          "targetSceneId": "scene-007",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 15},
+            {"scope": "world", "target": "music_event", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-003-2",
+          "text": "先去办手续，之后再考虑",
+          "targetSceneId": "scene-006",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 5},
+            {"scope": "world", "target": "cautious_approach", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-004",
+      "title": "图书馆的邂逅",
+      "body": "办完入学手续后，你来到图书馆。安静的氛围让人心情平静。\n\n在靠窗的位置，你看到了早上那个抱着书的女孩。她正在写着什么，阳光透过窗户洒在她身上，画面美得像一幅画。\n\n她注意到了你的目光，抬起头，眼神有些惊讶。\n\n\"你就是...新转学生？\"她轻声问，声音像风铃一样清脆。\n\n\"我是月宫雪，高二一班的。欢迎来到图书馆...这里是我最喜欢的地方。\"",
+      "chapter": "第一章：初遇",
+      "participants": ["char-001", "char-004"],
+      "choices": [
+        {
+          "id": "choice-004-1",
+          "text": "询问她在写什么，表现出兴趣",
+          "targetSceneId": "scene-008",
+          "effects": [
+            {"scope": "character", "target": "char-004", "operation": "add", "path": "relationship.char-001", "value": 15},
+            {"scope": "world", "target": "snow_interest", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-004-2",
+          "text": "说自己也喜欢安静的地方",
+          "targetSceneId": "scene-008",
+          "effects": [
+            {"scope": "character", "target": "char-004", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "world", "target": "kindred_spirit", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-005",
+      "title": "校外的拉面约会",
+      "body": "午休时间，美羽带你来到了学校附近的小巷。\"就是这家！老板的拉面是一绝！\"\n\n两人坐下点餐。美羽一边大口吃面，一边给你介绍学校的情况。\n\n\"夏目凛虽然看起来高冷，但其实是个好人。月宫雪呢，很神秘，总是一个人待在图书馆。对了，你更喜欢哪种类型的女生？\"\n\n她突然问出这个问题，让气氛有些微妙。\n\n\"啊，我就是好奇！\"她脸微微泛红，\"毕竟我们可是新朋友嘛！\"",
+      "chapter": "第一章：初遇",
+      "participants": ["char-001", "char-003"],
+      "choices": [
+        {
+          "id": "choice-005-1",
+          "text": "\"我喜欢开朗直率的女生，就像你这样\"",
+          "targetSceneId": "scene-009",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 20},
+            {"scope": "world", "target": "miyu_confession_flag", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-005-2",
+          "text": "\"还没想过这个问题，缘分到了自然就知道了\"",
+          "targetSceneId": "scene-010",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 5},
+            {"scope": "world", "target": "neutral_romance", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-006",
+      "title": "学校食堂的午餐",
+      "body": "你们三人来到学校食堂。夏目凛优雅地选了一份沙拉，美羽则毫不犹豫地拿了最大份的炸鸡套餐。\n\n\"凛酱你每天就吃这么点啊？\"美羽感叹道。\n\n\"保持体形也是学生会长的责任之一。\"夏目凛淡淡地说，但眼神却一直盯着美羽的炸鸡。\n\n\"想吃就说嘛！\"美羽夹了一块炸鸡递过去，\"偶尔放纵一下也没关系啦！\"\n\n夏目凛犹豫了一下，最终还是接受了。她吃下炸鸡的瞬间，脸上露出了满足的表情，但随即恢复了冷静。\n\n这一幕让你看到了她不为人知的一面。",
+      "chapter": "第一章：初遇",
+      "participants": ["char-001", "char-002", "char-003"],
+      "choices": [
+        {
+          "id": "choice-006-1",
+          "text": "\"会长也有可爱的一面呢\"（调侃）",
+          "targetSceneId": "scene-011",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 10},
+            {"scope": "world", "target": "rin_embarrassed", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-006-2",
+          "text": "装作没看见，给会长留面子",
+          "targetSceneId": "scene-012",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 15},
+            {"scope": "world", "target": "rin_grateful", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-007",
+      "title": "音乐会的邀请",
+      "body": "夏目凛带你参观学生会办公室。墙上挂满了各种活动的照片和奖状。\n\n\"这是去年的音乐会。\"她指着一张照片，照片中的她在舞台上弹钢琴，表情专注而优雅。\n\n\"钢琴是我唯一可以卸下防备的时刻。\"她突然说，语气比平时温柔，\"当我的手指触碰琴键，我就能暂时忘记'完美学生会长'的身份，做回真正的自己。\"\n\n她转过身看着你：\"你愿意听我弹琴吗？今晚放学后，音乐教室，只有我们两个人。\"",
+      "chapter": "第二章：深入了解",
+      "participants": ["char-001", "char-002"],
+      "choices": [
+        {
+          "id": "choice-007-1",
+          "text": "欣然答应私人演奏会",
+          "targetSceneId": "scene-013",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 25},
+            {"scope": "world", "target": "rin_route", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-007-2",
+          "text": "委婉拒绝，今天已有其他安排",
+          "targetSceneId": "scene-010",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": -5}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-008",
+      "title": "文学少女的秘密",
+      "body": "月宫雪有些羞涩地合上了笔记本。\"只是...一些随笔，不值一提。\"\n\n但你看到笔记本封面写着：《樱花树下的故事》。\n\n\"你喜欢文学吗？\"她轻声问，眼中闪烁着期待的光芒。\n\n接下来的时间里，你们聊了很多——从经典名著到现代诗歌，从人生哲理到青春烦恼。月宫雪逐渐放松下来，话也变多了。\n\n\"很少有人愿意听我说这些。\"她微笑着说，\"大家都觉得我太古怪了。但是...和你聊天很舒服。\"\n\n放学铃响起，她似乎有些不舍：\"明天...还会来图书馆吗？\"",
+      "chapter": "第二章：深入了解",
+      "participants": ["char-001", "char-004"],
+      "choices": [
+        {
+          "id": "choice-008-1",
+          "text": "\"当然，我也很享受和你的对话\"",
+          "targetSceneId": "scene-014",
+          "effects": [
+            {"scope": "character", "target": "char-004", "operation": "add", "path": "relationship.char-001", "value": 20},
+            {"scope": "world", "target": "snow_route", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-008-2",
+          "text": "\"会的，如果有时间的话\"",
+          "targetSceneId": "scene-010",
+          "effects": [
+            {"scope": "character", "target": "char-004", "operation": "add", "path": "relationship.char-001", "value": 10}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-009",
+      "title": "美羽的心动",
+      "body": "听到你的回答，美羽明显愣住了，然后笑容更加灿烂。\n\n\"是...是吗？\"她有些不好意思地摸着后脑勺，\"其实我也觉得，能遇到你真好。\"\n\n回学校的路上，美羽突然说：\"下周日学校有篮球比赛，我是队长。你...你会来给我加油吗？\"\n\n她的眼神充满期待。\n\n\"如果你来的话，我一定会拿下MVP！\"她握拳做出加油的动作。\n\n夕阳下，她的侧脸染上了金色，让人心动。",
+      "chapter": "第二章：深入了解",
+      "participants": ["char-001", "char-003"],
+      "choices": [
+        {
+          "id": "choice-009-1",
+          "text": "\"我一定会去的，等着看你的精彩表现\"",
+          "targetSceneId": "scene-015",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 25},
+            {"scope": "world", "target": "miyu_route", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-009-2",
+          "text": "\"尽力而为吧，我周末可能有事\"",
+          "targetSceneId": "scene-010",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 5}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-010",
+      "title": "命运的分岔路",
+      "body": "一周过去了。你和三位女生都建立了不错的关系，但还没有特别深入了解谁。\n\n周五放学后，三件事同时发生：\n\n美羽在操场等你，说要一起训练；\n夏目凛发来消息，邀请你帮忙准备音乐会；\n月宫雪在图书馆留了一张纸条，上面写着她的新作品，想和你分享。\n\n林老师走过来：\"看来你很受欢迎啊。但记住，真心只有一颗，要珍惜别人的感情。\"",
+      "chapter": "第二章：深入了解",
+      "participants": ["char-001", "char-005"],
+      "choices": [
+        {
+          "id": "choice-010-1",
+          "text": "去操场陪美羽训练",
+          "targetSceneId": "scene-015",
+          "effects": [
+            {"scope": "world", "target": "chosen_path", "operation": "set", "path": "", "value": "miyu"}
+          ]
+        },
+        {
+          "id": "choice-010-2",
+          "text": "去学生会帮忙准备音乐会",
+          "targetSceneId": "scene-013",
+          "effects": [
+            {"scope": "world", "target": "chosen_path", "operation": "set", "path": "", "value": "rin"}
+          ]
+        },
+        {
+          "id": "choice-010-3",
+          "text": "去图书馆找月宫雪",
+          "targetSceneId": "scene-014",
+          "effects": [
+            {"scope": "world", "target": "chosen_path", "operation": "set", "path": "", "value": "snow"}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-011",
+      "title": "会长的反击",
+      "body": "\"可...可爱？\"夏目凛的脸瞬间红了，\"你在说什么啊！\"\n\n美羽在旁边笑得前仰后合：\"哈哈哈，凛酱害羞了！第一次看到完美会长这个表情！\"\n\n夏目凛深呼吸平复心情，然后直视你的眼睛：\"既然你看到了我不为人知的一面，那你就要负责保守秘密。作为交换——\"\n\n她停顿了一下，\"今晚音乐教室，我有话要对你说。\"",
+      "chapter": "第二章：深入了解",
+      "participants": ["char-001", "char-002", "char-003"],
+      "choices": [
+        {
+          "id": "choice-011-1",
+          "text": "答应赴约",
+          "targetSceneId": "scene-013",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 20}
+          ]
+        },
+        {
+          "id": "choice-011-2",
+          "text": "\"什么话不能现在说吗？\"",
+          "targetSceneId": "scene-012",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 10}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-012",
+      "title": "微妙的距离",
+      "body": "你的体贴让夏目凛心中一暖。午餐结束后，她主动提出送你去教室。\n\n\"你是个善良的人。\"走在走廊上，她突然说，\"不是每个人都会考虑别人的感受。\"\n\n\"其实...\"她犹豫了一下，\"我也不想总是保持完美。有时候我也想像美羽那样，想吃就吃，想笑就笑。但是...一旦放松警惕，就会让人失望。\"\n\n她的话语中透露出一丝疲惫。\n\n这时美羽跑过来：\"凛酱，学生会有急事找你！\"",
+      "chapter": "第二章：深入了解",
+      "participants": ["char-001", "char-002", "char-003"],
+      "choices": [
+        {
+          "id": "choice-012-1",
+          "text": "\"不用总是逼自己，偶尔依靠别人也没关系\"",
+          "targetSceneId": "scene-013",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 20},
+            {"scope": "world", "target": "rin_touched", "operation": "set", "path": "", "value": 1}
+          ]
+        },
+        {
+          "id": "choice-012-2",
+          "text": "目送她离开，不多说什么",
+          "targetSceneId": "scene-010",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 5}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-013",
+      "title": "月光下的钢琴曲",
+      "body": "傍晚，你来到音乐教室。夏目凛已经在等你了，她坐在钢琴前，窗外是落日余晖。\n\n\"来了...\"她轻声说，然后开始演奏。\n\n琴声如流水般倾泻而出，时而激昂，时而温柔。你能感受到她倾注在音乐中的所有情感——孤独、压力、渴望被理解的心情。\n\n一曲终了，她转过身，眼眶有些湿润。\n\n\"谢谢你愿意听。这是我第一次为某个人单独演奏。\"她深吸一口气，\"我想告诉你...我...我喜欢你。从你第一天来学校，不惧怕我的'完美形象'，而是把我当成普通人对待的那一刻起。\"\n\n月光洒进教室，她等待着你的回答。",
+      "chapter": "第三章：心意相通",
+      "participants": ["char-001", "char-002"],
+      "choices": [
+        {
+          "id": "choice-013-1",
+          "text": "\"我也喜欢你，真实的你\"",
+          "targetSceneId": "scene-016",
+          "effects": [
+            {"scope": "world", "target": "final_choice", "operation": "set", "path": "", "value": "rin"},
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": 50}
+          ]
+        },
+        {
+          "id": "choice-013-2",
+          "text": "\"对不起，我...我需要时间考虑\"",
+          "targetSceneId": "scene-019",
+          "effects": [
+            {"scope": "character", "target": "char-002", "operation": "add", "path": "relationship.char-001", "value": -20},
+            {"scope": "world", "target": "rin_rejected", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-014",
+      "title": "图书馆的约定",
+      "body": "你成了月宫雪在图书馆的常客。每天放学后，你们都会在这里见面，分享彼此喜欢的书籍和想法。\n\n这一天，她拿出了一本精美的笔记本。\"这是...我写的小说。还没有完成，但我想让你先看看。\"\n\n你翻开笔记本，发现这是一个关于两个人在图书馆相遇的爱情故事。男主角的特征...和你惊人地相似。\n\n\"你发现了吗？\"她脸红了，\"对不起，我把你写进了我的故事。因为...因为你是第一个真正理解我的人。\"\n\n她鼓起勇气说：\"我喜欢你。不是故事里的角色，而是真实的你。\"",
+      "chapter": "第三章：心意相通",
+      "participants": ["char-001", "char-004"],
+      "choices": [
+        {
+          "id": "choice-014-1",
+          "text": "\"我也喜欢你，能成为你故事的一部分我很开心\"",
+          "targetSceneId": "scene-017",
+          "effects": [
+            {"scope": "world", "target": "final_choice", "operation": "set", "path": "", "value": "snow"},
+            {"scope": "character", "target": "char-004", "operation": "add", "path": "relationship.char-001", "value": 50}
+          ]
+        },
+        {
+          "id": "choice-014-2",
+          "text": "\"对不起，我只想和你做朋友\"",
+          "targetSceneId": "scene-019",
+          "effects": [
+            {"scope": "character", "target": "char-004", "operation": "add", "path": "relationship.char-001", "value": -20},
+            {"scope": "world", "target": "snow_rejected", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-015",
+      "title": "篮球场上的告白",
+      "body": "周日的篮球比赛，美羽表现出色。每次得分后，她都会看向观众席的你，露出灿烂的笑容。\n\n比赛结束，正如她承诺的，拿下了MVP。\n\n赛后，她跑到你面前，满头大汗但兴奋无比。\"看到了吗！我说过会拿MVP的！\"\n\n队友们欢呼着离开，最后只剩下你们两个人在逐渐暗下来的球场上。\n\n\"其实...\"美羽突然认真起来，\"我不只是想让你看我打球。我是想...想让你知道，我会为了你而努力变得更好。\"\n\n她深吸一口气：\"我喜欢你！从第一次见面，拉开你那一刻起就喜欢上了！\"",
+      "chapter": "第三章：心意相通",
+      "participants": ["char-001", "char-003"],
+      "choices": [
+        {
+          "id": "choice-015-1",
+          "text": "\"我也喜欢你，你的笑容总能让我开心\"",
+          "targetSceneId": "scene-018",
+          "effects": [
+            {"scope": "world", "target": "final_choice", "operation": "set", "path": "", "value": "miyu"},
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": 50}
+          ]
+        },
+        {
+          "id": "choice-015-2",
+          "text": "\"对不起，我不想破坏我们的友情\"",
+          "targetSceneId": "scene-019",
+          "effects": [
+            {"scope": "character", "target": "char-003", "operation": "add", "path": "relationship.char-001", "value": -20},
+            {"scope": "world", "target": "miyu_rejected", "operation": "set", "path": "", "value": 1}
+          ]
+        }
+      ],
+      "isEnding": false
+    },
+    {
+      "id": "scene-016",
+      "title": "完美恋人（凛结局）",
+      "body": "音乐会当晚，夏目凛的演奏技惊四座。但她演奏的最后一首曲子是专门为你而作的。\n\n演出结束后，她在樱花树下等你。\"从今以后，我不用再假装完美了。因为你接受了真实的我。\"\n\n她主动牵起你的手：\"我们一起，去追逐真正的梦想吧。\"\n\n一年后的春天，夏目凛考上了顶尖的音乐学院。在她的入学演奏会上，你坐在第一排，看着她在舞台上绽放光芒。\n\n演奏结束，她走下舞台，第一个拥抱的就是你。\n\n\"谢谢你，让我知道完美不是唯一的答案。和你在一起的每一天，都是最好的自己。\"",
+      "chapter": "终章",
+      "participants": ["char-001", "char-002"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "完美结局 - 凛的真心"
+    },
+    {
+      "id": "scene-017",
+      "title": "文学恋人（雪结局）",
+      "body": "月宫雪完成了她的小说，并投稿参加了新人文学奖。\n\n几个月后，她获奖了。在颁奖典礼上，她在致辞中说：\"这个故事能够完成，要感谢一个特别的人。是他走进了我的世界，给了我创作的灵感，也给了我爱的勇气。\"\n\n你们一起去了她小说中描写的所有地方——海边的灯塔、山顶的神社、都市的小书店。每一个场景都像从书里走出来一样美好。\n\n樱花再次盛开的季节，她出版了第二本小说，封面上写着献词：\"献给我的灵感来源，我的恋人，我的挚爱。\"\n\n\"你知道吗？\"她靠在你肩上，\"有你在身边，我再也不会觉得孤独了。\"",
+      "chapter": "终章",
+      "participants": ["char-001", "char-004"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "完美结局 - 雪的归属"
+    },
+    {
+      "id": "scene-018",
+      "title": "青春恋人（美羽结局）",
+      "body": "美羽考上了体育大学，继续追逐她的运动梦想。而你成了她最坚定的后盾。\n\n每一场比赛，无论多远，你都会去现场为她加油。她说你的存在就是她的幸运符。\n\n毕业那天，美羽穿着学士服，拉着你的手跑遍校园。\"要记住这里的每一个地方！我们相遇的校门、一起吃饭的食堂、你第一次为我加油的球场！\"\n\n樱花纷飞，她突然停下脚步，认真地看着你：\"未来无论去哪里，我都想和你在一起。因为有你，每一天都充满活力！\"\n\n她笑得那么灿烂，就像第一次见面时一样。\n\n\"我们的青春，永远不会结束！\"",
+      "chapter": "终章",
+      "participants": ["char-001", "char-003"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "完美结局 - 美羽的笑容"
+    },
+    {
+      "id": "scene-019",
+      "title": "未选择的道路",
+      "body": "你的拒绝让气氛变得尴尬。但她们都选择了尊重你的决定。\n\n时间继续流逝。毕业典礼上，你看着夏目凛、樱井美羽和月宫雪，她们都找到了各自的幸福。\n\n夏目凛成为了著名钢琴家；美羽入选了国家队；月宫雪的小说获得了大奖。\n\n她们都很优秀，都值得更好的人。\n\n林老师走过来拍拍你的肩膀：\"有时候，不做选择本身就是一种选择。但要记住，错过了就是错过了。\"\n\n你站在樱花树下，看着花瓣飘落，心中涌起一丝遗憾。\n\n如果当初...能够勇敢一点就好了。",
+      "chapter": "终章",
+      "participants": ["char-001", "char-005"],
+      "choices": [],
+      "isEnding": true,
+      "endingType": "遗憾结局 - 错过的春天"
+    }
+  ],
+  "events": [],
+  "world": {
+    "flags": {
+      "first_impression": "",
+      "lunch_partner": "",
+      "chosen_path": "",
+      "final_choice": ""
+    },
+    "intensity": 0.5
+  },
+  "tags": [
+    "恋爱",
+    "校园",
+    "青春",
+    "多结局",
+    "角色养成"
+  ]
+}

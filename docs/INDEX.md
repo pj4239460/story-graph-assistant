@@ -24,7 +24,11 @@
 ### 示例项目
 - **[examples/ordering_fallback_demo.py](../examples/ordering_fallback_demo.py)** - 排序约束和备选机制演示
 - **[examples/sample_project/](../examples/sample_project/)** - 基础示例项目（穿越题材）
+- **[examples/sample_project_en/](../examples/sample_project_en/)** - 基础示例项目（英文版）
 - **[examples/wuxia_rpg/](../examples/wuxia_rpg/)** - 武侠RPG完整示例（15场景，5结局）
+- **[examples/scifi_adventure/](../examples/scifi_adventure/)** - 科幻冒险示例（25场景，12结局）
+- **[examples/romance_sim/](../examples/romance_sim/)** - 恋爱模拟示例（19场景，4结局）
+- **[examples/town_factions/](../examples/town_factions/)** - World Director派系政治示例
 
 ---
 
