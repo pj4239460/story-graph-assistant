@@ -49,7 +49,7 @@ def render_storylet_editor():
     project_service = st.session_state.project_service
     project = project_service.get_project()
     
-    st.header(f"鉁忥笍 {i18n.t('storylet_editor.title')}")
+    st.header(i18n.t('storylet_editor.title'))
     st.caption(i18n.t('storylet_editor.subtitle'))
     
     # Initialize storylets dictionary if not exists
@@ -59,8 +59,8 @@ def render_storylet_editor():
     
     # Create tabbed interface for better organization
     tab1, tab2 = st.tabs([
-        f"馃摎 {i18n.t('storylet_editor.library_tab')}",
-        f"鉃?{i18n.t('storylet_editor.create_tab')}"
+        i18n.t('storylet_editor.library_tab'),
+        i18n.t('storylet_editor.create_tab')
     ])
     
     with tab1:
@@ -107,7 +107,7 @@ def render_storylet_library(project, project_service):
     col1, col2 = st.columns([2, 1])
     with col1:
         search = st.text_input(
-            f"馃攳 {i18n.t('storylet_editor.search_label')}",
+            i18n.t('storylet_editor.search_label'),
             placeholder=i18n.t('storylet_editor.search_placeholder'),
             key="storylet_search"
         )
@@ -186,7 +186,7 @@ def render_storylet_card(storylet, project, project_service):
         - Triggers rerun after state changes
     """
     i18n = st.session_state.i18n
-    with st.expander(f"馃搫 {storylet.title}", expanded=False):
+    with st.expander(f"{storylet.title}", expanded=False):
         col1, col2 = st.columns([3, 1])
         
         with col1:
@@ -197,13 +197,13 @@ def render_storylet_card(storylet, project, project_service):
             # Badges: Display key properties as visual indicators
             badges = []
             if storylet.is_fallback:
-                badges.append(f"馃攧 {i18n.t('storylet_editor.badge_fallback')}")  # Backup storylet when world stuck
+                badges.append(f"[{i18n.t('storylet_editor.badge_fallback')}]")  # Backup storylet when world stuck
             if storylet.once:
-                badges.append(f"1锔忊儯 {i18n.t('storylet_editor.badge_once')}")  # One-time storylet per playthrough
+                badges.append(f"[{i18n.t('storylet_editor.badge_once')}]")  # One-time storylet per playthrough
             if storylet.cooldown > 0:
-                badges.append(f"鈴憋笍 {i18n.t('storylet_editor.badge_cooldown').format(cooldown=storylet.cooldown)}")  # Cooldown in ticks
+                badges.append(f"[{i18n.t('storylet_editor.badge_cooldown').format(cooldown=storylet.cooldown)}]")  # Cooldown in ticks
             if storylet.tags:
-                badges.extend([f"馃彿锔?{tag}" for tag in storylet.tags])  # Category tags
+                badges.extend([f"#{tag}" for tag in storylet.tags])  # Category tags
             
             if badges:
                 st.caption(" | ".join(badges))
@@ -222,9 +222,9 @@ def render_storylet_card(storylet, project, project_service):
             # Ordering constraints: Display v0.7 narrative dependencies
             # These control quest chains and story sequences
             if storylet.requires_fired:
-                st.caption(f"鉀擄笍 **{i18n.t('storylet_editor.label_requires')}**: {', '.join(storylet.requires_fired)}")  # Must fire after these
+                st.caption(f"▶ **{i18n.t('storylet_editor.label_requires')}**: {', '.join(storylet.requires_fired)}")  # Must fire after these
             if storylet.forbids_fired:
-                st.caption(f"馃毇 **{i18n.t('storylet_editor.label_forbids')}**: {', '.join(storylet.forbids_fired)}")  # Cannot fire if these fired
+                st.caption(f"✕ **{i18n.t('storylet_editor.label_forbids')}**: {', '.join(storylet.forbids_fired)}")  # Cannot fire if these fired
             
             # Preconditions detail: Expandable list of all conditions
             # Shows scope.target.path comparison for each condition
@@ -238,16 +238,16 @@ def render_storylet_card(storylet, project, project_service):
             if storylet.effects:
                 with st.expander(i18n.t('storylet_editor.view_effects')):
                     for i, eff in enumerate(storylet.effects):
-                        icon = "馃懁" if eff.scope == "character" else ("馃挄" if eff.scope == "relationship" else "馃實")
+                        icon = "[C]" if eff.scope == "character" else ("[R]" if eff.scope == "relationship" else "[W]")
                         st.caption(f"{i+1}. {icon} `{eff.scope}.{eff.target}.{eff.path or 'value'}` {eff.op} `{eff.value}`")
         
         with col2:
-            if st.button(f"鉁忥笍 {i18n.t('storylet_editor.btn_edit')}", key=f"edit_{storylet.id}", use_container_width=True):
+            if st.button(i18n.t('storylet_editor.btn_edit'), key=f"edit_{storylet.id}", use_container_width=True):
                 # Store storylet ID in session state to populate form
                 st.session_state.editing_storylet = storylet.id
                 st.rerun()
             
-            if st.button(f"馃棏锔?{i18n.t('storylet_editor.btn_delete')}", key=f"delete_{storylet.id}", use_container_width=True, type="secondary"):
+            if st.button(i18n.t('storylet_editor.btn_delete'), key=f"delete_{storylet.id}", use_container_width=True, type="secondary"):
                 # Two-click confirmation to prevent accidental deletion
                 # First click sets confirmation flag, second click deletes
                 if st.session_state.get(f"confirm_delete_{storylet.id}"):
@@ -351,7 +351,7 @@ def render_storylet_creator(project, project_service):
     else:
         storylet = None
     
-    st.subheader(f"馃摑 {i18n.t('storylet_editor.section_basic')}")
+    st.subheader(i18n.t('storylet_editor.section_basic'))
     
     col1, col2 = st.columns(2)
     
@@ -382,7 +382,7 @@ def render_storylet_creator(project, project_service):
     
     # Properties
     st.divider()
-    st.subheader(f"鈿欙笍 {i18n.t('storylet_editor.section_properties')}")
+    st.subheader(i18n.t('storylet_editor.section_properties'))
     
     col1, col2, col3 = st.columns(3)
     
@@ -445,7 +445,7 @@ def render_storylet_creator(project, project_service):
     
     # Ordering constraints (v0.7)
     st.divider()
-    st.subheader(f"馃敆 {i18n.t('storylet_editor.section_ordering')}")
+    st.subheader(i18n.t('storylet_editor.section_ordering'))
     
     col1, col2 = st.columns(2)
     
@@ -471,7 +471,7 @@ def render_storylet_creator(project, project_service):
     
     # Preconditions
     st.divider()
-    st.subheader(f"馃搵 {i18n.t('storylet_editor.section_conditions')}")
+    st.subheader(i18n.t('storylet_editor.section_conditions'))
     st.caption(i18n.t('storylet_editor.conditions_caption'))
     
     # Initialize preconditions in session state
@@ -479,7 +479,7 @@ def render_storylet_creator(project, project_service):
         st.session_state.new_storylet_preconditions = storylet.preconditions if storylet else []
     
     # Add condition button
-    if st.button(f"鉃?{i18n.t('storylet_editor.btn_add_condition')}"):
+    if st.button(i18n.t('storylet_editor.btn_add_condition')):
         st.session_state.new_storylet_preconditions.append(
             Precondition(scope="world", target="", path="", op=">=", value=0)
         )
@@ -516,13 +516,13 @@ def render_storylet_creator(project, project_service):
                 scope=scope, target=target, path=path, op=op, value=value
             )
             
-            if st.button(f"馃棏锔?{i18n.t('storylet_editor.btn_remove')}", key=f"remove_cond_{i}"):
+            if st.button(i18n.t('storylet_editor.btn_remove'), key=f"remove_cond_{i}"):
                 st.session_state.new_storylet_preconditions.pop(i)
                 st.rerun()
     
     # Effects
     st.divider()
-    st.subheader(f"鈿?{i18n.t('storylet_editor.section_effects')}")
+    st.subheader(i18n.t('storylet_editor.section_effects'))
     st.caption(i18n.t('storylet_editor.effects_caption'))
     
     # Initialize effects in session state
@@ -530,7 +530,7 @@ def render_storylet_creator(project, project_service):
         st.session_state.new_storylet_effects = storylet.effects if storylet else []
     
     # Add effect button
-    if st.button(f"鉃?{i18n.t('storylet_editor.btn_add_effect')}"):
+    if st.button(i18n.t('storylet_editor.btn_add_effect')):
         st.session_state.new_storylet_effects.append(
             Effect(scope="world", target="", path="", op="add", value=0)
         )
@@ -567,7 +567,7 @@ def render_storylet_creator(project, project_service):
                 scope=scope, target=target, path=path, op=op, value=value
             )
             
-            if st.button(f"馃棏锔?{i18n.t('storylet_editor.btn_remove')}", key=f"remove_eff_{i}"):
+            if st.button(i18n.t('storylet_editor.btn_remove'), key=f"remove_eff_{i}"):
                 st.session_state.new_storylet_effects.pop(i)
                 st.rerun()
     
@@ -577,7 +577,7 @@ def render_storylet_creator(project, project_service):
     col1, col2, col3 = st.columns([2, 1, 1])
     
     with col1:
-        if st.button(f"馃捑 {i18n.t('storylet_editor.btn_save_storylet')}", 
+        if st.button(i18n.t('storylet_editor.btn_save_storylet'), 
                     type="primary", use_container_width=True):
             # Validation
             if not storylet_id or not title:
@@ -615,7 +615,7 @@ def render_storylet_creator(project, project_service):
             st.rerun()
     
     with col2:
-        if st.button(f"馃攧 {i18n.t('storylet_editor.btn_reset_form')}", use_container_width=True):
+        if st.button(i18n.t('storylet_editor.btn_reset_form'), use_container_width=True):
             st.session_state.new_storylet_preconditions = []
             st.session_state.new_storylet_effects = []
             if 'editing_storylet' in st.session_state:
@@ -623,7 +623,7 @@ def render_storylet_creator(project, project_service):
             st.rerun()
     
     with col3:
-        if st.button(f"馃搵 {i18n.t('storylet_editor.btn_duplicate_form')}", 
+        if st.button(i18n.t('storylet_editor.btn_duplicate_form'), 
                     use_container_width=True,
                     disabled=not editing_id):
             if editing_id:
