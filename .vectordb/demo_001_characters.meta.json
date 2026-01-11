@@ -94,5 +94,17 @@
     "document": "Name: 约翰·史密斯\nDescription: 神秘的时间机器发明者，已经失踪多年。留下了许多未解之谜。\nAlias: 时间教授\nTraits: 疯狂, 天才, 偏执, 神秘\nGoals: 完成终极时间实验\nFears: 实验失败, 被遗忘",
     "name": "约翰·史密斯",
     "type": "character"
+  },
+  "16": {
+    "id": "char-001",
+    "document": "Name: 李明\nDescription: 一位年轻的物理学家，对时间旅行理论有着深入的研究。性格谨慎但充满好奇心。\nAlias: 时间侦探\nTraits: 谨慎, 好奇, 理性, 勇敢\nGoals: 解开时间旅行的秘密, 找到史密斯教授的下落\nFears: 时间悖论, 失去自我",
+    "name": "李明",
+    "type": "character"
+  },
+  "17": {
+    "id": "char-002",
+    "document": "Name: 约翰·史密斯\nDescription: 神秘的时间机器发明者，已经失踪多年。留下了许多未解之谜。\nAlias: 时间教授\nTraits: 疯狂, 天才, 偏执, 神秘\nGoals: 完成终极时间实验\nFears: 实验失败, 被遗忘",
+    "name": "约翰·史密斯",
+    "type": "character"
   }
 }

@@ -366,6 +366,95 @@ The **World Director** is a fundamentally different approach to narrative design
 - System automatically combines them based on state
 - Linear effort (100 storylets → infinite combinations)
 
+### ✏️ Storylet Editor (NEW! v0.8)
+
+The **Storylet Editor** provides a user-friendly visual interface for creating and managing storylets without manually editing JSON files.
+
+**Accessing the Editor:**
+1. Open your project
+2. Navigate to **✏️ Storylets** tab
+3. You'll see two sub-tabs:
+   - **📚 Library** - Browse and manage existing storylets
+   - **➕ Create New** - Build new storylets with forms
+
+**Using the Library:**
+- **Search**: Type keywords to find storylets by title, ID, or tags
+- **Filters**: Quick filter by type
+  - `All` - Show all storylets
+  - `Fallback` - Only backup storylets
+  - `Once` - One-time storylets
+  - `Has Cooldown` - Storylets with cooldown timers
+  - `Has Ordering` - Storylets with sequence dependencies
+- **Cards**: Each storylet displays as an expandable card showing:
+  - Property badges (Fallback, Once, Cooldown, Tags)
+  - Metrics (Weight, Intensity Delta, Conditions, Effects)
+  - Ordering constraints (requires_fired, forbids_fired)
+  - Detailed conditions and effects
+- **Actions**:
+  - `✏️ Edit` - Load storylet into form for modification
+  - `🗑️ Delete` - Remove storylet (requires confirmation)
+
+**Creating/Editing Storylets:**
+
+The creation form is organized into sections:
+
+1. **Basic Information**
+   - `ID` (required, immutable when editing) - Unique identifier
+   - `Title` (required) - Display name
+   - `Description` - What happens in this storylet
+
+2. **Properties**
+   - `Weight` (0.0-10.0) - Selection probability when conditions met
+   - `Intensity Δ` (-1.0 to +1.0) - Change to narrative tension
+   - `Cooldown` (0-20 ticks) - Minimum time before retriggering
+   - `Once` checkbox - Can only trigger once per playthrough
+   - `Fallback` checkbox - Triggers when world is stuck (no regular storylets qualify)
+   - `Tags` - Comma-separated labels for filtering
+
+3. **Ordering Constraints (v0.7)**
+   - `Requires Fired` - Comma-separated storylet IDs that must fire first
+     - Example: `intro_01, setup_02` means this storylet needs those two to fire first
+   - `Forbids Fired` - Storylet IDs that block this storylet if they've fired
+     - Example: `bad_end_01` means this can't fire if that ending has triggered
+   - Use for quest chains and narrative dependencies
+
+4. **Preconditions** (Dynamic list)
+   - Click `➕ Add Condition` to add each condition
+   - Each condition specifies:
+     - `Scope`: `world` | `character` | `relationship`
+     - `Target`: Entity ID (character name, "world", etc.)
+     - `Path`: Nested property path (e.g., "vars.gold", "attributes.strength")
+     - `Op`: Comparison operator (`==`, `!=`, `>`, `<`, `>=`, `<=`)
+     - `Value`: Numeric value to compare against
+   - ALL conditions must be met for storylet to be selectable
+   - Click `🗑️ Remove` to delete a condition
+
+5. **Effects** (Dynamic list)
+   - Click `➕ Add Effect` to add each effect
+   - Each effect specifies:
+     - `Scope`: `world` | `character` | `relationship`
+     - `Target`: Entity ID to modify
+     - `Path`: Property path to modify
+     - `Op`: Mutation operation
+       - `set` - Replace value
+       - `add` - Add to existing value
+       - `multiply` - Multiply existing value
+     - `Value`: Value to apply
+   - All effects are applied atomically when storylet triggers
+   - Click `🗑️ Remove` to delete an effect
+
+**Form Actions:**
+- `💾 Save Storylet` - Create/update storylet and save project
+- `🔄 Reset Form` - Clear all fields
+- `📋 Duplicate` - Keep form data but clear ID for copying
+
+**Tips:**
+- Use meaningful IDs (e.g., `market_boom_01`, `quest_dragon_accept`)
+- Tag storylets by type (`combat`, `economic`, `relationship`) for filtering
+- Test preconditions carefully - storylets won't appear if conditions don't match
+- Use fallback storylets to prevent "world stuck" scenarios
+- Ordering constraints are powerful for quest chains and story sequences
+
 ### Core Concepts
 
 **1. Storylets**

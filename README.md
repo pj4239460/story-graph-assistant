@@ -34,11 +34,18 @@ Our **differentiated approach** to narrative design - move beyond manual branchi
 - **Idle Detection** - Automatically tracks consecutive ticks with no activity
 - **Complex Quest Chains** - Build multi-stage narratives with explicit ordering requirements
 
+**New in v0.8:**
+- **✏️ Storylet Editor** - Visual interface for creating/editing storylets without JSON editing
+- **Search & Filter** - Find storylets by keyword, type, or property
+- **Dynamic Forms** - Add/remove conditions and effects with user-friendly forms
+- **Real-time Validation** - Instant feedback on storylet configuration
+
 #### 📝 Story Building
 - 🌳 **Interactive Story Graph** - Drag-and-drop visualization with multiple layouts
-- ✏️ **Full Editing Support** - Edit scenes, characters, and choices with inline forms
+- ✏️ **Full Editing Support** - Edit scenes, characters, storylets, and choices with inline forms
 - 📋 **Scene Checkup Panel** - AI-powered comprehensive scene analysis with caching
 - 👥 **Character Management** - Centralized profiles and relationships
+- ✏️ **Storylet Editor** - Visual storylet creation with search, filter, and form-based editing
 
 #### ⚡ Dynamic States
 - **Effect-Based Mutations** - Define character/world/relationship changes
@@ -88,11 +95,12 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 5. **Chat** - Ask AI questions about your story in natural language
 
 #### World Director (Emergent Narratives)
-1. **Load Example** - Try "Town of Riverhaven" faction politics example
-2. **View Storylets** - See 20 pre-defined narrative fragments in World Director tab
-3. **Configure Director** - Set events/tick, pacing preference, diversity penalty
-4. **Run Tick** - Watch the Director select and trigger storylets based on state
-5. **Review History** - Explore tick-by-tick evolution with complete rationale
+1. **Load Example** - Try "wuxia_rpg", "scifi_adventure", or "romance_sim" example projects
+2. **View Storylets** - Navigate to **✏️ Storylets** tab to browse/create narrative fragments
+3. **Use Editor** - Create new storylets with the visual form (no JSON needed)
+4. **Configure Director** - In **🎬 World Director** tab, set events/tick, pacing, diversity
+5. **Run Tick** - Watch the Director select and trigger storylets based on state
+6. **Review History** - Explore tick-by-tick evolution with complete rationale
 
 ### 🏗️ Tech Stack
 
@@ -132,13 +140,13 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [x] Enhanced UI and complete tests
 - [x] Full documentation
 
-**v0.8 - Polish & Examples** (Next - 2 weeks)
-- [ ] Improved storylet editor UI
-- [ ] More example projects (templates)
-- [ ] Performance optimizations
-- [ ] Bug fixes and stability
+**v0.8 - Polish & Examples** ✅ (Completed - 2026-01-11)
+- [x] Improved storylet editor UI (Visual editor with search/filter)
+- [x] More example projects (3 new: wuxia RPG, sci-fi adventure, romance sim)
+- [x] Chinese developer guide translation
+- [x] Complete documentation update
 
-**v0.9 - Beta Testing** (Future - 2-3 weeks)
+**v0.9 - Beta Testing** (Next - 2-3 weeks)
 - [ ] Community feedback integration
 - [ ] Documentation refinement
 - [ ] Tutorial videos
@@ -155,6 +163,17 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [Getting Started Guide](GETTING_STARTED.en.md) - Quick start tutorial
 - [World Director Guide](docs/world_director_guide.md) - Comprehensive storylets reference
 - [Developer Guide](docs/developer_guide.en.md) - System architecture and internals
+- [Agent Development Guide](docs/agent_guide.en.md) - Extending AI capabilities
+- [Documentation Index](docs/INDEX.md) - Complete documentation overview
+
+### 🎮 Example Projects
+
+- **sample_project/** - Time travel story (Chinese)
+- **sample_project_en/** - Time travel story (English)
+- **wuxia_rpg/** - Martial arts RPG (15 scenes, 5 endings, moral choices)
+- **scifi_adventure/** - Quantum paradox adventure (25 scenes, 12 endings, AI ethics)
+- **romance_sim/** - School romance (19 scenes, 4 endings, 3 routes)
+- **town_factions/** - World Director faction politics demo
 
 ---
 
