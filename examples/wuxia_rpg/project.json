@@ -2,8 +2,8 @@
   "id": "wuxia-001",
   "name": "江湖风云录",
   "locale": "zh",
-  "createdAt": "2026-01-11T00:00:00.000Z",
-  "updatedAt": "2026-01-11T00:00:00.000Z",
+  "createdAt": "2026-01-11T00:00:00Z",
+  "updatedAt": "2026-01-11T15:03:54.295530",
   "aiSettings": {
     "provider": "deepseek",
     "modelExtraction": "deepseek/deepseek-chat",
@@ -21,97 +21,6 @@
     "byFeature": {},
     "todayDate": ""
   },
-  "world": {
-    "name": "江湖",
-    "description": "武林纷争的时代，正邪难分，各门各派争夺武林盟主之位",
-    "facts": {
-      "派系": {
-        "少林派": "武林第一大派，以佛法和武功闻名",
-        "武当派": "道家正宗，太极剑法天下无双",
-        "魔教": "被正派视为邪教，实则另有隐情",
-        "丐帮": "天下第一帮，行侠仗义"
-      },
-      "宝物": {
-        "武林秘籍": "失传已久的绝世武功",
-        "圣火令": "魔教信物，持有者可号令魔教"
-      },
-      "事件": {
-        "武林大会": "每十年一次，选举武林盟主",
-        "剑冢之谜": "传说有绝世神剑封印于此"
-      }
-    }
-  },
-  "characters": {
-    "char-001": {
-      "id": "char-001",
-      "name": "林傲天",
-      "alias": "主角",
-      "description": "孤儿出身，被少林收养，天赋异禀但性格桀骜不驯。",
-      "traits": ["正义", "冲动", "天赋异禀"],
-      "goals": ["查明身世", "成为武林高手", "匡扶正义"],
-      "fears": ["失去自由", "被人利用", "伤害无辜"],
-      "relationships": [
-        {
-          "targetId": "char-002",
-          "summary": "师父，亦师亦父"
-        },
-        {
-          "targetId": "char-003",
-          "summary": "师姐，青梅竹马"
-        }
-      ]
-    },
-    "char-002": {
-      "id": "char-002",
-      "name": "慧空大师",
-      "alias": "少林方丈",
-      "description": "少林派方丈，武功高深莫测，慈眉善目但隐藏秘密。",
-      "traits": ["智慧", "慈悲", "隐秘"],
-      "goals": ["维护武林和平", "保护少林", "守护秘密"],
-      "fears": ["旧事重提", "徒弟受伤"],
-      "relationships": [
-        {
-          "targetId": "char-001",
-          "summary": "徒弟，视如己出"
-        }
-      ]
-    },
-    "char-003": {
-      "id": "char-003",
-      "name": "苏婉儿",
-      "alias": "少林俗家弟子",
-      "description": "少林俗家弟子，剑法精湛，对林傲天情深意重。",
-      "traits": ["温柔", "坚强", "剑术高超"],
-      "goals": ["保护林傲天", "证明自己", "找到真爱"],
-      "fears": ["失去林傲天", "被轻视"],
-      "relationships": [
-        {
-          "targetId": "char-001",
-          "summary": "青梅竹马，暗生情愫"
-        }
-      ]
-    },
-    "char-004": {
-      "id": "char-004",
-      "name": "魔女红莲",
-      "alias": "魔教圣女",
-      "description": "魔教圣女，美艳绝伦但行事果断狠辣，对正派有深仇大恨。",
-      "traits": ["聪慧", "冷酷", "美艳"],
-      "goals": ["复兴魔教", "报仇", "找到圣火令"],
-      "fears": ["被正派消灭", "孤独终老"],
-      "relationships": []
-    },
-    "char-005": {
-      "id": "char-005",
-      "name": "剑圣独孤求败",
-      "alias": "隐世剑客",
-      "description": "隐居的剑术宗师，独来独往，只寻找值得传承剑法之人。",
-      "traits": ["孤傲", "剑道宗师", "看破红尘"],
-      "goals": ["寻找传人", "了却心愿"],
-      "fears": ["剑法失传"],
-      "relationships": []
-    }
-  },
   "scenes": {
     "scene-001": {
       "id": "scene-001",
@@ -119,8 +28,15 @@
       "body": "月色如水，你偷偷潜入藏经阁。层层书架上摆满了武学秘籍，空气中弥漫着古籍特有的气息。\n\n忽然，你发现最深处的角落里，有一本泛着微光的古籍——《无名心法》。\n\n就在你伸手触碰的瞬间，身后传来师父慧空大师的声音：\"傲天，深夜至此，所为何事？\"",
       "summary": "主角深夜潜入藏经阁寻找武功秘籍，被师父发现",
       "chapter": "第一章",
-      "tags": ["少林", "秘籍", "师徒"],
-      "participants": ["char-001", "char-002"],
+      "tags": [
+        "少林",
+        "秘籍",
+        "师徒"
+      ],
+      "participants": [
+        "char-001",
+        "char-002"
+      ],
       "choices": [
         {
           "id": "choice-001",
@@ -138,7 +54,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 0,
-      "timeLabel": "夜晚"
+      "timeLabel": "夜晚",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-002": {
       "id": "scene-002",
@@ -146,8 +64,14 @@
       "body": "慧空大师沉默片刻，叹了口气：\"你的武功已经超越同辈，为何还如此急躁？\"\n\n他走到《无名心法》前，轻声道：\"此功法乃少林禁术，修炼不当会走火入魔。但既然你有此心，我便给你一个机会...\"\n\n\"明日武林大会，各派高手云集。你若能在大会上胜过三人，我便允许你修炼此功。\"",
       "summary": "师父得知真相后，给予主角一个考验机会",
       "chapter": "第一章",
-      "tags": ["考验", "武林大会"],
-      "participants": ["char-001", "char-002"],
+      "tags": [
+        "考验",
+        "武林大会"
+      ],
+      "participants": [
+        "char-001",
+        "char-002"
+      ],
       "choices": [
         {
           "id": "choice-003",
@@ -159,7 +83,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 1,
-      "timeLabel": "深夜"
+      "timeLabel": "深夜",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-003": {
       "id": "scene-003",
@@ -167,8 +93,14 @@
       "body": "慧空大师目光如炬，似乎能看穿你的谎言。他缓缓摇头：\"傲天，为师看重的不是你的武功，而是你的品行。\"\n\n\"今日之事，我不予追究。但你需明白，心术不正，武功再高也终成魔道。\"\n\n他转身离去，留下你独自在藏经阁中反思。墙上的《无名心法》似乎在嘲笑你的怯懦。",
       "summary": "主角撒谎被师父识破，错失机会但得到教诲",
       "chapter": "第一章",
-      "tags": ["教诲", "反思"],
-      "participants": ["char-001", "char-002"],
+      "tags": [
+        "教诲",
+        "反思"
+      ],
+      "participants": [
+        "char-001",
+        "char-002"
+      ],
       "choices": [
         {
           "id": "choice-004",
@@ -186,7 +118,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 1,
-      "timeLabel": "深夜"
+      "timeLabel": "深夜",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-004": {
       "id": "scene-004",
@@ -194,13 +128,21 @@
       "body": "你趁夜色偷偷记下《无名心法》，回房后日夜苦练。\n\n三天后，在练功时你突然感到体内真气乱窜，经脉如同被火烧一般剧痛。你想呼救，却发现已经无法开口...\n\n苏婉儿路过听到动静，破门而入，却为时已晚。你的内力已经失控。\n\n\"傲天！\"她的呼唤是你失去意识前听到的最后声音。",
       "summary": "主角偷学禁功走火入魔，酿成大错",
       "chapter": "第一章",
-      "tags": ["走火入魔", "悲剧"],
-      "participants": ["char-001", "char-003"],
+      "tags": [
+        "走火入魔",
+        "悲剧"
+      ],
+      "participants": [
+        "char-001",
+        "char-003"
+      ],
       "choices": [],
       "isEnding": true,
       "endingType": "坏结局：心魔缠身",
       "timeIndex": 4,
-      "timeLabel": "三天后"
+      "timeLabel": "三天后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-005": {
       "id": "scene-005",
@@ -208,8 +150,15 @@
       "body": "武林大会在华山之巅举行，各派高手云集。\n\n擂台上，你已经连胜两场。观众席上，苏婉儿为你加油，而魔女红莲则用好奇的目光打量着你。\n\n\"第三场，挑战者——魔教圣女红莲！\"\n\n全场哗然。正派弟子挑战魔教圣女，这将是一场正邪对决！",
       "summary": "主角在武林大会上即将对战魔教圣女",
       "chapter": "第一章",
-      "tags": ["武林大会", "正邪对决"],
-      "participants": ["char-001", "char-003", "char-004"],
+      "tags": [
+        "武林大会",
+        "正邪对决"
+      ],
+      "participants": [
+        "char-001",
+        "char-003",
+        "char-004"
+      ],
       "choices": [
         {
           "id": "choice-006",
@@ -227,7 +176,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 2,
-      "timeLabel": "次日午时"
+      "timeLabel": "次日午时",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-006": {
       "id": "scene-006",
@@ -235,8 +186,14 @@
       "body": "你毫不犹豫地冲向红莲，少林拳法招招凌厉。\n\n红莲轻笑一声，身形如鬼魅般闪避，反手一掌击向你的胸口。你堪堪避开，却被掌风震得后退三步。\n\n\"有意思，\"红莲眼中闪过一丝欣赏，\"你这莽撞的性格，倒不像正派弟子。\"\n\n说话间，她又是数招快攻。你渐渐感到不支，台下苏婉儿焦急万分。\n\n就在此时，你忽然想起师父的教诲：\"以柔克刚，以静制动。\"",
       "summary": "主角与红莲正面交锋，处于劣势但领悟师父教诲",
       "chapter": "第一章",
-      "tags": ["战斗", "领悟"],
-      "participants": ["char-001", "char-004"],
+      "tags": [
+        "战斗",
+        "领悟"
+      ],
+      "participants": [
+        "char-001",
+        "char-004"
+      ],
       "choices": [
         {
           "id": "choice-008",
@@ -254,7 +211,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 3,
-      "timeLabel": "午后"
+      "timeLabel": "午后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-007": {
       "id": "scene-007",
@@ -262,8 +221,14 @@
       "body": "你没有急于进攻，而是细心观察红莲的招式。\n\n她的魔功诡异莫测，但你发现每次使用绝招后，她的呼吸会略微急促——这是内力不足的征兆！\n\n于是你故意卖出破绽，引诱她连续出招。果然，十招之后，红莲的动作慢了一瞬。\n\n就是现在！你使出少林绝学「大力金刚掌」，正中红莲胸口。\n\n她倒飞出擂台，你赢了！",
       "summary": "主角用智慧击败红莲，赢得大会",
       "chapter": "第一章",
-      "tags": ["胜利", "智慧"],
-      "participants": ["char-001", "char-004"],
+      "tags": [
+        "胜利",
+        "智慧"
+      ],
+      "participants": [
+        "char-001",
+        "char-004"
+      ],
       "choices": [
         {
           "id": "choice-010",
@@ -281,7 +246,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 3,
-      "timeLabel": "午后"
+      "timeLabel": "午后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-008": {
       "id": "scene-008",
@@ -289,8 +256,16 @@
       "body": "你收敛心神，不再强攻，转而专心防守。\n\n红莲连续进攻数十招，却始终无法突破你的防御。她的眼中闪过一丝惊讶：\"你竟能在战斗中领悟...不愧是慧空的徒弟。\"\n\n就在你渐入佳境之时，红莲忽然收招：\"今日到此为止。你已通过考验。\"\n\n说完，她飘然离去，留下满场惊愕的观众。\n\n师父慧空在台下微笑点头，他知道，你已经找到了属于自己的武道。",
       "summary": "主角领悟武道真谛，得到红莲认可",
       "chapter": "第一章",
-      "tags": ["领悟", "认可", "武道"],
-      "participants": ["char-001", "char-002", "char-004"],
+      "tags": [
+        "领悟",
+        "认可",
+        "武道"
+      ],
+      "participants": [
+        "char-001",
+        "char-002",
+        "char-004"
+      ],
       "choices": [
         {
           "id": "choice-012",
@@ -308,7 +283,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 3,
-      "timeLabel": "午后"
+      "timeLabel": "午后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-009": {
       "id": "scene-009",
@@ -316,8 +293,16 @@
       "body": "你不顾一切地运起全身内力，使出少林最强杀招「大威天龙」！\n\n金色佛光从你身上迸发，红莲也同时使出魔教禁术「血魔大法」，黑红色的魔气与佛光碰撞，发出惊天巨响！\n\n轰！\n\n你和红莲同时吐血倒地。台下一片混乱，苏婉儿和慧空大师冲上擂台...\n\n你在昏迷前，听到红莲虚弱的声音：\"林傲天...我记住你了...\"",
       "summary": "主角与红莲两败俱伤，种下因果",
       "chapter": "第一章",
-      "tags": ["重伤", "因果"],
-      "participants": ["char-001", "char-002", "char-003", "char-004"],
+      "tags": [
+        "重伤",
+        "因果"
+      ],
+      "participants": [
+        "char-001",
+        "char-002",
+        "char-003",
+        "char-004"
+      ],
       "choices": [
         {
           "id": "choice-014",
@@ -329,7 +314,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 4,
-      "timeLabel": "一月后"
+      "timeLabel": "一月后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-010": {
       "id": "scene-010",
@@ -337,8 +324,14 @@
       "body": "你不顾众人异样的目光，走到红莲身边查看她的伤势。\n\n红莲睁开眼，眼中闪过一丝惊讶：\"你这正派弟子...为何要帮我？\"\n\n\"武者之间，胜负已分，伤人性命非我所愿。\"你真诚地说。\n\n红莲沉默片刻，忽然笑了：\"有意思...林傲天，我记住你了。总有一天，我会让你知道，魔教并非你们想象的那样。\"\n\n她推开你的手，独自离去，背影有些孤寂。",
       "summary": "主角展现善意，与红莲结下善缘",
       "chapter": "第一章",
-      "tags": ["善意", "善缘"],
-      "participants": ["char-001", "char-004"],
+      "tags": [
+        "善意",
+        "善缘"
+      ],
+      "participants": [
+        "char-001",
+        "char-004"
+      ],
       "choices": [
         {
           "id": "choice-015",
@@ -350,7 +343,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 3,
-      "timeLabel": "午后"
+      "timeLabel": "午后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-011": {
       "id": "scene-011",
@@ -358,13 +353,21 @@
       "body": "你完成了师父的考验，终于获得修炼《无名心法》的资格。\n\n慧空大师亲自传授你心法要诀：\"此功法能够激发人的潜能，但也会放大内心的欲望。傲天，你要记住，武功只是手段，守护正道才是目的。\"\n\n在修炼的过程中，你感到体内真气如江河奔涌，武功突飞猛进。\n\n一年后，你已成为少林最杰出的弟子。但你知道，江湖风云变幻，更大的考验还在前方...",
       "summary": "主角成功修炼《无名心法》，武功大进",
       "chapter": "尾声",
-      "tags": ["成长", "传承"],
-      "participants": ["char-001", "char-002"],
+      "tags": [
+        "成长",
+        "传承"
+      ],
+      "participants": [
+        "char-001",
+        "char-002"
+      ],
       "choices": [],
       "isEnding": true,
       "endingType": "好结局：少林新星",
       "timeIndex": 365,
-      "timeLabel": "一年后"
+      "timeLabel": "一年后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-012": {
       "id": "scene-012",
@@ -372,8 +375,15 @@
       "body": "你追上红莲，想要了解她口中的真相。\n\n在一处僻静的山谷，红莲告诉你一个惊人的秘密：\"二十年前，正派围剿魔教，我的父母被少林方丈所杀。而我的父亲，正是你的生父！\"\n\n你震惊得说不出话。红莲递给你一块圣火令：\"你我本是兄妹，却因正邪立场相隔两端。这块令牌，是你身世的证明。\"\n\n\"选择吧，林傲天。是继续做少林的弟子，还是回归魔教，为父母报仇？\"",
       "summary": "主角得知自己的身世之谜，面临艰难抉择",
       "chapter": "第二章",
-      "tags": ["身世", "抉择", "转折"],
-      "participants": ["char-001", "char-004"],
+      "tags": [
+        "身世",
+        "抉择",
+        "转折"
+      ],
+      "participants": [
+        "char-001",
+        "char-004"
+      ],
       "choices": [
         {
           "id": "choice-016",
@@ -391,7 +401,9 @@
       "isEnding": false,
       "endingType": null,
       "timeIndex": 4,
-      "timeLabel": "一月后"
+      "timeLabel": "一月后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-013": {
       "id": "scene-013",
@@ -399,13 +411,21 @@
       "body": "伤愈后，你日夜苦练，心中只有一个念头：变强，击败红莲！\n\n你的武功突飞猛进，但性格也变得越来越偏激。苏婉儿和师父都察觉到了你的变化，却无法阻止。\n\n三年后，你终于再次遇到红莲。这一次，你以压倒性的优势击败了她。\n\n但当你举剑要取她性命时，看到她眼中的哀伤，你忽然明白：你已经偏离了武道的初心，变成了一个只知仇恨的魔头...",
       "summary": "主角因执念走上魔道",
       "chapter": "尾声",
-      "tags": ["复仇", "堕落"],
-      "participants": ["char-001", "char-004"],
+      "tags": [
+        "复仇",
+        "堕落"
+      ],
+      "participants": [
+        "char-001",
+        "char-004"
+      ],
       "choices": [],
       "isEnding": true,
       "endingType": "坏结局：心魔缠身",
       "timeIndex": 1095,
-      "timeLabel": "三年后"
+      "timeLabel": "三年后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-014": {
       "id": "scene-014",
@@ -413,13 +433,23 @@
       "body": "你和红莲一起调查真相，最终发现了师父隐藏多年的秘密。\n\n原来，你的父亲确实是魔教长老，但他并非恶人。当年正邪大战，慧空大师与你父亲惺惺相惜，最后是你父亲为了保护你，才与慧空达成协议，让他将你养大。\n\n慧空大师含泪向你坦白一切，并请求你的原谅。\n\n你终于理解了父亲和师父的苦心。武林之争，正邪之分，不过是世人的偏见。真正的武道，在于内心的正直。\n\n你决定用余生消除正邪隔阂，重建武林秩序。",
       "summary": "主角了解真相，选择化解正邪恩怨",
       "chapter": "尾声",
-      "tags": ["真相", "和解", "超越"],
-      "participants": ["char-001", "char-002", "char-004"],
+      "tags": [
+        "真相",
+        "和解",
+        "超越"
+      ],
+      "participants": [
+        "char-001",
+        "char-002",
+        "char-004"
+      ],
       "choices": [],
       "isEnding": true,
       "endingType": "完美结局：武林盟主",
       "timeIndex": 730,
-      "timeLabel": "两年后"
+      "timeLabel": "两年后",
+      "effects": [],
+      "worldEffects": []
     },
     "scene-015": {
       "id": "scene-015",
@@ -427,15 +457,414 @@
       "body": "你拒绝相信红莲的话，回到少林向师父求证。\n\n慧空大师沉默良久，最终承认了一切，但他解释说：\"你的父亲虽是魔教之人，但他临终前托我照顾你，让你走正道。我所做的一切，都是为了遵守承诺。\"\n\n你选择原谅师父，继续留在少林。多年后，你成为新一代方丈，将少林发扬光大。\n\n但每当夜深人静，你都会想起红莲那孤独的背影，心中隐隐作痛...",
       "summary": "主角选择忠于少林，但心有遗憾",
       "chapter": "尾声",
-      "tags": ["选择", "遗憾"],
-      "participants": ["char-001", "char-002"],
+      "tags": [
+        "选择",
+        "遗憾"
+      ],
+      "participants": [
+        "char-001",
+        "char-002"
+      ],
       "choices": [],
       "isEnding": true,
       "endingType": "好结局：少林方丈",
       "timeIndex": 3650,
-      "timeLabel": "十年后"
+      "timeLabel": "十年后",
+      "effects": [],
+      "worldEffects": []
     }
   },
-  "playThreads": {},
-  "storylets": {}
+  "characters": {
+    "char-001": {
+      "id": "char-001",
+      "name": "林傲天",
+      "alias": "主角",
+      "description": "孤儿出身，被少林收养，天赋异禀但性格桀骜不驯。",
+      "traits": [
+        "正义",
+        "冲动",
+        "天赋异禀"
+      ],
+      "goals": [
+        "查明身世",
+        "成为武林高手",
+        "匡扶正义"
+      ],
+      "fears": [
+        "失去自由",
+        "被人利用",
+        "伤害无辜"
+      ],
+      "relationships": [
+        {
+          "targetId": "char-002",
+          "summary": "师父，亦师亦父"
+        },
+        {
+          "targetId": "char-003",
+          "summary": "师姐，青梅竹马"
+        }
+      ],
+      "timeline": []
+    },
+    "char-002": {
+      "id": "char-002",
+      "name": "慧空大师",
+      "alias": "少林方丈",
+      "description": "少林派方丈，武功高深莫测，慈眉善目但隐藏秘密。",
+      "traits": [
+        "智慧",
+        "慈悲",
+        "隐秘"
+      ],
+      "goals": [
+        "维护武林和平",
+        "保护少林",
+        "守护秘密"
+      ],
+      "fears": [
+        "旧事重提",
+        "徒弟受伤"
+      ],
+      "relationships": [
+        {
+          "targetId": "char-001",
+          "summary": "徒弟，视如己出"
+        }
+      ],
+      "timeline": []
+    },
+    "char-003": {
+      "id": "char-003",
+      "name": "苏婉儿",
+      "alias": "少林俗家弟子",
+      "description": "少林俗家弟子，剑法精湛，对林傲天情深意重。",
+      "traits": [
+        "温柔",
+        "坚强",
+        "剑术高超"
+      ],
+      "goals": [
+        "保护林傲天",
+        "证明自己",
+        "找到真爱"
+      ],
+      "fears": [
+        "失去林傲天",
+        "被轻视"
+      ],
+      "relationships": [
+        {
+          "targetId": "char-001",
+          "summary": "青梅竹马，暗生情愫"
+        }
+      ],
+      "timeline": []
+    },
+    "char-004": {
+      "id": "char-004",
+      "name": "魔女红莲",
+      "alias": "魔教圣女",
+      "description": "魔教圣女，美艳绝伦但行事果断狠辣，对正派有深仇大恨。",
+      "traits": [
+        "聪慧",
+        "冷酷",
+        "美艳"
+      ],
+      "goals": [
+        "复兴魔教",
+        "报仇",
+        "找到圣火令"
+      ],
+      "fears": [
+        "被正派消灭",
+        "孤独终老"
+      ],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-005": {
+      "id": "char-005",
+      "name": "剑圣独孤求败",
+      "alias": "隐世剑客",
+      "description": "隐居的剑术宗师，独来独往，只寻找值得传承剑法之人。",
+      "traits": [
+        "孤傲",
+        "剑道宗师",
+        "看破红尘"
+      ],
+      "goals": [
+        "寻找传人",
+        "了却心愿"
+      ],
+      "fears": [
+        "剑法失传"
+      ],
+      "relationships": [],
+      "timeline": []
+    }
+  },
+  "events": {},
+  "worldState": {
+    "facts": {},
+    "vars": {},
+    "relations": {}
+  },
+  "threads": {
+    "thread_c334cea2": {
+      "id": "thread_c334cea2",
+      "name": "Playthrough 1",
+      "steps": [
+        {
+          "sceneId": "scene-001",
+          "choiceId": null
+        },
+        {
+          "sceneId": "scene-003",
+          "choiceId": "choice-002"
+        },
+        {
+          "sceneId": "scene-004",
+          "choiceId": "choice-005"
+        }
+      ],
+      "description": ""
+    }
+  },
+  "storylets": {
+    "st-market-gossip": {
+      "id": "st-market-gossip",
+      "title": "市井传闻",
+      "description": "听到关于江湖大事的流言蜚语",
+      "tags": [
+        "信息",
+        "环境"
+      ],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "op": "add",
+          "path": "info_gathered",
+          "value": 1,
+          "reason": null,
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 3,
+      "once": false,
+      "intensity_delta": 0.0,
+      "is_fallback": true,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-sect-conflict": {
+      "id": "st-sect-conflict",
+      "title": "门派冲突",
+      "description": "正邪两派在街头发生冲突",
+      "tags": [
+        "冲突",
+        "选择"
+      ],
+      "preconditions": [
+        {
+          "path": "characters.char-001.vars.reputation",
+          "op": ">=",
+          "value": 10
+        }
+      ],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "vars.combat_exp",
+          "value": 5,
+          "reason": null,
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "vars",
+          "op": "add",
+          "path": "tension",
+          "value": 10,
+          "reason": null,
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.5,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": 0.3,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-master-teaching": {
+      "id": "st-master-teaching",
+      "title": "师父传授武功",
+      "description": "少林方丈传授高深武学",
+      "tags": [
+        "成长",
+        "武功"
+      ],
+      "preconditions": [
+        {
+          "path": "characters.char-001.vars.reputation",
+          "op": ">=",
+          "value": 20
+        }
+      ],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "vars.martial_arts",
+          "value": 15,
+          "reason": null,
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 2.0,
+      "cooldown": 0,
+      "once": true,
+      "intensity_delta": 0.2,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": [
+        "st-leave-shaolin"
+      ]
+    },
+    "st-mysterious-encounter": {
+      "id": "st-mysterious-encounter",
+      "title": "神秘人物现身",
+      "description": "一位神秘高手突然出现",
+      "tags": [
+        "神秘",
+        "转折"
+      ],
+      "preconditions": [
+        {
+          "path": "world.vars.tension",
+          "op": ">=",
+          "value": 30
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "op": "add",
+          "path": "mystery_level",
+          "value": 20,
+          "reason": null,
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.2,
+      "cooldown": 8,
+      "once": false,
+      "intensity_delta": 0.4,
+      "is_fallback": false,
+      "requires_fired": [
+        "st-sect-conflict"
+      ],
+      "forbids_fired": []
+    },
+    "st-training-montage": {
+      "id": "st-training-montage",
+      "title": "刻苦修炼",
+      "description": "主角闭关修炼，武功日益精进",
+      "tags": [
+        "修炼",
+        "成长"
+      ],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "op": "add",
+          "path": "vars.martial_arts",
+          "value": 3,
+          "reason": null,
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 2,
+      "once": false,
+      "intensity_delta": -0.1,
+      "is_fallback": true,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-festival-celebration": {
+      "id": "st-festival-celebration",
+      "title": "节日庆典",
+      "description": "江湖各派聚集庆祝，暂时放下恩怨",
+      "tags": [
+        "社交",
+        "环境"
+      ],
+      "preconditions": [
+        {
+          "path": "world.vars.tension",
+          "op": "<",
+          "value": 50
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "op": "add",
+          "path": "harmony",
+          "value": 15,
+          "reason": null,
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "vars",
+          "op": "add",
+          "path": "tension",
+          "value": -5,
+          "reason": null,
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 0.8,
+      "cooldown": 10,
+      "once": false,
+      "intensity_delta": -0.2,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    }
+  },
+  "tick_histories": {
+    "tick_history_thread_c334cea2": {
+      "thread_id": "thread_c334cea2",
+      "ticks": [
+        {
+          "tick_number": 0,
+          "timestamp": "2026-01-11T16:03:54.295530",
+          "step_index": 2,
+          "intensity_before": 0.5,
+          "intensity_after": 0.5,
+          "events": [],
+          "state_diff": {}
+        }
+      ],
+      "last_triggered": {},
+      "triggered_once": {},
+      "current_intensity": 0.5,
+      "idle_tick_count": 1
+    }
+  }
 }

@@ -534,6 +534,13 @@
   ],
   "events": [],
   "world": {
+    "vars": {
+      "social_interactions": 0,
+      "romantic_atmosphere": 30,
+      "relationship_status": 0,
+      "jealousy_level": 0,
+      "exam_season": 0
+    },
     "flags": {
       "first_impression": "",
       "lunch_partner": "",
@@ -548,5 +555,182 @@
     "青春",
     "多结局",
     "角色养成"
-  ]
+  ],
+  "playThreads": {},
+  "storylets": {
+    "st-daily-greeting": {
+      "id": "st-daily-greeting",
+      "title": "日常问候",
+      "description": "在走廊里遇到某个女孩并打招呼",
+      "weight": 1.0,
+      "once": false,
+      "cooldown": 2,
+      "intensity_delta": 0.0,
+      "tags": ["日常", "社交"],
+      "is_fallback": true,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "path": "social_interactions",
+          "op": "add",
+          "value": 1
+        }
+      ]
+    },
+    "st-lunch-together": {
+      "id": "st-lunch-together",
+      "title": "一起吃午饭",
+      "description": "女孩主动邀请你一起吃午饭",
+      "weight": 1.5,
+      "once": false,
+      "cooldown": 3,
+      "intensity_delta": 0.1,
+      "tags": ["约会", "亲密"],
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [
+        {
+          "path": "characters.char-002.vars.relationship.affection",
+          "op": ">=",
+          "value": 20
+        }
+      ],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-002",
+          "path": "relationship.affection",
+          "op": "add",
+          "value": 5
+        }
+      ]
+    },
+    "st-confession-moment": {
+      "id": "st-confession-moment",
+      "title": "告白的契机",
+      "description": "气氛变得微妙，似乎有告白的机会",
+      "weight": 2.0,
+      "once": true,
+      "cooldown": 0,
+      "intensity_delta": 0.6,
+      "tags": ["重要", "转折"],
+      "is_fallback": false,
+      "requires_fired": ["st-lunch-together"],
+      "forbids_fired": [],
+      "preconditions": [
+        {
+          "path": "characters.char-002.vars.relationship.affection",
+          "op": ">=",
+          "value": 60
+        },
+        {
+          "path": "world.vars.romantic_atmosphere",
+          "op": ">=",
+          "value": 50
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "path": "relationship_status",
+          "op": "set",
+          "value": 1
+        }
+      ]
+    },
+    "st-rival-appears": {
+      "id": "st-rival-appears",
+      "title": "情敌出现",
+      "description": "另一个男生也对她表现出好感",
+      "weight": 1.3,
+      "once": false,
+      "cooldown": 5,
+      "intensity_delta": 0.3,
+      "tags": ["竞争", "紧张"],
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": ["st-confession-moment"],
+      "preconditions": [
+        {
+          "path": "characters.char-002.vars.relationship.affection",
+          "op": ">=",
+          "value": 30
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "path": "jealousy_level",
+          "op": "add",
+          "value": 15
+        }
+      ]
+    },
+    "st-study-session": {
+      "id": "st-study-session",
+      "title": "一起复习功课",
+      "description": "考试前一起学习，互相鼓励",
+      "weight": 1.0,
+      "once": false,
+      "cooldown": 4,
+      "intensity_delta": -0.1,
+      "tags": ["学习", "友情"],
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [
+        {
+          "path": "world.vars.exam_season",
+          "op": ">=",
+          "value": 1
+        }
+      ],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "path": "attributes.academic_score",
+          "op": "add",
+          "value": 5
+        },
+        {
+          "scope": "character",
+          "target": "char-002",
+          "path": "relationship.trust",
+          "op": "add",
+          "value": 3
+        }
+      ]
+    },
+    "st-peaceful-moment": {
+      "id": "st-peaceful-moment",
+      "title": "宁静的午后",
+      "description": "在图书馆享受安静的阅读时光",
+      "weight": 0.8,
+      "once": false,
+      "cooldown": 1,
+      "intensity_delta": -0.2,
+      "tags": ["平静", "独处"],
+      "is_fallback": true,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "path": "attributes.stress_level",
+          "op": "add",
+          "value": -3
+        }
+      ]
+    }
+  }
 }

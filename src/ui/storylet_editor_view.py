@@ -227,11 +227,11 @@ def render_storylet_card(storylet, project, project_service):
                 st.caption(f"✕ **{i18n.t('storylet_editor.label_forbids')}**: {', '.join(storylet.forbids_fired)}")  # Cannot fire if these fired
             
             # Preconditions detail: Expandable list of all conditions
-            # Shows scope.target.path comparison for each condition
+            # Shows full path comparison for each condition
             if storylet.preconditions:
                 with st.expander(i18n.t('storylet_editor.view_conditions')):
                     for i, cond in enumerate(storylet.preconditions):
-                        st.caption(f"{i+1}. `{cond.scope}.{cond.target}.{cond.path or 'value'}` {cond.op} `{cond.value}`")
+                        st.caption(f"{i+1}. `{cond.path}` {cond.op} `{cond.value}`")
             
             # Effects detail: Expandable list of all state mutations
             # Uses icons to indicate scope type (character/relationship/world)
@@ -239,7 +239,7 @@ def render_storylet_card(storylet, project, project_service):
                 with st.expander(i18n.t('storylet_editor.view_effects')):
                     for i, eff in enumerate(storylet.effects):
                         icon = "[C]" if eff.scope == "character" else ("[R]" if eff.scope == "relationship" else "[W]")
-                        st.caption(f"{i+1}. {icon} `{eff.scope}.{eff.target}.{eff.path or 'value'}` {eff.op} `{eff.value}`")
+                        st.caption(f"{i+1}. {icon} `{eff.scope}.{eff.target}.{eff.path}` {eff.op} `{eff.value}`")
         
         with col2:
             if st.button(i18n.t('storylet_editor.btn_edit'), key=f"edit_{storylet.id}", use_container_width=True):

@@ -582,6 +582,13 @@
   ],
   "events": [],
   "world": {
+    "vars": {
+      "timeline_instability": 0,
+      "anomaly_detected": 0,
+      "research_progress": 20,
+      "tech_level": 50,
+      "paradox_level": 0
+    },
     "flags": {
       "trust_ai": 50,
       "crew_morale": 70,
@@ -595,5 +602,155 @@
     "人工智能",
     "伦理困境",
     "多结局"
-  ]
+  ],
+  "playThreads": {},
+  "storylets": {
+    "st-time-anomaly": {
+      "id": "st-time-anomaly",
+      "title": "时间异常检测",
+      "description": "传感器检测到时间线波动",
+      "weight": 1.2,
+      "once": false,
+      "cooldown": 3,
+      "intensity_delta": 0.1,
+      "tags": ["科技", "信息"],
+      "is_fallback": true,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "path": "anomaly_detected",
+          "op": "add",
+          "value": 1
+        }
+      ]
+    },
+    "st-ai-debate": {
+      "id": "st-ai-debate",
+      "title": "人机伦理辩论",
+      "description": "与艾娃讨论人工智能的道德边界",
+      "weight": 1.5,
+      "once": false,
+      "cooldown": 5,
+      "intensity_delta": 0.0,
+      "tags": ["哲学", "关系"],
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [
+        {
+          "path": "relationships.char-001_char-003.trust",
+          "op": ">=",
+          "value": 30
+        }
+      ],
+      "effects": [
+        {
+          "scope": "relationship",
+          "target": "char-001_char-003",
+          "path": "trust",
+          "op": "add",
+          "value": 5
+        },
+        {
+          "scope": "character",
+          "target": "char-001",
+          "path": "attributes.wisdom",
+          "op": "add",
+          "value": 3
+        }
+      ]
+    },
+    "st-parallel-self": {
+      "id": "st-parallel-self",
+      "title": "遇见平行自己",
+      "description": "在时空裂缝中遇到另一个时间线的自己",
+      "weight": 2.0,
+      "once": true,
+      "cooldown": 0,
+      "intensity_delta": 0.5,
+      "tags": ["震撼", "转折"],
+      "is_fallback": false,
+      "requires_fired": ["st-time-anomaly"],
+      "forbids_fired": [],
+      "preconditions": [
+        {
+          "path": "world.vars.timeline_instability",
+          "op": ">=",
+          "value": 60
+        }
+      ],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "path": "attributes.existential_crisis",
+          "op": "add",
+          "value": 20
+        },
+        {
+          "scope": "world",
+          "target": "vars",
+          "path": "paradox_level",
+          "op": "add",
+          "value": 30
+        }
+      ]
+    },
+    "st-tech-breakthrough": {
+      "id": "st-tech-breakthrough",
+      "title": "技术突破",
+      "description": "研究团队在时空技术上取得重大进展",
+      "weight": 1.0,
+      "once": false,
+      "cooldown": 7,
+      "intensity_delta": 0.2,
+      "tags": ["科技", "成长"],
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [
+        {
+          "path": "world.vars.research_progress",
+          "op": ">=",
+          "value": 40
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "vars",
+          "path": "tech_level",
+          "op": "add",
+          "value": 10
+        }
+      ]
+    },
+    "st-quiet-observation": {
+      "id": "st-quiet-observation",
+      "title": "静静观察宇宙",
+      "description": "在飞船上凝视星空，思考生命的意义",
+      "weight": 0.8,
+      "once": false,
+      "cooldown": 2,
+      "intensity_delta": -0.2,
+      "tags": ["平静", "思考"],
+      "is_fallback": true,
+      "requires_fired": [],
+      "forbids_fired": [],
+      "preconditions": [],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-001",
+          "path": "attributes.mental_stability",
+          "op": "add",
+          "value": 5
+        }
+      ]
+    }
+  }
 }

@@ -68,8 +68,11 @@ def render_director_view():
                 - 标签：冲突、经济
                 """)
         
-        if st.button("📚 Load Example Project with Storylets" if st.session_state.locale == "en" else "📚 加载带故事块的示例项目"):
-            st.info("Example project with storylets coming soon!" if st.session_state.locale == "en" else "带故事块的示例项目即将推出！")
+        st.info(
+            "💡 Tip: Load the example projects (wuxia_rpg, scifi_adventure, romance_sim) to see storylets in action!"
+            if st.session_state.locale == "en"
+            else "💡 提示：加载示例项目（武侠RPG、科幻冒险、恋爱模拟）查看故事块的实际应用！"
+        )
         
         return
     
@@ -215,8 +218,8 @@ def render_director_view():
                     config
                 )
                 
-                # Save project
-                project_service.save_project(project)
+                # Save project (no argument needed - uses current path)
+                project_service.save_project()
                 
                 # Store in session for display
                 st.session_state.last_tick_record = tick_record
