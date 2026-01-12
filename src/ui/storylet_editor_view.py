@@ -252,7 +252,7 @@ def render_storylet_card(storylet, project, project_service):
                 # First click sets confirmation flag, second click deletes
                 if st.session_state.get(f"confirm_delete_{storylet.id}"):
                     del project.storylets[storylet.id]
-                    project_service.save_project(project)
+                    project_service.save_project()
                     st.success(i18n.t('storylet_editor.deleted'))
                     st.rerun()
                 else:
@@ -481,39 +481,41 @@ def render_storylet_creator(project, project_service):
     # Add condition button
     if st.button(i18n.t('storylet_editor.btn_add_condition')):
         st.session_state.new_storylet_preconditions.append(
-            Precondition(scope="world", target="", path="", op=">=", value=0)
+            Precondition(path="world.vars.example", op=">=", value=0)
         )
     
     # Display existing conditions
     for i, cond in enumerate(st.session_state.new_storylet_preconditions):
         with st.expander(i18n.t('storylet_editor.condition_label').format(num=i+1), expanded=True):
-            col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 1, 2])
+            col1, col2, col3 = st.columns([4, 1, 2])
             
             with col1:
-                scope = st.selectbox(
-                    i18n.t('storylet_editor.field_scope'),
-                    ["world", "character", "relationship"],
-                    index=["world", "character", "relationship"].index(cond.scope),
-                    key=f"cond_scope_{i}"
+                path = st.text_input(
+                    "Path",
+                    value=cond.path,
+                    placeholder="world.vars.tension or characters.char-001.vars.reputation",
+                    help="Full path: world.vars.X, characters.ID.vars.X, or relationships.ID1_ID2.X",
+                    key=f"cond_path_{i}"
                 )
             
             with col2:
-                target = st.text_input(i18n.t('storylet_editor.field_target'), value=cond.target, key=f"cond_target_{i}")
+                op = st.selectbox(
+                    "Op",
+                    ["==", "!=", ">", "<", ">=", "<="], 
+                    index=["==", "!=", ">", "<", ">=", "<="].index(cond.op) if cond.op in ["==", "!=", ">", "<", ">=", "<="] else 0,
+                    key=f"cond_op_{i}"
+                )
             
             with col3:
-                path = st.text_input(i18n.t('storylet_editor.field_path'), value=cond.path or "", key=f"cond_path_{i}")
-            
-            with col4:
-                op = st.selectbox(i18n.t('storylet_editor.field_op'), ["==", "!=", ">", "<", ">=", "<="], 
-                                 index=["==", "!=", ">", "<", ">=", "<="].index(cond.op) if cond.op in ["==", "!=", ">", "<", ">=", "<="] else 0,
-                                 key=f"cond_op_{i}")
-            
-            with col5:
-                value = st.number_input(i18n.t('storylet_editor.field_value'), value=float(cond.value), key=f"cond_value_{i}")
+                value = st.number_input(
+                    "Value",
+                    value=float(cond.value),
+                    key=f"cond_value_{i}"
+                )
             
             # Update condition
             st.session_state.new_storylet_preconditions[i] = Precondition(
-                scope=scope, target=target, path=path, op=op, value=value
+                path=path, op=op, value=value
             )
             
             if st.button(i18n.t('storylet_editor.btn_remove'), key=f"remove_cond_{i}"):
@@ -603,7 +605,7 @@ def render_storylet_creator(project, project_service):
             
             # Save to project
             project.storylets[storylet_id] = new_storylet
-            project_service.save_project(project)
+            project_service.save_project()
             
             # Clear session state
             st.session_state.new_storylet_preconditions = []

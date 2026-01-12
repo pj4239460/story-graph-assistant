@@ -1030,7 +1030,7 @@ def render_play_path_mode(project, scene_service, i18n):
                     
                     # Save project
                     project_service = st.session_state.project_service
-                    project_service.save_project(project)
+                    project_service.save_project()
                     
                     st.success(f"✅ Thread '{thread_name}' saved!" if st.session_state.locale == "en" else f"✅ 故事线「{thread_name}」已保存！")
                     st.balloons()
@@ -1060,5 +1060,5 @@ def render_play_path_mode(project, scene_service, i18n):
                 if st.button("🗑️ Delete" if st.session_state.locale == "en" else "🗑️ 删除", key=f"del_thread_{thread_id}"):
                     del project.threads[thread_id]
                     project_service = st.session_state.project_service
-                    project_service.save_project(project)
+                    project_service.save_project()
                     st.rerun()
