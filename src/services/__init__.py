@@ -6,6 +6,7 @@ from .scene_service import SceneService
 from .character_service import CharacterService
 from .ai_service import AIService
 from .search_service import SearchService
+from .ai_conditions import AIConditionsEvaluator
 
 __all__ = [
     "ProjectService",
@@ -13,4 +14,5 @@ __all__ = [
     "CharacterService",
     "AIService",
     "SearchService",
+    "AIConditionsEvaluator",
 ]

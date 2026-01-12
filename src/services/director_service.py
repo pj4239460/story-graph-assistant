@@ -52,6 +52,7 @@ from ..models.world import Effect, WorldState
 from ..models.character import CharacterState
 from .state_service import StateService
 from .conditions import ConditionsEvaluator
+from .ai_conditions import AIConditionsEvaluator
 
 
 class DirectorService:
@@ -98,10 +99,11 @@ class DirectorService:
         - Append to TickHistory
     """
     
-    def __init__(self):
+    def __init__(self, llm_client=None):
         """Initialize the Director with required services."""
         self.state_service = StateService()
         self.conditions_evaluator = ConditionsEvaluator()
+        self.ai_conditions_evaluator = AIConditionsEvaluator(llm_client)
     
     def load_storylets(self, project: Project) -> List[Storylet]:
         """
@@ -153,7 +155,8 @@ class DirectorService:
         char_states: Dict[str, CharacterState],
         rel_states: Dict[str, Any],
         tick_history: TickHistory,
-        config: DirectorConfig
+        config: DirectorConfig,
+        project: Project
     ) -> Tuple[List[Storylet], List[str]]:
         """
         Select storylets to trigger based on current state and director policy.
@@ -224,13 +227,16 @@ class DirectorService:
                 # Already triggered and marked as "once", skip
                 continue
             
-            # Evaluate all preconditions using ConditionsEvaluator
+            # Evaluate all preconditions using hybrid evaluator
+            # Supports both deterministic and AI-powered conditions
             # Returns: (bool: all_satisfied, List[str]: explanations)
-            satisfied, explanations = self.conditions_evaluator.evaluate_all(
+            satisfied, explanations = self._evaluate_conditions_hybrid(
                 storylet.preconditions,
                 world_state,
                 char_states,
-                rel_states
+                rel_states,
+                project,
+                config.ai_mode
             )
             
             if satisfied:
@@ -267,7 +273,9 @@ class DirectorService:
                     world_state,
                     char_states,
                     rel_states,
-                    tick_history
+                    tick_history,
+                    project,
+                    config
                 )
                 
                 if not candidates:
@@ -411,7 +419,8 @@ class DirectorService:
             char_states,
             rel_states,
             tick_history,
-            config
+            config,
+            project
         )
         
         # Update idle tick count
@@ -617,7 +626,9 @@ class DirectorService:
         world_state: WorldState,
         char_states: Dict[str, CharacterState],
         rel_states: Dict[str, Any],
-        tick_history: TickHistory
+        tick_history: TickHistory,
+        project: Project,
+        config: DirectorConfig
     ) -> List[Tuple[Storylet, List[str]]]:
         """
         Select fallback storylet candidates (v0.7).
@@ -691,12 +702,14 @@ class DirectorService:
             # - "Snow" only in winter
             # - "Market bustle" only during day
             
-            # Evaluate preconditions
-            satisfied, explanations = self.conditions_evaluator.evaluate_all(
+            # Evaluate preconditions using hybrid evaluator
+            satisfied, explanations = self._evaluate_conditions_hybrid(
                 storylet.preconditions,
                 world_state,
                 char_states,
-                rel_states
+                rel_states,
+                project,
+                config.ai_mode
             )
             
             if satisfied:
@@ -834,3 +847,81 @@ class DirectorService:
             diff["relationships"] = rel_changes
         
         return diff
+    
+    def _evaluate_conditions_hybrid(
+        self,
+        preconditions: List[Precondition],
+        world_state: WorldState,
+        char_states: Dict[str, CharacterState],
+        rel_states: Dict[str, Any],
+        project: Project,
+        ai_mode: str
+    ) -> Tuple[bool, List[str]]:
+        """
+        Evaluate preconditions using hybrid deterministic+AI approach.
+        
+        This method routes condition evaluation based on AI mode:
+        - "deterministic": Only use rule-based evaluation (fast, default)
+        - "ai_assisted": Use AI for NL conditions, rules for others
+        - "ai_primary": Use AI when available, rules as fallback
+        
+        Args:
+            preconditions: List of conditions to evaluate
+            world_state: Current world state
+            char_states: Character states
+            rel_states: Relationship states
+            project: Project context (for LLM settings)
+            ai_mode: Which evaluation mode to use
+        
+        Returns:
+            (all_satisfied, explanations) - same as ConditionsEvaluator.evaluate_all
+        
+        Example:
+            >>> # Mix of deterministic and NL conditions
+            >>> preconditions = [
+            ...     Precondition(path="world.vars.tension", op=">=", value=70),
+            ...     Precondition(nl_condition="Alice is feeling desperate")
+            ... ]
+            >>> satisfied, explanations = self._evaluate_conditions_hybrid(
+            ...     preconditions, world, chars, rels, project, "ai_assisted"
+            ... )
+        """
+        if not preconditions:
+            return True, ["No preconditions (always satisfied)"]
+        
+        if ai_mode == "deterministic":
+            # Pure rule-based, no AI
+            # NL conditions will be skipped (ConditionsEvaluator can't handle them)
+            return self.conditions_evaluator.evaluate_all(
+                preconditions, world_state, char_states, rel_states
+            )
+        
+        # AI-assisted or AI-primary modes
+        explanations = []
+        all_satisfied = True
+        
+        for cond in preconditions:
+            if cond.is_nl_condition():
+                # This is a natural language condition
+                if ai_mode in ["ai_assisted", "ai_primary"]:
+                    # Use AI evaluator
+                    satisfied, explanation = self.ai_conditions_evaluator.evaluate(
+                        cond, world_state, char_states, rel_states, project
+                    )
+                    explanations.append(explanation)
+                    if not satisfied:
+                        all_satisfied = False
+                else:
+                    # Should not reach here, but handle gracefully
+                    explanations.append(f"⚠ NL condition in deterministic mode: {cond.nl_condition}")
+                    all_satisfied = False
+            else:
+                # This is a deterministic condition
+                satisfied, explanation = self.conditions_evaluator.evaluate(
+                    cond, world_state, char_states, rel_states
+                )
+                explanations.append(explanation)
+                if not satisfied:
+                    all_satisfied = False
+        
+        return all_satisfied, explanations

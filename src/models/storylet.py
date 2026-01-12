@@ -18,21 +18,43 @@ class Precondition(BaseModel):
     """
     A condition that must be satisfied for a storylet to trigger.
     
-    Preconditions use dot-notation paths to access world state, character state,
-    or relationship state. They support various comparison operators for flexible
-    condition checking.
+    Supports two evaluation modes:
+    1. Deterministic (default): Fast, explicit path-based conditions
+    2. AI-powered: Natural language conditions evaluated by LLM
     
-    Examples:
+    Deterministic Examples:
         - World variable: path="world.vars.faction_a_power", op=">=", value=60
         - Character mood: path="characters.char-001.mood", op="==", value="angry"
         - Relationship trust: path="relationships.alice|bob.trust", op=">", value=50
         - Tag checking: path="characters.char-001.active_traits", op="contains", value="brave"
+    
+    AI-powered Examples:
+        - nl_condition="The tension is high and Alice is angry"
+        - nl_condition="Multiple factions are in conflict"
+        - nl_condition="The protagonist feels cornered and desperate"
+    
+    Design Note:
+        Deterministic conditions are preferred for performance and reproducibility.
+        AI conditions are useful when:
+        - Conditions are too complex for explicit rules
+        - You want emergent behavior that adapts to narrative context
+        - Prototyping new storylets before formalizing conditions
     """
-    path: str  # Dot-notation path to state value
-    op: Literal["==", "!=", "<", "<=", ">", ">=", "in", "contains", "has_tag"]
-    value: Any  # Value to compare against
+    # Deterministic condition fields
+    path: Optional[str] = None  # Dot-notation path to state value
+    op: Optional[Literal["==", "!=", "<", "<=", ">", ">=", "in", "contains", "has_tag"]] = None
+    value: Optional[Any] = None  # Value to compare against
+    
+    # AI-powered condition field
+    nl_condition: Optional[str] = None  # Natural language description
+    
+    def is_nl_condition(self) -> bool:
+        """Check if this is an AI-powered natural language condition"""
+        return self.nl_condition is not None and self.nl_condition.strip() != ""
     
     def __str__(self) -> str:
+        if self.is_nl_condition():
+            return f"[AI] {self.nl_condition}"
         return f"{self.path} {self.op} {self.value}"
 
 
@@ -219,6 +241,7 @@ class DirectorConfig(BaseModel):
     - Intensity: Creates "peaks and valleys" pacing like Left 4 Dead's AI Director
     - Pacing preference: Bias toward calm, balanced, or intense stories
     - Fallback: Prevents world from getting stuck when no storylets qualify
+    - AI Mode: Choose between deterministic rules or AI-powered selection
     
     You can tune these parameters to achieve different narrative feels:
     - High diversity_penalty = more variety, less repetition
@@ -226,6 +249,11 @@ class DirectorConfig(BaseModel):
     - "calm" pacing = favors low-intensity storylets
     - "intense" pacing = favors high-intensity storylets
     - Lower fallback_after_idle_ticks = more aggressive fallback triggering
+    
+    AI Modes:
+    - "deterministic": Fast, rule-based conditions (default, no LLM calls)
+    - "ai_assisted": LLM evaluates NL conditions, falls back to rules
+    - "ai_primary": LLM drives selection, uses rules as hints
     
     Attributes:
         events_per_tick: How many storylets to select (1-5)
@@ -236,7 +264,13 @@ class DirectorConfig(BaseModel):
         intensity_decay: How much intensity decays per tick toward 0.5 (0.0-0.5)
         pacing_preference: Overall story pacing bias
         fallback_after_idle_ticks: Trigger fallback storylets after N idle ticks (0=disabled)
+        ai_mode: Which evaluation mode to use
+        ai_cache_enabled: Cache AI evaluations for same state (performance)
     """
+    # AI mode selection (NEW in v0.9)
+    ai_mode: Literal["deterministic", "ai_assisted", "ai_primary"] = "deterministic"
+    ai_cache_enabled: bool = True  # Cache AI condition evaluations
+    
     # How many storylets to trigger per tick
     events_per_tick: int = Field(default=2, ge=1, le=5)
     

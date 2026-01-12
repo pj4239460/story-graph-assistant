@@ -281,5 +281,16 @@
     "validation_required": "ID和标题是必填项！",
     "saved": "故事块已保存！",
     "duplicate_hint": "修改ID以创建副本"
+  },
+  "director": {
+    "mode_deterministic": "确定性（基于规则）",
+    "mode_ai_assisted": "AI辅助（混合模式）",
+    "mode_ai_primary": "AI主导（涌现模式）",
+    "mode_help_deterministic": "最快（无LLM调用）| 100%可复现 | 低token成本 | 需要显式条件规则",
+    "mode_help_ai_assisted": "速度与灵活性平衡 | 支持自然语言条件 | 比确定性慢 | 中等token成本",
+    "mode_help_ai_primary": "最大叙事涌现性 | 适应复杂语境 | 最慢 | 高token成本 | 可复现性较低",
+    "director_mode_label": "导演模式",
+    "nl_condition_example": "示例：'紧张度很高且Alice很愤怒'",
+    "nl_condition_help": "自然语言条件由AI评估（需要AI模式）"
   }
 }

@@ -281,5 +281,16 @@
     "validation_required": "ID and Title are required!",
     "saved": "Storylet saved!",
     "duplicate_hint": "Change the ID to create a duplicate"
+  },
+  "director": {
+    "mode_deterministic": "Deterministic (Rule-based)",
+    "mode_ai_assisted": "AI-Assisted (Hybrid)",
+    "mode_ai_primary": "AI-Primary (Emergent)",
+    "mode_help_deterministic": "Fastest (no LLM calls) | 100% reproducible | Low token cost | Requires explicit condition rules",
+    "mode_help_ai_assisted": "Balance of speed and flexibility | Natural language conditions supported | Slower than deterministic | Moderate token cost",
+    "mode_help_ai_primary": "Maximum narrative emergence | Adapts to complex contexts | Slowest | High token cost | Less reproducible",
+    "director_mode_label": "Director Mode",
+    "nl_condition_example": "Example: 'The tension is high and Alice is angry'",
+    "nl_condition_help": "Natural language conditions are evaluated by AI (requires AI mode)"
   }
 }

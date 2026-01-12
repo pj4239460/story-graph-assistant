@@ -152,6 +152,46 @@ def render_director_view():
     st.divider()
     st.subheader("⚙️ Director Settings" if st.session_state.locale == "en" else "⚙️ 导演设置")
     
+    # AI Mode Selection (NEW in v0.9) - Prominent placement
+    ai_mode_options = {
+        "deterministic": "🔧 Deterministic (Rule-based)" if st.session_state.locale == "en" else "🔧 确定性（基于规则）",
+        "ai_assisted": "🤖 AI-Assisted (Hybrid)" if st.session_state.locale == "en" else "🤖 AI辅助（混合）",
+        "ai_primary": "🧠 AI-Primary (Emergent)" if st.session_state.locale == "en" else "🧠 AI主导（涌现）"
+    }
+    
+    ai_mode = st.radio(
+        "🎯 Director Mode" if st.session_state.locale == "en" else "🎯 导演模式",
+        options=list(ai_mode_options.keys()),
+        format_func=lambda x: ai_mode_options[x],
+        horizontal=True,
+        key="director_ai_mode",
+        help=(
+            "Deterministic: Fast, rule-based conditions only. AI-Assisted: LLM evaluates NL conditions. AI-Primary: LLM drives narrative selection."
+            if st.session_state.locale == "en"
+            else "确定性：快速，仅基于规则。AI辅助：LLM评估自然语言条件。AI主导：LLM驱动叙事选择。"
+        )
+    )
+    
+    # Show explanation for selected mode
+    mode_explanations = {
+        "deterministic": (
+            "✓ Fastest (no LLM calls) | ✓ 100% reproducible | ✓ Low token cost | ⚠ Requires explicit condition rules"
+            if st.session_state.locale == "en"
+            else "✓ 最快（无LLM调用）| ✓ 100%可复现 | ✓ 低token成本 | ⚠ 需要显式条件规则"
+        ),
+        "ai_assisted": (
+            "✓ Balance of speed and flexibility | ✓ Natural language conditions supported | ⚠ Slower than deterministic | ⚠ Moderate token cost"
+            if st.session_state.locale == "en"
+            else "✓ 速度与灵活性平衡 | ✓ 支持自然语言条件 | ⚠ 比确定性慢 | ⚠ 中等token成本"
+        ),
+        "ai_primary": (
+            "✓ Maximum narrative emergence | ✓ Adapts to complex contexts | ⚠ Slowest | ⚠ High token cost | ⚠ Less reproducible"
+            if st.session_state.locale == "en"
+            else "✓ 最大叙事涌现性 | ✓ 适应复杂语境 | ⚠ 最慢 | ⚠ 高token成本 | ⚠ 可复现性较低"
+        )
+    }
+    st.caption(mode_explanations[ai_mode])
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
@@ -201,13 +241,14 @@ def render_director_view():
     col1, col2 = st.columns([1, 3])
     with col1:
         if st.button("🎲 Run Tick" if st.session_state.locale == "en" else "🎲 执行 Tick", use_container_width=True, type="primary"):
-            # Execute tick
-            director_service = DirectorService()
+            # Execute tick with AI mode
+            director_service = DirectorService(st.session_state.ai_service.llm_client)
             config = DirectorConfig(
                 events_per_tick=events_per_tick,
                 pacing_preference=pacing_preference,
                 diversity_penalty=diversity_penalty,
-                fallback_after_idle_ticks=fallback_ticks
+                fallback_after_idle_ticks=fallback_ticks,
+                ai_mode=ai_mode  # Pass AI mode selection
             )
             
             with st.spinner("Running tick..." if st.session_state.locale == "en" else "执行 tick..."):

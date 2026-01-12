@@ -17,7 +17,7 @@ A powerful tool for narrative game developers featuring **World Director** - an 
 
 ### ✨ Core Features
 
-#### 🎬 World Director (v0.7 Current)
+#### 🎬 World Director (v0.8 Current)
 Our **differentiated approach** to narrative design - move beyond manual branching and AI NPCs:
 
 **Core System:**
@@ -28,17 +28,29 @@ Our **differentiated approach** to narrative design - move beyond manual branchi
 - **Explainable Decisions** - Every world tick includes human-readable rationale
 - **Replayable History** - Complete tick-by-tick record with state diffs
 
-**Advanced Features (v0.7 Current):**
+**Advanced Features:**
 - **Ordering Constraints** - Define narrative sequence dependencies (requires/forbids storylets)
 - **Fallback Mechanism** - Prevents "world stuck" - triggers ambient storylets when no regular events qualify
 - **Idle Detection** - Automatically tracks consecutive ticks with no activity
 - **Complex Quest Chains** - Build multi-stage narratives with explicit ordering requirements
 
-**New in v0.8:**
+**New in v0.8 (Current):**
 - **✏️ Storylet Editor** - Visual interface for creating/editing storylets without JSON editing
 - **Search & Filter** - Find storylets by keyword, type, or property
 - **Dynamic Forms** - Add/remove conditions and effects with user-friendly forms
 - **Real-time Validation** - Instant feedback on storylet configuration
+- **Enhanced Examples** - 3 new demo projects (wuxia RPG, sci-fi adventure, romance sim)
+
+**🚀 Planned for v0.9 (AI Enhancement):**
+- **Natural Language Conditions** - Write preconditions in natural language (e.g., "The player is wealthy and trusted")
+- **AI-Assisted Mode** - Hybrid evaluation: rules for performance, AI for nuanced judgment
+- **Three Director Modes:**
+  - 🔧 **Deterministic** - Pure rule-based (current system, fastest)
+  - 🤖 **AI-Assisted** - Mix of rules + AI conditions (balanced)
+  - 🧠 **AI-Primary** - AI-driven decisions with rule validation (most flexible)
+- **Smart Caching** - AI evaluation results cached by state hash (cost optimization)
+- **Token Management** - Built-in usage tracking and limits
+- **Explainable AI** - Confidence scores + reasoning for every AI decision
 
 #### 📝 Story Building
 - 🌳 **Interactive Story Graph** - Drag-and-drop visualization with multiple layouts
@@ -133,35 +145,50 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [x] World Director UI
 - [x] Comprehensive test suite
 
-**v0.7 - Ordering & Fallback** ✅ (Current)
+**v0.7 - Ordering & Fallback** ✅
 - [x] Ordering constraints (requires_fired, forbids_fired)
 - [x] Fallback mechanism (prevents world stuck)
 - [x] Idle tick tracking
 - [x] Enhanced UI and complete tests
 - [x] Full documentation
 
-**v0.8 - Polish & Examples** ✅ (Completed - 2026-01-11)
+**v0.8 - Polish & Examples** ✅ (Current)
 - [x] Improved storylet editor UI (Visual editor with search/filter)
 - [x] More example projects (3 new: wuxia RPG, sci-fi adventure, romance sim)
 - [x] Chinese developer guide translation
 - [x] Complete documentation update
 
-**v0.9 - Beta Testing** (Next - 2-3 weeks)
-- [ ] Community feedback integration
-- [ ] Documentation refinement
-- [ ] Tutorial videos
-- [ ] Pre-release preparation
+**v0.9 - AI Enhancement** (In Development)
+- [x] Natural language conditions (Precondition.nl_condition field)
+- [x] AIConditionsEvaluator service (350 lines, LLM-powered)
+- [x] Three director modes (deterministic/ai_assisted/ai_primary)
+- [x] Hybrid evaluation engine (rules + AI)
+- [x] Smart caching with state hash
+- [x] Token management and limits
+- [x] AI mode selector UI
+- [x] Bilingual i18n (9 new keys)
+- [ ] Documentation updates (in progress)
+- [ ] Example NL condition storylets
+- [ ] Testing and validation
+- [ ] Performance benchmarks
+- [ ] Community feedback and refinement
+- [ ] Tutorial content
 
-**v0.3 - Public Release** (Future - 1 month)
-- [ ] Production-ready
-- [ ] Complete feature set
-- [ ] Full documentation
-- [ ] Marketing materials
+**Future Enhancements** (Long-term Vision)
+- [ ] AI-generated storylets (LLM creates storylets dynamically)
+- [ ] Natural language effects ("Increase player trust")
+- [ ] Timeline visualization (state evolution graph)
+- [ ] Batch AI evaluation (optimize multi-condition checks)
+- [ ] Multiplayer state synchronization
+- [ ] Visual node-based storylet editor
+- [ ] Plugin system for custom evaluators
+- [ ] Export to game engines (Unity/Godot)
 
 ### 📚 Documentation
 
 - [Getting Started Guide](GETTING_STARTED.en.md) - Quick start tutorial
 - [World Director Guide](docs/world_director_guide.md) - Comprehensive storylets reference
+- [AI Director Guide](docs/AI_DIRECTOR_GUIDE.md) - AI-enhanced narrative features (v0.9+)
 - [Developer Guide](docs/developer_guide.en.md) - System architecture and internals
 - [Agent Development Guide](docs/agent_guide.en.md) - Extending AI capabilities
 - [Documentation Index](docs/INDEX.md) - Complete documentation overview
@@ -181,7 +208,7 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 
 ### ✨ 功能特色
 
-#### 🎬 世界导演系统 (v0.7 当前版本)
+#### 🎬 世界导演系统 (v0.8 当前版本)
 我们的**差异化叙事设计方法** - 超越手工分支和AI NPC：
 
 **核心系统：**
@@ -192,11 +219,29 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - **可解释决策** - 每次世界tick都包含人类可读的选择理由
 - **可回放历史** - 完整的逐tick记录，包含状态差异
 
-**高级功能（v0.7 当前版本）：**
+**高级功能：**
 - **排序约束** - 定义叙事序列依赖（requires/forbids storylets）
 - **备选机制** - 防止"世界卡住" - 当常规事件无法触发时，触发氛围storylets
 - **空闲检测** - 自动跟踪连续无活动的ticks
 - **复杂任务链** - 用显式排序要求构建多阶段叙事
+
+**v0.8 新功能（当前版本）：**
+- **✏️ Storylet编辑器** - 可视化界面，无需手写JSON
+- **搜索与过滤** - 按关键词、类型或属性查找storylets
+- **动态表单** - 用户友好的条件和效果添加/删除
+- **实时验证** - 即时配置反馈
+- **增强示例** - 3个新演示项目（武侠RPG、科幻冒险、校园恋爱）
+
+**🚀 v0.9 计划（AI增强）：**
+- **自然语言条件** - 用自然语言编写前置条件（如"玩家富有且受信任"）
+- **AI辅助模式** - 混合评估：规则保证性能，AI处理细腻判断
+- **三种导演模式：**
+  - 🔧 **确定性** - 纯规则（当前系统，最快）
+  - 🤖 **AI辅助** - 规则+AI条件混合（平衡）
+  - 🧠 **AI主导** - AI驱动决策+规则验证（最灵活）
+- **智能缓存** - 按状态哈希缓存AI评估结果（成本优化）
+- **Token管理** - 内置用量追踪和限额
+- **可解释AI** - 每个AI决策都包含置信度+推理
 
 #### 📝 故事构建
 - 🌳 **交互式剧情图谱** - 拖拽可视化，多种布局算法
@@ -277,30 +322,44 @@ streamlit run src/app.py
 - [x] TickHistory 和强度控制
 - [x] 世界导演 UI
 
-**v0.7 - 排序约束 + 备选机制** ✅（当前版本）
+**v0.7 - 排序约束 + 备选机制** ✅
 - [x] 排序约束（requires_fired、forbids_fired）
 - [x] 备选机制（防止世界卡住）
 - [x] 空闲tick跟踪
 - [x] 增强UI和完整测试
 - [x] 完整文档
 
-**v0.8 - 完善与示例** （下一步 - 2周）
-- [ ] Storylet 编辑器UI改进
-- [ ] 更多示例项目和模板
-- [ ] 性能优化
-- [ ] Bug修复和稳定性改进
+**v0.8 - 完善与示例** ✅（当前版本）
+- [x] Storylet 编辑器UI改进（可视化编辑器+搜索/过滤）
+- [x] 更多示例项目（3个新项目：武侠RPG、科幻冒险、校园恋爱）
+- [x] 中文开发者指南翻译
+- [x] 完整文档更新
 
-**v0.9 - Beta测试** （未来 - 2-3周）
-- [ ] 社区反馈整合
-- [ ] 文档完善
-- [ ] 教程制作
-- [ ] 发布前准备
+**v0.9 - AI增强** （开发中）
+- [x] 自然语言条件（Precondition.nl_condition字段）
+- [x] AIConditionsEvaluator服务（350行，LLM驱动）
+- [x] 三种导演模式（deterministic/ai_assisted/ai_primary）
+- [x] 混合评估引擎（规则+AI）
+- [x] 基于状态哈希的智能缓存
+- [x] Token管理和限额
+- [x] AI模式选择器UI
+- [x] 双语i18n（9个新键）
+- [ ] 文档更新（进行中）
+- [ ] NL条件示例storylets
+- [ ] 测试和验证
+- [ ] 性能基准测试
+- [ ] 社区反馈和改进
+- [ ] 教程内容
 
-**v0.3 - 正式发布** （未来 - 1个月）
-- [ ] 生产就绪
-- [ ] 完整功能集
-- [ ] 完整文档
-- [ ] 宣传材料
+**未来功能** （长期愿景）
+- [ ] AI生成storylets（LLM动态创建storylets）
+- [ ] 自然语言效果（"增加玩家信任度"）
+- [ ] 时间线可视化（状态演化图）
+- [ ] 批量AI评估（优化多条件检查）
+- [ ] 多人状态同步
+- [ ] 可视化节点编辑器
+- [ ] 自定义评估器插件系统
+- [ ] 导出到游戏引擎（Unity/Godot）
 
 ### 📚 文档
 
