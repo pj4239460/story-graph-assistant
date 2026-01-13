@@ -1,7 +1,7 @@
 # Story Graph Assistant - 文档索引
 
-**当前版本：** v0.7  
-**最后更新：** 2026-01
+**当前版本：** v0.8 (稳定版) / v0.9 (开发中)  
+**最后更新：** 2026-01-13
 
 ---
 
@@ -14,8 +14,10 @@
 ### 技术参考
 - **[世界导演指南（英文）](world_director_guide.md)** - World Director系统完整技术文档
 - **[世界导演指南（中文）](world_director_guide.zh.md)** - 世界导演系统中文技术文档
+- **[AI导演指南](AI_DIRECTOR_GUIDE.md)** - AI增强的世界导演 (v0.9 新增)
 - **[开发者指南（英文）](developer_guide.en.md)** - 系统架构和开发指南
 - **[开发者指南（中文）](developer_guide.zh.md)** - 系统架构和开发指南（中文版）
+- **[开发路线图](../DEVELOPMENT_ROADMAP.md)** - v0.9完成计划和进度跟踪
 
 ### 高级主题
 - **[Agent开发指南（英文）](agent_guide.en.md)** - LangGraph Agent扩展开发指南
@@ -28,6 +30,8 @@
 - **[examples/wuxia_rpg/](../examples/wuxia_rpg/)** - 武侠RPG完整示例（15场景，5结局）
 - **[examples/scifi_adventure/](../examples/scifi_adventure/)** - 科幻冒险示例（25场景，12结局）
 - **[examples/romance_sim/](../examples/romance_sim/)** - 恋爱模拟示例（19场景，4结局）
+- **[examples/town_factions/](../examples/town_factions/)** - AI条件测试（v0.9，10个英文NL storylets）
+- **[examples/ai_test_zh/](../examples/ai_test_zh/)** - AI条件测试（v0.9，10个中文NL storylets，武侠主题）
 - **[examples/town_factions/](../examples/town_factions/)** - World Director派系政治示例
 
 ---

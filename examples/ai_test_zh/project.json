@@ -1,0 +1,1402 @@
+{
+  "id": "ai-test-zh",
+  "name": "江湖风云 - AI条件测试",
+  "locale": "zh",
+  "createdAt": "2026-01-13T00:00:00Z",
+  "updatedAt": "2026-01-13T17:05:12.225454",
+  "aiSettings": {
+    "provider": "deepseek",
+    "modelExtraction": "deepseek/deepseek-chat",
+    "modelOOC": "deepseek/deepseek-chat",
+    "modelWhatIf": "deepseek/deepseek-reasoner",
+    "maxTokensPerCall": 2000,
+    "worldSimEnabled": true,
+    "worldSimMaxTokensPerRun": 3000,
+    "projectTokenLimit": 50000,
+    "dailyTokenSoftLimit": 8000
+  },
+  "tokenStats": {
+    "projectUsed": 28222,
+    "todayUsed": 28222,
+    "byFeature": {
+      "condition_eval": 28222
+    },
+    "todayDate": "2026-01-13"
+  },
+  "scenes": {
+    "scene-start": {
+      "id": "scene-start",
+      "title": "初入江湖",
+      "body": "你是一名刚刚下山的年轻侠客。师父临别时叮嘱：\"江湖险恶，行事需谨慎。正邪难辨，唯凭本心。\"\n\n如今你来到了繁华的云州城，这里聚集着三大势力：\n\n**青云门** - 名门正派，以侠义闻名，掌门李青云德高望重。\n\n**血影堂** - 邪派势力，行事诡秘，堂主血无痕手段狠辣。\n\n**商盟会** - 中立商帮，富甲一方，会长王富贵精于算计。\n\n你的选择将决定你在江湖中的道路...",
+      "summary": "初入江湖，了解三大势力",
+      "chapter": "序章",
+      "tags": [
+        "开场",
+        "介绍"
+      ],
+      "participants": [
+        "char-player"
+      ],
+      "choices": [],
+      "isEnding": false,
+      "endingType": null,
+      "timeIndex": 0,
+      "timeLabel": "第一天",
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.day",
+          "value": 1,
+          "reason": "开始模拟",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.qingyun_power",
+          "value": 70,
+          "reason": "青云门初始势力",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.xueying_power",
+          "value": 50,
+          "reason": "血影堂初始势力",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.shanglian_power",
+          "value": 60,
+          "reason": "商盟会初始势力",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 65,
+          "reason": "江湖初始和平度",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 55,
+          "reason": "民心初始值",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.player_reputation",
+          "value": 30,
+          "reason": "玩家初始名声",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.player_wealth",
+          "value": 40,
+          "reason": "玩家初始财富",
+          "sourceSceneId": "scene-start"
+        },
+        {
+          "scope": "character",
+          "target": "char-player",
+          "op": "set",
+          "path": "traits",
+          "value": [
+            "年轻",
+            "初入江湖",
+            "谨慎"
+          ],
+          "reason": "设置玩家初始特质",
+          "sourceSceneId": "scene-start"
+        }
+      ],
+      "worldEffects": []
+    }
+  },
+  "characters": {
+    "char-player": {
+      "id": "char-player",
+      "name": "你",
+      "alias": "无名侠客",
+      "description": "刚刚下山的年轻侠客，前途未定。",
+      "traits": [
+        "年轻",
+        "初入江湖"
+      ],
+      "goals": [
+        "在江湖中立足",
+        "寻找自己的道路"
+      ],
+      "fears": [
+        "误入歧途",
+        "被人利用"
+      ],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-liqingyun": {
+      "id": "char-liqingyun",
+      "name": "李青云",
+      "alias": "青云剑圣",
+      "description": "青云门掌门，武功高强，为人正直。",
+      "traits": [
+        "正派",
+        "德高望重",
+        "剑术高手"
+      ],
+      "goals": [
+        "维护武林正义",
+        "培养后辈"
+      ],
+      "fears": [
+        "邪派坐大",
+        "门派衰落"
+      ],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-xuewuhen": {
+      "id": "char-xuewuhen",
+      "name": "血无痕",
+      "alias": "血影魔头",
+      "description": "血影堂堂主，手段狠辣，野心勃勃。",
+      "traits": [
+        "邪派",
+        "狡猾",
+        "心狠手辣"
+      ],
+      "goals": [
+        "称霸武林",
+        "消灭正派"
+      ],
+      "fears": [
+        "被正派围剿",
+        "手下背叛"
+      ],
+      "relationships": [],
+      "timeline": []
+    },
+    "char-wangfugui": {
+      "id": "char-wangfugui",
+      "name": "王富贵",
+      "alias": "商界奇才",
+      "description": "商盟会会长，富可敌国，精于权谋。",
+      "traits": [
+        "中立",
+        "精明",
+        "富有"
+      ],
+      "goals": [
+        "扩大商业版图",
+        "保持中立获利"
+      ],
+      "fears": [
+        "卷入正邪之争",
+        "财产损失"
+      ],
+      "relationships": [],
+      "timeline": []
+    }
+  },
+  "events": {},
+  "worldState": {
+    "facts": {},
+    "vars": {},
+    "relations": {}
+  },
+  "threads": {
+    "thread_d60ab752": {
+      "id": "thread_d60ab752",
+      "name": "Playthrough 1",
+      "steps": [
+        {
+          "sceneId": "scene-start",
+          "choiceId": null
+        }
+      ],
+      "description": ""
+    },
+    "thread_33e9bf2c": {
+      "id": "thread_33e9bf2c",
+      "name": "Playthrough 2",
+      "steps": [
+        {
+          "sceneId": "scene-start",
+          "choiceId": null
+        }
+      ],
+      "description": ""
+    }
+  },
+  "storylets": {
+    "st-qingyun-recruitment": {
+      "id": "st-qingyun-recruitment",
+      "title": "青云门招募",
+      "description": "青云门广发英雄帖，招募有志之士共抗邪派。",
+      "tags": [
+        "正派",
+        "招募",
+        "青云门"
+      ],
+      "preconditions": [
+        {
+          "path": "world.vars.qingyun_power",
+          "op": ">=",
+          "value": 60,
+          "nl_condition": null
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.qingyun_power",
+          "value": 75,
+          "reason": "招募增强势力",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 60,
+          "reason": "民众支持正派",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.2,
+      "cooldown": 3,
+      "once": false,
+      "intensity_delta": 0.1,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-xueying-attack": {
+      "id": "st-xueying-attack",
+      "title": "血影堂夜袭",
+      "description": "血影堂趁夜突袭城中商户，抢掠财物。",
+      "tags": [
+        "邪派",
+        "冲突",
+        "血影堂"
+      ],
+      "preconditions": [
+        {
+          "path": "world.vars.xueying_power",
+          "op": ">=",
+          "value": 45,
+          "nl_condition": null
+        },
+        {
+          "path": "world.vars.peace_level",
+          "op": "<",
+          "value": 70,
+          "nl_condition": null
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 55,
+          "reason": "夜袭破坏和平",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 45,
+          "reason": "民众恐慌",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.xueying_power",
+          "value": 55,
+          "reason": "抢掠增强实力",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.5,
+      "cooldown": 2,
+      "once": false,
+      "intensity_delta": 0.2,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-shanglian-mediation": {
+      "id": "st-shanglian-mediation",
+      "title": "商盟调停",
+      "description": "商盟会出面调停正邪冲突，希望维持商业繁荣。",
+      "tags": [
+        "中立",
+        "调停",
+        "商盟"
+      ],
+      "preconditions": [
+        {
+          "path": "world.vars.peace_level",
+          "op": "<",
+          "value": 60,
+          "nl_condition": null
+        },
+        {
+          "path": "world.vars.shanglian_power",
+          "op": ">=",
+          "value": 55,
+          "nl_condition": null
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 65,
+          "reason": "调停缓和局势",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.shanglian_power",
+          "value": 63,
+          "reason": "调停提升威望",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 4,
+      "once": false,
+      "intensity_delta": -0.1,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-wealthy-reputation": {
+      "id": "st-nl-wealthy-reputation",
+      "title": "商界大佬的邀请",
+      "description": "一位商界大佬注意到你，邀请你加入一桩大买卖。但他只跟有钱有名望的人合作。",
+      "tags": [
+        "机遇",
+        "商业",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "玩家看起来富有并且在江湖中有一定名声"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.player_wealth",
+          "value": 65,
+          "reason": "生意成功获利",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "character",
+          "target": "char-player",
+          "op": "add",
+          "path": "traits",
+          "value": "商界人脉",
+          "reason": "结识商界大佬",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.1,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": 0.05,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-tense-atmosphere": {
+      "id": "st-nl-tense-atmosphere",
+      "title": "山雨欲来",
+      "description": "江湖风云诡谲，正邪对立严重，所有人都感到大战将至。",
+      "tags": [
+        "紧张",
+        "冲突",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "江湖气氛非常紧张，正邪双方势力都很强且关系恶劣"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 40,
+          "reason": "紧张局势恶化",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 38,
+          "reason": "民众担忧恐慌",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.3,
+      "cooldown": 3,
+      "once": false,
+      "intensity_delta": 0.25,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-trust-despite-conflict": {
+      "id": "st-nl-trust-despite-conflict",
+      "title": "李青云的私密托付",
+      "description": "青云门掌门李青云单独找到你，尽管最近江湖多事，但他相信你能帮他处理一件秘密任务。",
+      "tags": [
+        "信任",
+        "任务",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "李青云信任玩家，尽管最近江湖中有冲突和矛盾"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "character",
+          "target": "char-player",
+          "op": "add",
+          "path": "relationships",
+          "value": {
+            "character_id": "char-liqingyun",
+            "type": "受托重任"
+          },
+          "reason": "获得掌门信任",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.player_reputation",
+          "value": 55,
+          "reason": "受托于名门正派",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 6,
+      "once": false,
+      "intensity_delta": 0.08,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-peaceful-prosperity": {
+      "id": "st-nl-peaceful-prosperity",
+      "title": "太平盛世",
+      "description": "江湖难得太平，各方势力和睦相处，百姓安居乐业，商业繁荣。",
+      "tags": [
+        "和平",
+        "繁荣",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "江湖和平，各方势力没有严重冲突，百姓生活安稳"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 80,
+          "reason": "和平巩固",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 75,
+          "reason": "百姓满意",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.shanglian_power",
+          "value": 68,
+          "reason": "商业繁荣",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 0.8,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": -0.2,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-desperate-people": {
+      "id": "st-nl-desperate-people",
+      "title": "民不聊生",
+      "description": "战乱频繁，百姓流离失所，民怨四起，局势危急。",
+      "tags": [
+        "危机",
+        "民生",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "百姓生活艰难，民心不稳，对现状感到绝望"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 25,
+          "reason": "民怨沸腾",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 35,
+          "reason": "社会动荡",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.4,
+      "cooldown": 4,
+      "once": false,
+      "intensity_delta": 0.28,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-power-balance": {
+      "id": "st-nl-power-balance",
+      "title": "三足鼎立",
+      "description": "青云门、血影堂、商盟会三方势均力敌，谁也不敢轻举妄动。",
+      "tags": [
+        "平衡",
+        "势力",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "三大势力的力量大致相当，形成微妙的平衡"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 70,
+          "reason": "平衡维持和平",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 0.9,
+      "cooldown": 5,
+      "once": false,
+      "intensity_delta": 0.05,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-evil-dominating": {
+      "id": "st-nl-evil-dominating",
+      "title": "邪派猖獗",
+      "description": "血影堂势力膨胀，肆意妄为，欺压良善，正派难以抗衡。",
+      "tags": [
+        "邪派",
+        "压迫",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "邪派势力过于强大，并且行事肆无忌惮地欺压百姓"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 30,
+          "reason": "百姓受压迫",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.qingyun_power",
+          "value": 55,
+          "reason": "正派被打压",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.3,
+      "cooldown": 4,
+      "once": false,
+      "intensity_delta": 0.22,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-martial-tournament": {
+      "id": "st-nl-martial-tournament",
+      "title": "武林大会召开",
+      "description": "各派齐聚，召开武林大会，商讨江湖大事。气氛热烈但也暗流涌动。",
+      "tags": [
+        "盛会",
+        "政治",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "江湖中有重要事件需要各方坐下来商议"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 68,
+          "reason": "对话缓和局势",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 0.9,
+      "cooldown": 7,
+      "once": false,
+      "intensity_delta": 0.1,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-young-hero-rising": {
+      "id": "st-nl-young-hero-rising",
+      "title": "少侠崭露头角",
+      "description": "你在江湖中的行为引起了各方注意，开始被人们谈论。",
+      "tags": [
+        "成长",
+        "名声",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "玩家在江湖中逐渐有了一些名气和影响力"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.player_reputation",
+          "value": 60,
+          "reason": "名声提升",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "character",
+          "target": "char-player",
+          "op": "remove",
+          "path": "traits",
+          "value": "初入江湖",
+          "reason": "不再是新人",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "character",
+          "target": "char-player",
+          "op": "add",
+          "path": "traits",
+          "value": "小有名气",
+          "reason": "建立声望",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.0,
+      "cooldown": 6,
+      "once": true,
+      "intensity_delta": 0.08,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    },
+    "st-nl-crisis-imminent": {
+      "id": "st-nl-crisis-imminent",
+      "title": "大战将至",
+      "description": "正邪对峙到了临界点，一场大战似乎无可避免。",
+      "tags": [
+        "危机",
+        "战争",
+        "AI测试"
+      ],
+      "preconditions": [
+        {
+          "path": null,
+          "op": null,
+          "value": null,
+          "nl_condition": "局势极度紧张，正邪大战似乎即将爆发"
+        }
+      ],
+      "effects": [
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.peace_level",
+          "value": 25,
+          "reason": "战争边缘",
+          "sourceSceneId": null
+        },
+        {
+          "scope": "world",
+          "target": "world",
+          "op": "set",
+          "path": "vars.public_mood",
+          "value": 28,
+          "reason": "人心惶惶",
+          "sourceSceneId": null
+        }
+      ],
+      "weight": 1.5,
+      "cooldown": 3,
+      "once": false,
+      "intensity_delta": 0.35,
+      "is_fallback": false,
+      "requires_fired": [],
+      "forbids_fired": []
+    }
+  },
+  "tick_histories": {
+    "tick_history_thread_d60ab752": {
+      "thread_id": "thread_d60ab752",
+      "ticks": [
+        {
+          "tick_number": 0,
+          "timestamp": "2026-01-13T18:02:28.610296",
+          "step_index": 0,
+          "intensity_before": 0.5,
+          "intensity_after": 0.77,
+          "events": [
+            {
+              "storylet_id": "st-qingyun-recruitment",
+              "storylet_title": "青云门招募",
+              "tick_number": 0,
+              "timestamp": "2026-01-13T18:02:28.610296",
+              "satisfied_conditions": [
+                "    ✓ world.vars.qingyun_power = 70 (satisfies >= 60)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.qingyun_power",
+                  "value": 75,
+                  "reason": "招募增强势力"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 60,
+                  "reason": "民众支持正派"
+                }
+              ],
+              "rationale": "Selected '青云门招募' (weight: 0.36)\n  Tags: 正派, 招募, 青云门\n  Satisfied conditions:\n    ✓ world.vars.qingyun_power = 70 (satisfies >= 60)"
+            },
+            {
+              "storylet_id": "st-xueying-attack",
+              "storylet_title": "血影堂夜袭",
+              "tick_number": 0,
+              "timestamp": "2026-01-13T18:02:28.610296",
+              "satisfied_conditions": [
+                "    ✓ world.vars.xueying_power = 50 (satisfies >= 45)",
+                "    ✓ world.vars.peace_level = 65 (satisfies < 70)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.peace_level",
+                  "value": 55,
+                  "reason": "夜袭破坏和平"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 45,
+                  "reason": "民众恐慌"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.xueying_power",
+                  "value": 55,
+                  "reason": "抢掠增强实力"
+                }
+              ],
+              "rationale": "Selected '血影堂夜袭' (weight: 0.45)\n  Tags: 邪派, 冲突, 血影堂\n  Satisfied conditions:\n    ✓ world.vars.xueying_power = 50 (satisfies >= 45)\n    ✓ world.vars.peace_level = 65 (satisfies < 70)"
+            }
+          ],
+          "state_diff": {
+            "world": {
+              "qingyun_power": {
+                "before": 70,
+                "after": 75
+              },
+              "public_mood": {
+                "before": 55,
+                "after": 45
+              },
+              "peace_level": {
+                "before": 65,
+                "after": 55
+              },
+              "xueying_power": {
+                "before": 50,
+                "after": 55
+              }
+            }
+          }
+        },
+        {
+          "tick_number": 1,
+          "timestamp": "2026-01-13T18:03:37.165144",
+          "step_index": 0,
+          "intensity_before": 0.77,
+          "intensity_after": 0.5630000000000001,
+          "events": [
+            {
+              "storylet_id": "st-nl-peaceful-prosperity",
+              "storylet_title": "太平盛世",
+              "tick_number": 1,
+              "timestamp": "2026-01-13T18:03:37.165144",
+              "satisfied_conditions": [
+                "    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (world.vars.peace_level=65 (moderately high), world.vars.public_mood=55 (neutral to slightly positive...)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.peace_level",
+                  "value": 80,
+                  "reason": "和平巩固"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 75,
+                  "reason": "百姓满意"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.shanglian_power",
+                  "value": 68,
+                  "reason": "商业繁荣"
+                }
+              ],
+              "rationale": "Selected '太平盛世' (weight: 1.04)\n  Tags: 和平, 繁荣, AI测试\n  Satisfied conditions:\n    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (world.vars.peace_level=65 (moderately high), world.vars.public_mood=55 (neutral to slightly positive...)"
+            }
+          ],
+          "state_diff": {
+            "world": {
+              "shanglian_power": {
+                "before": 60,
+                "after": 68
+              },
+              "public_mood": {
+                "before": 55,
+                "after": 75
+              },
+              "peace_level": {
+                "before": 65,
+                "after": 80
+              }
+            }
+          }
+        },
+        {
+          "tick_number": 1,
+          "timestamp": "2026-01-13T18:03:43.542661",
+          "step_index": 0,
+          "intensity_before": 0.5630000000000001,
+          "intensity_after": 0.37670000000000003,
+          "events": [
+            {
+              "storylet_id": "st-nl-peaceful-prosperity",
+              "storylet_title": "太平盛世",
+              "tick_number": 1,
+              "timestamp": "2026-01-13T18:03:43.542661",
+              "satisfied_conditions": [
+                "    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (The condition describes a peaceful world with no major conflict and stable civilian life. The world....)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.peace_level",
+                  "value": 80,
+                  "reason": "和平巩固"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 75,
+                  "reason": "百姓满意"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.shanglian_power",
+                  "value": 68,
+                  "reason": "商业繁荣"
+                }
+              ],
+              "rationale": "Selected '太平盛世' (weight: 0.24)\n  Tags: 和平, 繁荣, AI测试\n  Satisfied conditions:\n    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (The condition describes a peaceful world with no major conflict and stable civilian life. The world....)"
+            }
+          ],
+          "state_diff": {
+            "world": {
+              "shanglian_power": {
+                "before": 60,
+                "after": 68
+              },
+              "public_mood": {
+                "before": 55,
+                "after": 75
+              },
+              "peace_level": {
+                "before": 65,
+                "after": 80
+              }
+            }
+          }
+        },
+        {
+          "tick_number": 1,
+          "timestamp": "2026-01-13T18:03:50.581216",
+          "step_index": 0,
+          "intensity_before": 0.37670000000000003,
+          "intensity_after": 0.23,
+          "events": [
+            {
+              "storylet_id": "st-nl-peaceful-prosperity",
+              "storylet_title": "太平盛世",
+              "tick_number": 1,
+              "timestamp": "2026-01-13T18:03:50.581216",
+              "satisfied_conditions": [
+                "    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (world.vars.peace_level=65 (moderately high), world.vars.public_mood=55 (neutral to slightly positive...)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.peace_level",
+                  "value": 80,
+                  "reason": "和平巩固"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 75,
+                  "reason": "百姓满意"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.shanglian_power",
+                  "value": 68,
+                  "reason": "商业繁荣"
+                }
+              ],
+              "rationale": "Selected '太平盛世' (weight: 0.64)\n  Tags: 和平, 繁荣, AI测试\n  Satisfied conditions:\n    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (world.vars.peace_level=65 (moderately high), world.vars.public_mood=55 (neutral to slightly positive...)"
+            }
+          ],
+          "state_diff": {
+            "world": {
+              "shanglian_power": {
+                "before": 60,
+                "after": 68
+              },
+              "public_mood": {
+                "before": 55,
+                "after": 75
+              },
+              "peace_level": {
+                "before": 65,
+                "after": 80
+              }
+            }
+          }
+        },
+        {
+          "tick_number": 1,
+          "timestamp": "2026-01-13T18:03:53.011883",
+          "step_index": 0,
+          "intensity_before": 0.23,
+          "intensity_after": 0.23,
+          "events": [
+            {
+              "storylet_id": "st-nl-peaceful-prosperity",
+              "storylet_title": "太平盛世",
+              "tick_number": 1,
+              "timestamp": "2026-01-13T18:03:53.011883",
+              "satisfied_conditions": [
+                "    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (world.vars.peace_level=65 (moderately high), world.vars.public_mood=55 (neutral to slightly positive...)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.peace_level",
+                  "value": 80,
+                  "reason": "和平巩固"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 75,
+                  "reason": "百姓满意"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.shanglian_power",
+                  "value": 68,
+                  "reason": "商业繁荣"
+                }
+              ],
+              "rationale": "Selected '太平盛世' (weight: 0.64)\n  Tags: 和平, 繁荣, AI测试\n  Satisfied conditions:\n    ✓ [AI 0.75] 江湖和平，各方势力没有严重冲突，百姓生活安稳 (world.vars.peace_level=65 (moderately high), world.vars.public_mood=55 (neutral to slightly positive...)"
+            }
+          ],
+          "state_diff": {
+            "world": {
+              "shanglian_power": {
+                "before": 60,
+                "after": 68
+              },
+              "public_mood": {
+                "before": 55,
+                "after": 75
+              },
+              "peace_level": {
+                "before": 65,
+                "after": 80
+              }
+            }
+          }
+        },
+        {
+          "tick_number": 5,
+          "timestamp": "2026-01-13T18:05:06.248216",
+          "step_index": 0,
+          "intensity_before": 0.23,
+          "intensity_after": 0.527,
+          "events": [
+            {
+              "storylet_id": "st-xueying-attack",
+              "storylet_title": "血影堂夜袭",
+              "tick_number": 5,
+              "timestamp": "2026-01-13T18:05:06.248216",
+              "satisfied_conditions": [
+                "    ✓ world.vars.xueying_power = 50 (satisfies >= 45)",
+                "    ✓ world.vars.peace_level = 65 (satisfies < 70)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.peace_level",
+                  "value": 55,
+                  "reason": "夜袭破坏和平"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 45,
+                  "reason": "民众恐慌"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.xueying_power",
+                  "value": 55,
+                  "reason": "抢掠增强实力"
+                }
+              ],
+              "rationale": "Selected '血影堂夜袭' (weight: 1.95)\n  Tags: 邪派, 冲突, 血影堂\n  Satisfied conditions:\n    ✓ world.vars.xueying_power = 50 (satisfies >= 45)\n    ✓ world.vars.peace_level = 65 (satisfies < 70)"
+            },
+            {
+              "storylet_id": "st-qingyun-recruitment",
+              "storylet_title": "青云门招募",
+              "tick_number": 5,
+              "timestamp": "2026-01-13T18:05:06.248216",
+              "satisfied_conditions": [
+                "    ✓ world.vars.qingyun_power = 70 (satisfies >= 60)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.qingyun_power",
+                  "value": 75,
+                  "reason": "招募增强势力"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 60,
+                  "reason": "民众支持正派"
+                }
+              ],
+              "rationale": "Selected '青云门招募' (weight: 1.56)\n  Tags: 正派, 招募, 青云门\n  Satisfied conditions:\n    ✓ world.vars.qingyun_power = 70 (satisfies >= 60)"
+            }
+          ],
+          "state_diff": {
+            "world": {
+              "qingyun_power": {
+                "before": 70,
+                "after": 75
+              },
+              "public_mood": {
+                "before": 55,
+                "after": 60
+              },
+              "peace_level": {
+                "before": 65,
+                "after": 55
+              },
+              "xueying_power": {
+                "before": 50,
+                "after": 55
+              }
+            }
+          }
+        },
+        {
+          "tick_number": 5,
+          "timestamp": "2026-01-13T18:05:12.224454",
+          "step_index": 0,
+          "intensity_before": 0.527,
+          "intensity_after": 0.77,
+          "events": [
+            {
+              "storylet_id": "st-xueying-attack",
+              "storylet_title": "血影堂夜袭",
+              "tick_number": 5,
+              "timestamp": "2026-01-13T18:05:12.224454",
+              "satisfied_conditions": [
+                "    ✓ world.vars.xueying_power = 50 (satisfies >= 45)",
+                "    ✓ world.vars.peace_level = 65 (satisfies < 70)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.peace_level",
+                  "value": 55,
+                  "reason": "夜袭破坏和平"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 45,
+                  "reason": "民众恐慌"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.xueying_power",
+                  "value": 55,
+                  "reason": "抢掠增强实力"
+                }
+              ],
+              "rationale": "Selected '血影堂夜袭' (weight: 0.45)\n  Tags: 邪派, 冲突, 血影堂\n  Satisfied conditions:\n    ✓ world.vars.xueying_power = 50 (satisfies >= 45)\n    ✓ world.vars.peace_level = 65 (satisfies < 70)"
+            },
+            {
+              "storylet_id": "st-qingyun-recruitment",
+              "storylet_title": "青云门招募",
+              "tick_number": 5,
+              "timestamp": "2026-01-13T18:05:12.224454",
+              "satisfied_conditions": [
+                "    ✓ world.vars.qingyun_power = 70 (satisfies >= 60)"
+              ],
+              "applied_effects": [
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.qingyun_power",
+                  "value": 75,
+                  "reason": "招募增强势力"
+                },
+                {
+                  "scope": "world",
+                  "target": "world",
+                  "op": "set",
+                  "path": "vars.public_mood",
+                  "value": 60,
+                  "reason": "民众支持正派"
+                }
+              ],
+              "rationale": "Selected '青云门招募' (weight: 0.36)\n  Tags: 正派, 招募, 青云门\n  Satisfied conditions:\n    ✓ world.vars.qingyun_power = 70 (satisfies >= 60)"
+            }
+          ],
+          "state_diff": {
+            "world": {
+              "qingyun_power": {
+                "before": 70,
+                "after": 75
+              },
+              "public_mood": {
+                "before": 55,
+                "after": 60
+              },
+              "peace_level": {
+                "before": 65,
+                "after": 55
+              },
+              "xueying_power": {
+                "before": 50,
+                "after": 55
+              }
+            }
+          }
+        }
+      ],
+      "last_triggered": {
+        "st-qingyun-recruitment": 5,
+        "st-xueying-attack": 5,
+        "st-nl-peaceful-prosperity": 1
+      },
+      "triggered_once": {},
+      "current_intensity": 0.77,
+      "idle_tick_count": 0
+    }
+  }
+}

@@ -134,14 +134,19 @@ def render_director_view():
     
     thread = project.threads[selected_thread_id]
     
-    # Select step
-    step_index = st.slider(
-        "Story Progress (Step)" if st.session_state.locale == "en" else "故事进度（步骤）",
-        min_value=0,
-        max_value=len(thread.steps) - 1 if thread.steps else 0,
-        value=len(thread.steps) - 1 if thread.steps else 0,
-        key="director_step"
-    )
+    # Select step (only show slider if more than 1 step)
+    if len(thread.steps) > 1:
+        step_index = st.slider(
+            "Story Progress (Step)" if st.session_state.locale == "en" else "故事进度（步骤）",
+            min_value=0,
+            max_value=len(thread.steps) - 1,
+            value=len(thread.steps) - 1,
+            key="director_step"
+        )
+    else:
+        step_index = 0
+        if thread.steps:
+            st.caption(f"📍 Step 1 of 1" if st.session_state.locale == "en" else "📍 第1步，共1步")
     
     if thread.steps:
         current_scene = project.scenes.get(thread.steps[step_index].sceneId)
@@ -251,7 +256,15 @@ def render_director_view():
                 ai_mode=ai_mode  # Pass AI mode selection
             )
             
-            with st.spinner("Running tick..." if st.session_state.locale == "en" else "执行 tick..."):
+            # Dynamic spinner message based on AI mode
+            if ai_mode == "deterministic":
+                spinner_text = "Running tick..." if st.session_state.locale == "en" else "执行 tick..."
+            elif ai_mode == "ai_assisted":
+                spinner_text = "🤖 Evaluating conditions with AI..." if st.session_state.locale == "en" else "🤖 AI 评估条件中..."
+            else:  # ai_primary
+                spinner_text = "🧠 AI analyzing narrative possibilities..." if st.session_state.locale == "en" else "🧠 AI 分析叙事可能性..."
+            
+            with st.spinner(spinner_text):
                 tick_record = director_service.tick(
                     project,
                     selected_thread_id,

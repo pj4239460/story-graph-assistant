@@ -1,5 +1,8 @@
 # World Director System Guide
 
+> **Current Version:** v0.8 (Stable) / v0.9 (AI-Enhanced, In Development)  
+> **For v0.9 AI Features:** See [AI Director Guide](AI_DIRECTOR_GUIDE.md)
+
 ## Overview
 
 The **World Director** is a narrative design system that creates emergent, replayable stories using **storylets** (narrative fragments) and **dynamic state management**. Instead of manually authoring every story branch, you define:
@@ -9,6 +12,8 @@ The **World Director** is a narrative design system that creates emergent, repla
 3. **Director Policy** - Pacing, diversity, and intensity preferences
 
 The Director then automatically selects and triggers storylets based on the current state, creating unique stories that feel responsive and dynamic.
+
+**New in v0.9:** Natural language conditions powered by AI. See [AI Director Guide](AI_DIRECTOR_GUIDE.md) for details.
 
 ## Design Philosophy
 
@@ -101,7 +106,9 @@ A storylet is a self-contained narrative unit:
 
 ### 2. Preconditions
 
-Preconditions determine *when* a storylet can trigger:
+Preconditions determine *when* a storylet can trigger. **v0.9 introduces two types:**
+
+#### Traditional Rule-Based Conditions (v0.8)
 
 ```json
 {
@@ -134,6 +141,30 @@ Preconditions determine *when* a storylet can trigger:
 // Relationship trust
 {"path": "relationships.alice|bob.trust", "op": ">", "value": 50}
 ```
+
+#### Natural Language Conditions (v0.9 NEW) 🌟
+
+**Alternative approach:** Write conditions in natural language, evaluated by AI.
+
+```json
+{
+  "nl_condition": "The player appears wealthy and has a good reputation"
+}
+```
+
+**Advantages:**
+- Express complex social/emotional states naturally
+- No need to define explicit numeric thresholds
+- Handles nuanced, qualitative judgments
+- More author-friendly for narrative designers
+
+**Use Cases:**
+- Social perception: "The player is respected but financially struggling"
+- Emotional states: "The atmosphere feels tense and dangerous"
+- Contextual judgment: "Relations between factions are severely strained"
+- Holistic assessment: "The common people are desperate and losing hope"
+
+**See:** [AI Director Guide](AI_DIRECTOR_GUIDE.md) for complete documentation and 20 example storylets.
 
 ### 3. Effects
 

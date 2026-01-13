@@ -17,7 +17,7 @@ A powerful tool for narrative game developers featuring **World Director** - an 
 
 ### ✨ Core Features
 
-#### 🎬 World Director (v0.8 Current)
+#### 🎬 World Director (v0.8 Stable, v0.9 In Development)
 Our **differentiated approach** to narrative design - move beyond manual branching and AI NPCs:
 
 **Core System:**
@@ -34,20 +34,24 @@ Our **differentiated approach** to narrative design - move beyond manual branchi
 - **Idle Detection** - Automatically tracks consecutive ticks with no activity
 - **Complex Quest Chains** - Build multi-stage narratives with explicit ordering requirements
 
-**New in v0.8 (Current):**
+**v0.8 Features (Stable):**
 - **✏️ Storylet Editor** - Visual interface for creating/editing storylets without JSON editing
 - **Search & Filter** - Find storylets by keyword, type, or property
 - **Dynamic Forms** - Add/remove conditions and effects with user-friendly forms
 - **Real-time Validation** - Instant feedback on storylet configuration
 - **Enhanced Examples** - 3 new demo projects (wuxia RPG, sci-fi adventure, romance sim)
 
-**🚀 Planned for v0.9 (AI Enhancement):**
-- **Natural Language Conditions** - Write preconditions in natural language (e.g., "The player is wealthy and trusted")
-- **AI-Assisted Mode** - Hybrid evaluation: rules for performance, AI for nuanced judgment
-- **Three Director Modes:**
-  - 🔧 **Deterministic** - Pure rule-based (current system, fastest)
-  - 🤖 **AI-Assisted** - Mix of rules + AI conditions (balanced)
+**🚧 v0.9 - AI Enhancement (In Development - Code Complete):**
+- **✅ Natural Language Conditions** - Write preconditions in natural language (e.g., "The player is wealthy and trusted")
+- **✅ AI-Assisted Mode** - Hybrid evaluation: rules for performance, AI for nuanced judgment
+- **✅ Three Director Modes:**
+  - 🔧 **Deterministic** - Pure rule-based (fastest, 0 tokens)
+  - 🤖 **AI-Assisted** - Mix of rules + AI conditions (balanced, recommended)
   - 🧠 **AI-Primary** - AI-driven decisions with rule validation (most flexible)
+- **✅ Test Projects:**
+  - `examples/town_factions/` - 10 English NL condition storylets
+  - `examples/ai_test_zh/` - 10 Chinese NL condition storylets (武侠主题)
+- **📝 Status:** Core implementation complete and tested. Documentation in progress.
 - **Smart Caching** - AI evaluation results cached by state hash (cost optimization)
 - **Token Management** - Built-in usage tracking and limits
 - **Explainable AI** - Confidence scores + reasoning for every AI decision
@@ -152,13 +156,13 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [x] Enhanced UI and complete tests
 - [x] Full documentation
 
-**v0.8 - Polish & Examples** ✅ (Current)
+**v0.8 - Polish & Examples** ✅ (Stable)
 - [x] Improved storylet editor UI (Visual editor with search/filter)
 - [x] More example projects (3 new: wuxia RPG, sci-fi adventure, romance sim)
 - [x] Chinese developer guide translation
 - [x] Complete documentation update
 
-**v0.9 - AI Enhancement** (In Development)
+**v0.9 - AI Enhancement** 🚧 (Code Complete, Documentation In Progress)
 - [x] Natural language conditions (Precondition.nl_condition field)
 - [x] AIConditionsEvaluator service (350 lines, LLM-powered)
 - [x] Three director modes (deterministic/ai_assisted/ai_primary)
@@ -167,8 +171,11 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - [x] Token management and limits
 - [x] AI mode selector UI
 - [x] Bilingual i18n (9 new keys)
-- [ ] Documentation updates (in progress)
-- [ ] Example NL condition storylets
+- [x] Test projects with NL conditions (20 storylets total: 10 EN + 10 ZH)
+- [x] AI_DIRECTOR_GUIDE.md documentation
+- [x] Initial functional testing passed
+- [ ] Complete documentation updates (developer_guide.en.md ✅, others in progress)
+- [ ] v0.9 release notes
 - [ ] Testing and validation
 - [ ] Performance benchmarks
 - [ ] Community feedback and refinement
@@ -225,22 +232,25 @@ Also supports: OpenAI, Anthropic, Google Gemini, and local models (Ollama)
 - **空闲检测** - 自动跟踪连续无活动的ticks
 - **复杂任务链** - 用显式排序要求构建多阶段叙事
 
-**v0.8 新功能（当前版本）：**
+**v0.8 功能（稳定版）：**
 - **✏️ Storylet编辑器** - 可视化界面，无需手写JSON
 - **搜索与过滤** - 按关键词、类型或属性查找storylets
 - **动态表单** - 用户友好的条件和效果添加/删除
 - **实时验证** - 即时配置反馈
 - **增强示例** - 3个新演示项目（武侠RPG、科幻冒险、校园恋爱）
 
-**🚀 v0.9 计划（AI增强）：**
-- **自然语言条件** - 用自然语言编写前置条件（如"玩家富有且受信任"）
-- **AI辅助模式** - 混合评估：规则保证性能，AI处理细腻判断
-- **三种导演模式：**
-  - 🔧 **确定性** - 纯规则（当前系统，最快）
-  - 🤖 **AI辅助** - 规则+AI条件混合（平衡）
+**🚧 v0.9 - AI增强（开发中 - 代码已完成）：**
+- **✅ 自然语言条件** - 用自然语言编写前置条件（如"玩家富有且受信任"）
+- **✅ AI辅助模式** - 混合评估：规则保证性能，AI处理细腻判断
+- **✅ 三种导演模式：**
+  - 🔧 **确定性** - 纯规则（最快，0 token）
+  - 🤖 **AI辅助** - 规则+AI条件混合（平衡，推荐）
   - 🧠 **AI主导** - AI驱动决策+规则验证（最灵活）
+- **✅ 测试项目：**
+  - `examples/town_factions/` - 10个英文NL条件storylets
+  - `examples/ai_test_zh/` - 10个中文NL条件storylets（武侠主题）
+- **📝 状态：** 核心实现已完成并测试通过，文档编写中。
 - **智能缓存** - 按状态哈希缓存AI评估结果（成本优化）
-- **Token管理** - 内置用量追踪和限额
 - **可解释AI** - 每个AI决策都包含置信度+推理
 
 #### 📝 故事构建
@@ -329,15 +339,26 @@ streamlit run src/app.py
 - [x] 增强UI和完整测试
 - [x] 完整文档
 
-**v0.8 - 完善与示例** ✅（当前版本）
+**v0.8 - 完善与示例** ✅（稳定版）
 - [x] Storylet 编辑器UI改进（可视化编辑器+搜索/过滤）
 - [x] 更多示例项目（3个新项目：武侠RPG、科幻冒险、校园恋爱）
 - [x] 中文开发者指南翻译
 - [x] 完整文档更新
 
-**v0.9 - AI增强** （开发中）
+**v0.9 - AI增强** 🚧（代码已完成，文档编写中）
 - [x] 自然语言条件（Precondition.nl_condition字段）
 - [x] AIConditionsEvaluator服务（350行，LLM驱动）
+- [x] 三种导演模式（确定性/AI辅助/AI主导）
+- [x] 混合评估引擎（规则+AI）
+- [x] 智能缓存（状态哈希）
+- [x] Token管理和限额
+- [x] AI模式选择UI
+- [x] 双语i18n（9个新键）
+- [x] NL条件测试项目（20个storylets：10英文+10中文）
+- [x] AI_DIRECTOR_GUIDE.md文档
+- [x] 初步功能测试通过
+- [ ] 完整文档更新（developer_guide.en.md ✅，其他进行中）
+- [ ] v0.9发布说明
 - [x] 三种导演模式（deterministic/ai_assisted/ai_primary）
 - [x] 混合评估引擎（规则+AI）
 - [x] 基于状态哈希的智能缓存

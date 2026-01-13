@@ -2,8 +2,8 @@
 
 > **Story Graph Assistant** - Technical documentation for contributors
 
-**Version:** 0.7  
-**Last Updated:** January 2026
+**Version:** 0.9  
+**Last Updated:** January 13, 2026
 
 This guide provides comprehensive technical documentation for developers working on Story Graph Assistant. It covers system architecture, code organization, data flow, testing strategies, and guidelines for adding new features.
 
@@ -14,12 +14,14 @@ This guide provides comprehensive technical documentation for developers working
 - [Architecture Overview](#architecture-overview)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [World Director System (v0.7)](#world-director-system-v171)
+- [World Director System](#world-director-system)
+- [AI-Enhanced Director (v0.9)](#ai-enhanced-director-v09)
 - [Data Flow & Pipelines](#data-flow--pipelines)
-- [State Management](#state-management)
-- [Testing Strategy](#testing-strategy)
-- [Adding New Features](#adding-new-features)
-- [Code Standards](#code-standards)
+- [Key Features Implementation](#key-features-implementation)
+- [Development Workflow](#development-workflow)
+- [Testing](#testing)
+- [Contributing](#contributing)
+- [Resources](#resources)
 
 ---
 
@@ -41,7 +43,8 @@ This guide provides comprehensive technical documentation for developers working
                    ▼
 ┌─────────────────────────────────────────────────────┐
 │                Service Layer                        │
-│  - DirectorService (storylet selection v0.7)     │
+│  - DirectorService (storylet selection v0.9)     │
+│  - AIConditionsEvaluator (NL condition eval v0.9)│
 │  - StateService (temporal state computation)        │
 │  - ProjectService (project CRUD)                    │
 │  - AIService (LLM integration)                      │
@@ -71,8 +74,8 @@ User clicks "▶️ Tick Forward" in director_view.py
     ↓
 DirectorService.tick(scene_id, config)
     ↓
-select_storylets() → 9-stage pipeline (v0.7)
-    ├─ Stage 1: Precondition Filtering
+select_storylets() → 9-stage pipeline (v0.9)
+    ├─ Stage 1: Precondition Filtering (v0.9: AI-powered NL conditions)
     ├─ Stage 2: Ordering Constraints (v0.7)
     ├─ Stage 3: Cooldown & Once
     ├─ Stage 4: Fallback Check (v0.7)
@@ -90,6 +93,7 @@ Return TickRecord with storylets + diffs + rationale
     ↓
 UI displays results in director_view.py
 ```
+
 
 ---
 
@@ -133,11 +137,13 @@ src/
 │   ├── __init__.py
 │   ├── director_service.py     # World Director orchestration
 │   │   ├── DirectorService     # Main service class
-│   │   ├── select_storylets()  # 9-stage selection pipeline (v0.7)
+│   │   ├── select_storylets()  # 9-stage selection pipeline (v0.9 enhanced)
 │   │   ├── apply_effects()     # Apply effects to state
 │   │   ├── tick()              # Execute one tick
 │   │   ├── _filter_by_ordering_constraints()  # v0.7
 │   │   └── _select_fallback_candidates()      # v0.7
+│   ├── ai_conditions.py        # AI condition evaluation (v0.9 NEW)
+│   │   └── AIConditionsEvaluator  # Natural language condition evaluation
 │   ├── state_service.py        # State computation
 │   │   ├── compute_state()     # Temporal state computation
 │   │   ├── compute_diffs()     # Before/after comparison
@@ -172,9 +178,13 @@ src/
 
 ---
 
-## World Director System (v0.7)
+## World Director System
+
+**Core Feature** (v0.7) with **AI Enhancement** (v0.9)
 
 The World Director is the core dynamic narrative engine, responsible for selecting and triggering storylets based on preconditions, ordering constraints, pacing, and fallback mechanisms.
+
+**v0.9 adds:** Natural language conditions, three director modes, and AI-powered condition evaluation alongside traditional rule-based logic.
 
 ### Key Components
 
@@ -189,7 +199,7 @@ class Storylet(BaseModel):
         id: Unique identifier (used in requires_fired, forbids_fired)
         title: Display name
         description: Full narrative content
-        preconditions: List of conditions that must ALL be satisfied
+        preconditions: List of conditions (v0.9: supports NL conditions)
         effects: List of state mutations to apply when triggered
         weight: Base selection probability (default: 0.3)
         once: If True, can only trigger once per playthrough
@@ -205,7 +215,7 @@ class Storylet(BaseModel):
     id: str
     title: str
     description: str = ""
-    preconditions: List[Condition] = []
+    preconditions: List[Precondition] = []  # v0.9: can contain nl_condition
     effects: List[Effect] = []
     weight: float = 0.3
     once: bool = False
@@ -216,6 +226,29 @@ class Storylet(BaseModel):
     requires_fired: List[str] = []         # v0.7
     forbids_fired: List[str] = []          # v0.7
 ```
+
+**v0.9 Precondition Enhancement:**
+
+```python
+class Precondition(BaseModel):
+    """
+    A condition that must be satisfied for a storylet to trigger.
+    
+    v0.9: Supports both traditional rule-based AND natural language conditions.
+    """
+    # Traditional fields (v0.8):
+    path: Optional[str] = None       # e.g., "world.vars.power"
+    op: Optional[str] = None         # e.g., ">=", "<", "=="
+    value: Optional[Any] = None      # e.g., 60
+    
+    # v0.9 NEW:
+    nl_condition: Optional[str] = None  # Natural language condition
+    
+    def is_nl_condition(self) -> bool:
+        """Returns True if this is an NL condition."""
+        return self.nl_condition is not None and self.nl_condition.strip() != ""
+```
+
 
 #### 2. DirectorConfig
 
@@ -232,13 +265,20 @@ class DirectorConfig(BaseModel):
         
         # v0.7 NEW FIELD:
         fallback_after_idle_ticks: Trigger fallback after N empty ticks
+        
+        # v0.9 NEW FIELDS:
+        ai_mode: Control AI usage ("deterministic", "ai_assisted", "ai_primary")
+        ai_cache_enabled: Enable caching for AI evaluations
     """
     events_per_tick: int = 2
     diversity_penalty: float = 0.5
     diversity_window: int = 3
     pacing_scale: float = 0.3
     fallback_after_idle_ticks: int = 3     # v0.7
+    ai_mode: Literal["deterministic", "ai_assisted", "ai_primary"] = "ai_assisted"  # v0.9
+    ai_cache_enabled: bool = True          # v0.9
 ```
+
 
 #### 3. TickHistory (v0.7 Updated)
 
@@ -263,11 +303,303 @@ class TickHistory(BaseModel):
 
 ---
 
+## AI-Enhanced Director (v0.9)
+
+**New in v0.9:** The World Director now supports AI-powered natural language conditions alongside traditional rule-based conditions, enabling more nuanced and expressive narrative logic.
+
+### Core Innovation: Hybrid Evaluation
+
+The v0.9 enhancement introduces **three director modes** that give users full control over AI usage:
+
+```python
+class DirectorConfig(BaseModel):
+    # ... existing fields ...
+    
+    # v0.9 NEW FIELDS:
+    ai_mode: Literal["deterministic", "ai_assisted", "ai_primary"] = "ai_assisted"
+    ai_cache_enabled: bool = True
+```
+
+**Three Modes:**
+
+| Mode | Description | Performance | Use Case |
+|------|-------------|-------------|----------|
+| **🔧 Deterministic** | Pure rule-based evaluation (v0.8 behavior) | <1ms, 0 tokens | High performance, exact logic |
+| **🤖 AI-Assisted** | Hybrid: rules first, AI for NL conditions | ~500ms, 200-800 tokens | Balanced, recommended |
+| **🧠 AI-Primary** | AI evaluates all conditions | 1-2s, 500-2000 tokens | Maximum flexibility |
+
+### Natural Language Conditions
+
+**New Precondition field:**
+
+```python
+class Precondition(BaseModel):
+    # Traditional (v0.8)
+    path: Optional[str] = None       # e.g., "world.vars.power"
+    op: Optional[str] = None         # e.g., ">=", "<", "=="
+    value: Optional[Any] = None      # e.g., 60
+    
+    # v0.9 NEW:
+    nl_condition: Optional[str] = None  # Natural language condition
+    
+    def is_nl_condition(self) -> bool:
+        """Check if this is a natural language condition."""
+        return self.nl_condition is not None and self.nl_condition.strip() != ""
+```
+
+**Examples of NL conditions:**
+
+```json
+{
+  "preconditions": [
+    {"nl_condition": "The player appears wealthy and has a good reputation"}
+  ]
+}
+```
+
+```json
+{
+  "preconditions": [
+    {"nl_condition": "Relations between factions are severely strained"}
+  ]
+}
+```
+
+```json
+{
+  "preconditions": [
+    {"nl_condition": "The common people are desperate and losing hope"}
+  ]
+}
+```
+
+### AIConditionsEvaluator
+
+**New service:** `src/services/ai_conditions.py` (350 lines)
+
+```python
+class AIConditionsEvaluator:
+    """
+    Evaluates natural language conditions using LLM.
+    
+    Key features:
+    - Converts world state to natural language context
+    - Structured LLM prompts ensure consistent output
+    - Returns (satisfied: bool, explanation: str)
+    - Smart caching based on state hash
+    """
+    
+    def __init__(self, llm_client: LLMClient, token_stats: TokenStats):
+        self.llm = llm_client
+        self.stats = token_stats
+        self._cache: Dict[str, Tuple[bool, str]] = {}
+    
+    def evaluate(
+        self,
+        condition: str,
+        project: Project,
+        world_state: WorldState,
+        character_states: Dict[str, CharacterState]
+    ) -> Tuple[bool, str]:
+        """
+        Evaluate a single NL condition.
+        
+        Returns:
+            (satisfied, explanation)
+            
+        Example explanation:
+            "✓ [AI 0.92] Player appears wealthy (player_wealth=65, reputation=55)"
+        """
+        # Check cache first
+        cache_key = self._make_cache_key(condition, world_state, character_states)
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+        
+        # Build natural language context
+        context = self._build_context(world_state, character_states)
+        
+        # Call LLM with structured prompt
+        response = self._call_llm(condition, context)
+        
+        # Parse structured response
+        satisfied, confidence, reasoning = self._parse_response(response)
+        
+        # Format explanation
+        explanation = f"{'✓' if satisfied else '✗'} [AI {confidence:.2f}] {reasoning}"
+        
+        # Cache result
+        self._cache[cache_key] = (satisfied, explanation)
+        
+        return satisfied, explanation
+```
+
+**Caching mechanism:**
+
+```python
+def _make_cache_key(
+    self,
+    condition: str,
+    world_state: WorldState,
+    character_states: Dict[str, CharacterState]
+) -> str:
+    """
+    Generate cache key from condition text and relevant state.
+    
+    Same condition + same state = cache hit (0 tokens)
+    """
+    state_hash = hashlib.md5()
+    state_hash.update(condition.encode())
+    state_hash.update(json.dumps(world_state.vars, sort_keys=True).encode())
+    state_hash.update(json.dumps(world_state.facts, sort_keys=True).encode())
+    # ... hash character moods and relationships ...
+    return state_hash.hexdigest()
+```
+
+### Hybrid Evaluation Flow
+
+**In DirectorService:**
+
+```python
+def _evaluate_conditions_hybrid(
+    self,
+    preconditions: List[Precondition],
+    project: Project,
+    world_state: WorldState,
+    character_states: Dict[str, CharacterState],
+    config: DirectorConfig
+) -> Tuple[bool, List[str]]:
+    """
+    Evaluate preconditions using hybrid approach.
+    
+    Flow:
+    1. If ai_mode == "deterministic": only rule-based
+    2. If ai_mode == "ai_assisted" or "ai_primary":
+       - Traditional conditions → ConditionsEvaluator (fast)
+       - NL conditions → AIConditionsEvaluator (LLM)
+    3. Return (all_satisfied, reasons)
+    """
+    
+    if config.ai_mode == "deterministic":
+        # Skip NL conditions entirely
+        traditional_only = [c for c in preconditions if not c.is_nl_condition()]
+        return self.conditions_evaluator.evaluate_all(traditional_only, ...)
+    
+    reasons = []
+    
+    for condition in preconditions:
+        if condition.is_nl_condition():
+            # Use AI evaluator
+            satisfied, explanation = self.ai_conditions_evaluator.evaluate(
+                condition.nl_condition,
+                project,
+                world_state,
+                character_states
+            )
+            reasons.append(explanation)
+            if not satisfied:
+                return False, reasons
+        else:
+            # Use traditional evaluator
+            satisfied, explanation = self.conditions_evaluator.evaluate_single(condition, ...)
+            reasons.append(explanation)
+            if not satisfied:
+                return False, reasons
+    
+    return True, reasons
+```
+
+### UI Integration
+
+**Director View (v0.9):**
+
+```python
+# AI Mode Selection
+ai_mode = st.radio(
+    "🎯 Director Mode",
+    options=["deterministic", "ai_assisted", "ai_primary"],
+    format_func=lambda x: {
+        "deterministic": "🔧 Deterministic (Rule-based)",
+        "ai_assisted": "🤖 AI-Assisted (Hybrid)",
+        "ai_primary": "🧠 AI-Primary (Emergent)"
+    }[x],
+    horizontal=True
+)
+
+# Pass to DirectorConfig
+config = DirectorConfig(
+    events_per_tick=events_per_tick,
+    pacing_preference=pacing_preference,
+    ai_mode=ai_mode,  # v0.9
+    ai_cache_enabled=True
+)
+```
+
+### Best Practices for NL Conditions
+
+**✅ Good NL Conditions:**
+
+- **Clear and specific:** "The player is wealthy and respected"
+- **Qualitative judgments:** "The atmosphere feels tense and dangerous"
+- **Complex social states:** "Relations between factions are hostile"
+- **Emotional states:** "The common people are desperate and losing hope"
+- **Temporal reasoning:** "Violence seems imminent"
+
+**❌ Avoid:**
+
+- **Too vague:** "Something is wrong"
+- **Too complex:** "If X then Y unless Z considering W..."
+- **Numeric duplicates:** "power is greater than 60" (use traditional conditions!)
+- **Self-referential:** "This condition should trigger"
+
+### Performance Considerations
+
+**Token Usage:**
+
+- **AI-Assisted:** ~200-800 tokens per NL condition evaluation
+- **Caching:** Same state → 0 tokens (instant)
+- **Recommended limit:** 8000 tokens/day for hobby use
+
+**Response Time:**
+
+- **Deterministic:** <1ms (no AI)
+- **AI-Assisted:** ~500ms per unique NL evaluation
+- **Cache hits:** <1ms (instant)
+
+**Cost Optimization:**
+
+1. Use deterministic mode for performance-critical paths
+2. Enable caching (default: on)
+3. Write stable NL conditions (avoid random phrasing)
+4. Mix traditional + NL conditions (evaluate cheap ones first)
+
+### Testing AI Conditions
+
+**Test projects included:**
+
+- `examples/town_factions/` - 10 English NL condition storylets
+- `examples/ai_test_zh/` - 10 Chinese NL condition storylets
+
+**Testing approach:**
+
+```python
+# Test NL condition evaluation
+config = DirectorConfig(ai_mode="ai_assisted")
+tick_record = director_service.tick(project, thread_id, step_index, config)
+
+# Check if NL storylets were triggered
+for storylet, rationale in tick_record.selected_storylets:
+    if storylet.id.startswith("st-nl-"):
+        print(f"✓ NL storylet triggered: {storylet.title}")
+        print(f"  Rationale: {rationale}")
+```
+
+---
+
 ## Data Flow & Pipelines
 
-### World Director Pipeline (v0.7)
+### World Director Pipeline
 
-The `select_storylets()` method implements a 9-stage pipeline:
+The `select_storylets()` method implements a **9-stage pipeline** with AI enhancements in v0.9:
 
 ```python
 def select_storylets(
@@ -280,9 +612,63 @@ def select_storylets(
     """
     Execute the 9-stage storylet selection pipeline.
     
+    v0.9 enhancement: Stage 1 now includes AI-powered condition evaluation
+    when ai_mode is "ai_assisted" or "ai_primary".
+    
     Returns: List of (Storylet, rationale) tuples
     """
     tokenStats: TokenStats
+```
+
+**Pipeline Stages Overview:**
+
+1. **Precondition Evaluation** (v0.9 enhanced):
+   - **Traditional conditions** → Deterministic evaluator (<1ms)
+   - **NL conditions** → AI evaluator (~500ms, if ai_mode allows)
+   - All conditions must be satisfied (AND logic)
+   - Returns eligible storylets only
+
+2. **Recent History Filtering** - Remove recently triggered storylets
+
+3. **Category Filtering** - Apply category-specific limits
+
+4. **Priority Sorting** - Order by storylet importance
+
+5. **Pacing Adjustment** - Match user's pacing preference
+
+6. **Diversity Selection** - Avoid repetitive patterns
+
+7. **Final Scoring** - Composite score calculation
+
+8. **Top-N Selection** - Select best candidates
+
+9. **Rationale Generation** - Explain selections
+
+**Key v0.9 Enhancement in Stage 1:**
+
+```python
+# Pseudocode of Stage 1 with AI support
+eligible = []
+for storylet in all_storylets:
+    satisfied, reasons = self._evaluate_conditions_hybrid(
+        storylet.preconditions,
+        project,
+        world_state,
+        character_states,
+        config  # Contains ai_mode
+    )
+    if satisfied:
+        eligible.append((storylet, reasons))
+    else:
+        # Log rejection with AI-generated explanations
+        logger.debug(f"Rejected {storylet.id}: {reasons}")
+
+return eligible  # Pass to Stage 2
+```
+
+---
+
+### Models
 
 # Scene
 class Scene(BaseModel):
@@ -306,95 +692,36 @@ class Character(BaseModel):
 
 ## Key Features Implementation
 
-### 1. Scene Checkup Panel
+### AI-Enhanced World Director (v0.9) 🌟
 
-**File:** `src/ui/scene_checkup_panel.py`
+See [AI-Enhanced Director (v0.9)](#ai-enhanced-director-v09) section above for full details.
 
-Implements caching for AI analysis:
+**Core files:**
+- `src/services/ai_conditions.py` - AIConditionsEvaluator (350 lines)
+- `src/services/director_service.py` - Hybrid evaluation logic
+- `src/models/storylet.py` - Precondition.nl_condition field
+- `src/ui/director_view.py` - AI mode selector UI
 
-```python
-class SceneCheckup:
-    def get_cache_key(self, project: Project, scene: Scene) -> str:
-        # Cache based on content hash
-        content_hash = hash(scene.body)
-        return f"{project.name}_{scene.id}_{content_hash}"
-    
-    def run_checkup(self, project, scene, force_refresh=False):
-        cache_key = self.get_cache_key(project, scene)
-        
-        if not force_refresh and cache_key in st.session_state.checkup_cache:
-            return st.session_state.checkup_cache[cache_key]
-        
-        # Run AI analysis...
-        result = {
-            'summary': ...,
-            'facts': ...,
-            'emotions': ...,
-            'metadata': ...
-        }
-        
-        # Cache result
-        st.session_state.checkup_cache[cache_key] = result
-        return result
-```
+**Test projects with NL conditions:**
+- `examples/town_factions/` - 10 English NL storylets
+- `examples/ai_test_zh/` - 10 Chinese NL storylets
 
-### 2. FAISS Vector Search
+### Scene Analysis Tools (v0.6+)
 
-**File:** `src/infra/vector_db.py`
+**Scene Checkup Panel** - `src/ui/scene_checkup_panel.py`
 
-CPU-optimized semantic search:
+AI-powered scene analysis with caching:
+- Scene summarization
+- Fact extraction  
+- Emotion detection
+- Character OOC checking
 
-```python
-class VectorDatabase:
-    def __init__(self):
-        self.model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
-        self.indices = {}  # project_name -> index_dict
-    
-    def add_documents(self, project_name, doc_type, documents):
-        embeddings = self.model.encode(texts)
-        dimension = embeddings.shape[1]
-        
-        index = faiss.IndexFlatL2(dimension)
-        index.add(embeddings)
-        
-        self.indices[project_name][doc_type] = {
-            'index': index,
-            'documents': documents
-        }
-    
-    def search(self, project_name, query, top_k=5):
-        query_embedding = self.model.encode([query])
-        distances, indices = index.search(query_embedding, top_k)
-        return results
-```
+**Vector Search** - `src/infra/vector_db.py`
 
-### 3. LangGraph Agent
-
-**File:** `src/services/ai_service.py`
-
-Conversational agent with tool calling:
-
-```python
-from langgraph.prebuilt import create_react_agent
-
-@tool
-def search_scenes(query: str) -> str:
-    """Search for scenes matching the query"""
-    # Use vector DB to find relevant scenes
-    results = vector_db.search(project_name, query)
-    return json.dumps(results)
-
-@tool
-def count_characters() -> str:
-    """Count total characters in the project"""
-    return str(len(project.characters))
-
-# Create agent
-agent = create_react_agent(
-    model=llm,
-    tools=[search_scenes, count_characters, ...]
-)
-```
+FAISS-based semantic search for scenes, characters, and lore:
+- CPU-optimized (no GPU required)
+- Multilingual support (paraphrase-multilingual-MiniLM-L12-v2)
+- Project-level isolation
 
 ## Development Workflow
 
@@ -405,20 +732,24 @@ agent = create_react_agent(
 3. **Build UI Component** in `src/ui/`
 4. **Add i18n Keys** in `i18n/en.json` and `i18n/zh.json`
 5. **Test** with sample project
+6. **Update Documentation** (developer_guide.en.md, DEVELOPMENT_ROADMAP.md)
 
-### Adding AI Tools
+### Adding Natural Language Conditions (v0.9)
 
-Create a new `@tool` function in `src/services/ai_service.py`:
-
-```python
-@tool
-def my_new_tool(param: str) -> str:
-    """Description for the AI agent"""
-    # Implementation
-    return result
+1. **Add to storylet preconditions:**
+```json
+{
+  "preconditions": [
+    {"nl_condition": "Your natural language condition here"}
+  ]
+}
 ```
 
-The agent will automatically discover and use it.
+2. **Test with AI-Assisted mode** to verify condition triggers correctly
+
+3. **Document pattern** if it's a new design pattern
+
+**See:** `examples/town_factions/NL_CONDITIONS_GUIDE.md` for patterns and best practices
 
 ### Internationalization
 
@@ -442,18 +773,45 @@ st.button(i18n.t('my_feature.button'))
 
 ## Testing
 
-### Manual Testing
+### Testing AI-Enhanced Director (v0.9) 🌟
+
+**Test Projects:**
+- `examples/town_factions/` - 10 English NL condition storylets (faction politics)
+- `examples/ai_test_zh/` - 10 Chinese NL condition storylets (武侠江湖)
+
+**Testing Workflow:**
+1. Load test project (e.g., `town_factions`)
+2. Navigate to World Director view
+3. Select AI mode (🔧 Deterministic / 🤖 AI-Assisted / 🧠 AI-Primary)
+4. Click "▶️ Tick Forward" and observe:
+   - Which storylets trigger (look for `st-nl-*` IDs)
+   - AI evaluation explanations (e.g., "✓ [AI 0.92] Player appears wealthy...")
+   - Response time and token usage
+5. Change world state variables (e.g., `player_wealth`, `tension_level`)
+6. Run tick again to verify NL conditions respond appropriately
+
+**What to Test:**
+- ✅ NL conditions trigger correctly based on state
+- ✅ Traditional conditions still work (hybrid evaluation)
+- ✅ Cache hits reduce token usage (run same state twice)
+- ✅ AI mode switching works without errors
+- ✅ Spinner shows during AI processing
+
+### Manual Testing (General Features)
 
 1. Load sample project: Click 🇨🇳 or 🇺🇸 button
 2. Test graph interaction: Drag nodes, click for details
 3. Test Scene Checkup: Click node → AI Checkup tab
-4. Test chat: Ask "How many characters?"
-5. Test caching: Click Refresh button, verify speed
+4. Test World Director: Navigate to Director view, run ticks
+5. Verify i18n: Switch language, check UI updates
 
 ### Sample Projects
 
-- `examples/sample_project/` - Chinese time travel story
+**Current:**
+- `examples/sample_project/` - Chinese interactive fiction
 - `examples/sample_project_en/` - English version
+- `examples/town_factions/` - English World Director test (10 NL storylets)
+- `examples/ai_test_zh/` - Chinese World Director test (10 NL storylets, 武侠主题)
 
 ## Contributing
 
@@ -482,151 +840,14 @@ perf: performance improvement
 4. Push branch: `git push origin feature/amazing-feature`
 5. Open Pull Request
 
-## Roadmap
-
-### Current (v0.3)
-- ✅ Interactive graph with drag-and-drop
-- ✅ Scene Checkup panel
-- ✅ Sample projects (CN/EN)
-- ✅ FAISS vector search
-- ✅ Chat history
-
-### Next (v0.4)
-- [ ] Play Path feature (test player routes)
-- [ ] Timeline view
-- [ ] Multi-scene consistency checks
-- [ ] Export to Twine/Articy format
-
-### Future (v0.3)
-- [ ] Character arc analysis
-- [ ] Emotional pacing visualization
-- [ ] What-if simulation
-- [ ] Collaborative editing
+---
 
 ## Resources
 
 - **Streamlit Docs**: https://docs.streamlit.io
-- **LangGraph**: https://langchain-ai.github.io/langgraph
 - **FAISS**: https://github.com/facebookresearch/faiss
 - **DeepSeek API**: https://platform.deepseek.com/docs
-
----
-
-**Questions?** Open an issue at [github.com/pj4239460/story-graph-assistant](https://github.com/pj4239460/story-graph-assistant)
----
-
-## MVP Feature List (v0.1)
-
-### ✅ Implemented
-
-- [x] Project creation, loading, saving
-- [x] Scene management (CRUD)
-- [x] Character management (CRUD)
-- [x] AI scene summarization
-- [x] AI lore extraction
-- [x] AI OOC detection
-- [x] Token usage tracking
-
-### 🚧 Planned
-
-- [ ] Scene connection/branch management
-- [ ] Graph visualization (Graphviz/D3.js)
-- [ ] Timeline view
-- [ ] RAG knowledge base
-- [ ] What-if simulations
-- [ ] Export features
-
----
-
-## Development Roadmap
-
-### v0.1 - MVP (Current Version)
-- ✅ Basic project management
-- ✅ Scene and character CRUD
-- ✅ Single-scene AI features
-- ✅ Token statistics
-
-### v0.3 - RAG Foundation
-- [ ] Timeline view
-- [ ] Keyword-based retrieval
-- [ ] Worldbuilding Q&A
-- [ ] Multi-scene OOC checking
-
-### v0.3 - Full RAG
-- [ ] Vector retrieval (FAISS/Chroma)
-- [ ] Character life arcs
-- [ ] Route analysis
-- [ ] Emotional pacing
-
-### v2.0 - World Simulation
-- [ ] WorldState & StoryThread
-- [ ] Advanced what-if simulations
-- [ ] Project consistency reports
-- [ ] Cost modes
-
----
-
-## API Documentation
-
-### Services
-
-#### ProjectService
-
-```python
-# Create project
-project = project_service.create_project(name="My Story", locale="en")
-
-# Load project
-project = project_service.load_project("path/to/project.json")
-
-# Save project
-project_service.save_project("path/to/project.json")
-```
-
-#### SceneService
-
-```python
-# Create scene
-scene = scene_service.create_scene(
-    project, 
-    title="Opening", 
-    body="The story begins...",
-    chapter="Chapter 1"
-)
-
-# Add choice
-choice = scene_service.add_choice(
-    project,
-    scene.id,
-    text="Choice A",
-    target_scene_id=another_scene.id
-)
-```
-
-#### AIService
-
-```python
-# Scene summarization
-summary = ai_service.summarize_scene(project, scene)
-
-# Lore extraction
-facts = ai_service.extract_facts(project, scene)
-
-# OOC detection
-result = ai_service.check_ooc(project, character_id, scene)
-```
-
----
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the project
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- **Full Roadmap**: See [DEVELOPMENT_ROADMAP.md](../DEVELOPMENT_ROADMAP.md) for v0.9 completion plan
 
 ---
 
